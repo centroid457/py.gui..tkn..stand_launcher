@@ -51,6 +51,7 @@ class Gui(tk.Frame):
         self.window_flag_fullscreen = 0
         self.window_flag_independent = 0
         self.button_color_set_normal = ("white", "#77FF77")
+        self.window_state = ['normal', "zoomed"]
 
         super().__init__(master)
         self.master = master
@@ -62,18 +63,25 @@ class Gui(tk.Frame):
 
     def window_control_top(self):
         self.window_flag_topalways = not (self.window_flag_topalways)
-        self.master.wm_attributes("-topmost", self.window_flag_topalways)
         self.button_window_topalways["bg"] = self.button_color_set_normal[int(self.window_flag_topalways)]
+        self.master.wm_attributes("-topmost", self.window_flag_topalways)
+
 
     def window_control_fullscreen(self):
         self.window_flag_fullscreen = not (self.window_flag_fullscreen)
-        self.master.attributes('-fullscreen', self.window_flag_fullscreen)
         self.button_window_fullscreen["bg"] = self.button_color_set_normal[int(self.window_flag_fullscreen)]
+        self.master.state(self.window_state[int(self.window_flag_fullscreen)])
+        if not self.window_flag_fullscreen:
+            self.master.wm_attributes('-fullscreen', self.window_flag_fullscreen)
+
+
 
     def window_control_independent(self):
         self.window_flag_independent = not (self.window_flag_independent)
-        self.master.overrideredirect(self.window_flag_independent)
         self.button_window_independent["bg"] = self.button_color_set_normal[int(self.window_flag_independent)]
+        self.master.wm_overrideredirect(self.window_flag_independent)
+
+
 
     def window_geometry(self):
         w = 300
