@@ -57,41 +57,48 @@ class Gui(tk.Frame):
         self.master = master
         self.pack()
         self.master.title("STAND LAUNCHER")
-        self.window_geometry()
         self.create_widgets()
+        self.window_geometry()
 
-
-    def window_control_top(self):
-        self.window_flag_topalways = not (self.window_flag_topalways)
+    def window_control_top(self, setdefault=False):
+        self.window_flag_topalways = 0 if setdefault else not (self.window_flag_topalways)
+        print(self.window_flag_topalways)
         self.button_window_topalways["bg"] = self.button_color_set_normal[int(self.window_flag_topalways)]
         self.master.wm_attributes("-topmost", self.window_flag_topalways)
 
 
-    def window_control_fullscreen(self):
-        self.window_flag_fullscreen = not (self.window_flag_fullscreen)
+    def window_control_fullscreen(self, setdefault=False):
+        self.window_flag_fullscreen = 0 if setdefault else not (self.window_flag_fullscreen)
         self.button_window_fullscreen["bg"] = self.button_color_set_normal[int(self.window_flag_fullscreen)]
         self.master.state(self.window_state[int(self.window_flag_fullscreen)])
         if not self.window_flag_fullscreen:
             self.master.wm_attributes('-fullscreen', self.window_flag_fullscreen)
 
 
-    def window_control_independent(self):
-        self.window_flag_independent = not (self.window_flag_independent)
+    def window_control_independent(self, setdefault=False):
+        self.window_flag_independent = 0 if setdefault else not (self.window_flag_independent)
         self.button_window_independent["bg"] = self.button_color_set_normal[int(self.window_flag_independent)]
         self.master.wm_overrideredirect(self.window_flag_independent)
 
 
-    def window_move_to_00(self):
-        self.master.geometry('+0+0')
+    def window_geometry(self, moveto00=False):
+        if moveto00:   # only move to (0,0)
+            self.master.geometry("+0+0")
+            return
 
-    def window_geometry(self):
-        window_width = 300
-        window_height = 200
+
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
+        window_width = 500
+        window_height = 200
+
         x = (screen_width - window_width) / 2
         y = (screen_height - window_height) / 2
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
+
+        self.window_control_top(setdefault=True)
+        self.window_control_fullscreen(setdefault=True)
+        self.window_control_independent(setdefault=True)
 
     def create_widgets(self):
         # ==================== FRAME CONTROL ====================
@@ -123,8 +130,14 @@ class Gui(tk.Frame):
         self.button_window_moveto00 = tk.Button(frame_control,
                                          text="(0.0)", width=3, height=1,
                                          bg=self.button_color_set_normal[int(self.window_flag_topalways)], fg="black",
-                                         command=self.window_move_to_00)
+                                         command=lambda:self.window_geometry(moveto00=True))
         self.button_window_moveto00.pack(side='left')
+
+        self.button_window_make_fullscreen = tk.Button(frame_control,
+                                         text="begin", height=1,
+                                         bg=self.button_color_set_normal[int(self.window_flag_topalways)], fg="black",
+                                         command=lambda:self.window_geometry())
+        self.button_window_make_fullscreen.pack(side='left')
 
         self.button_window_topalways = tk.Button(frame_control,
                                          text="top", width=3, height=1,
