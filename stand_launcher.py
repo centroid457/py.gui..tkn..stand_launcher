@@ -121,7 +121,7 @@ class Gui(tk.Frame):
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
         grip = Grip(self.frame_control)
-        self.create_control_buttons()
+        self.create_control_buttons(self.frame_control)
 
 
         # ======= FRAME-2 (SETTINGS) ====================
@@ -154,55 +154,55 @@ class Gui(tk.Frame):
         self.create_work_error_eria(self.frame_error_aria)
 
 
-    def create_control_buttons(self):
-        self.button_window_exit = tk.Button(self.frame_control,
+    def create_control_buttons(self, master):
+        self.button_window_exit = tk.Button(master,
                                             text="X", width=3, height=1,
                                             bg="#FF3333", fg="white",
                                             command=lambda: exit())
         self.button_window_exit.pack(side='left')
 
-        self.button_window_fullscreen = tk.Button(self.frame_control,
+        self.button_window_fullscreen = tk.Button(master,
                                                   text="^", width=3, height=1,
                                                   bg=self.color_button_set_normal[int(self.window_flag_fullscreen)],
                                                   fg="black",
                                                   command=self.window_control_fullscreen)
         self.button_window_fullscreen.pack(side='left')
 
-        self.button_window_down = tk.Button(self.frame_control,
+        self.button_window_down = tk.Button(master,
                                             text="_", width=3, height=1,
                                             bg="white", fg="black",
                                             command=lambda: self.master.iconify())
         self.button_window_down.pack(side='left')
 
-        self.button_window_moveto00 = tk.Button(self.frame_control,
+        self.button_window_moveto00 = tk.Button(master,
                                                 text="(0.0)", width=3, height=1,
                                                 bg=self.color_button_set_normal[int(self.window_flag_topalways)],
                                                 fg="black",
                                                 command=lambda: self.create_window_geometry(moveto00=True))
         self.button_window_moveto00.pack(side='left')
 
-        self.button_window_set_as_started = tk.Button(self.frame_control,
+        self.button_window_set_as_started = tk.Button(master,
                                                        text="begin", height=1,
                                                        bg=self.color_button_set_normal[int(self.window_flag_topalways)],
                                                        fg="black",
                                                        command=self.create_window_geometry)
         self.button_window_set_as_started.pack(side='left')
 
-        self.button_window_topalways = tk.Button(self.frame_control,
+        self.button_window_topalways = tk.Button(master,
                                                  text="top", width=3, height=1,
                                                  bg=self.color_button_set_normal[int(self.window_flag_topalways)],
                                                  fg="black",
                                                  command=self.window_control_top)
         self.button_window_topalways.pack(side='left')
 
-        self.button_window_independent = tk.Button(self.frame_control,
+        self.button_window_independent = tk.Button(master,
                                                    text="I", width=3, height=1,
                                                    bg=self.color_button_set_normal[int(self.window_flag_independent)],
                                                    fg="black",
                                                    command=self.window_control_independent)
         self.button_window_independent.pack(side='left')
 
-        self.button_window_settings = tk.Button(self.frame_control,
+        self.button_window_settings = tk.Button(master,
                                                 text="Настройки", height=1,
                                                 bg="white", fg="black",
                                                 command=self.frame_settings_open)
