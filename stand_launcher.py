@@ -53,17 +53,21 @@ def window_control_fullscreen():
     window_flag_fullscreen = not(window_flag_fullscreen)
     root.attributes('-fullscreen', window_flag_fullscreen)
 
+def window_control_independent():
+    global window_flag_independent
+    window_flag_independent = not(window_flag_independent)
+    root.overrideredirect(window_flag_independent)
 
 def main():
-    global root, window_flag_topalways, window_flag_fullscreen
+    global root, window_flag_topalways, window_flag_fullscreen, window_flag_independent
     window_flag_topalways = 0
     window_flag_fullscreen = 0
+    window_flag_independent = 0
 
     root = Tk()
     root.title("STAND LAUNCHER")
     root.geometry("300x200")
     root.overrideredirect(0)
-
 
 
     # ==================== FRAME CONTROL ====================
@@ -76,7 +80,8 @@ def main():
     button_window_exit = Button(frame_control, text="X", width=3, height=1, bg="#FF3333", fg="white", command=lambda: exit())
     button_window_exit.pack(side='right')
 
-    button_window_fullscreen = Button(frame_control, text="^", width=3, height=1, bg="white", fg="black", command=window_control_fullscreen)
+    button_window_fullscreen_color = ("white", "#33FF33")
+    button_window_fullscreen = Button(frame_control, text="^", width=3, height=1, bg=button_window_fullscreen_color[int(window_flag_fullscreen)], fg="black", command=window_control_fullscreen)
     button_window_fullscreen.pack(side='right')
 
     button_window_down = Button(frame_control, text="_", width=3, height=1, bg="white", fg="black", command=lambda: root.iconify())
@@ -84,6 +89,9 @@ def main():
 
     button_window_topalways = Button(frame_control, text="top", width=3, height=1, bg="white", fg="black", command=window_control_top)
     button_window_topalways.pack(side='right')
+
+    button_window_independent = Button(frame_control, text="I", width=3, height=1, bg="white", fg="black", command=window_control_independent)
+    button_window_independent.pack(side='right')
 
     button_window_settings = Button(frame_control, text="Настройки", height=1, bg="white", fg="black", command=lambda: None)
     button_window_settings.pack(side='right')
