@@ -56,7 +56,7 @@ class Gui(tk.Frame):
         self.master = master
         self.pack()
         self.master.title("STAND LAUNCHER")
-        self.master.geometry("300x200+100+100")
+        self.window_geometry()
         self.create_widgets()
 
 
@@ -74,6 +74,17 @@ class Gui(tk.Frame):
         self.window_flag_independent = not (self.window_flag_independent)
         self.master.overrideredirect(self.window_flag_independent)
         self.button_window_independent["bg"] = self.button_color_set_normal[int(self.window_flag_independent)]
+
+    def window_geometry(self):
+        w = 300
+        h = 200
+
+        sw = self.master.winfo_screenwidth()
+        sh = self.master.winfo_screenheight()
+
+        x = (sw - w) / 2
+        y = (sh - h) / 2
+        self.master.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
     def create_widgets(self):
         # ==================== FRAME CONTROL ====================
