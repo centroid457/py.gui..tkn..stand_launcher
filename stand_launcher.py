@@ -1,7 +1,8 @@
 from tkinter import *
 
+
 class Grip:
-    ''' Makes a window dragable. '''
+    ''' Makes a window dragable by mouse '''
     def __init__ (self, parent, disable=None, releasecmd=None) :
         self.parent = parent
         self.root = parent.winfo_toplevel()
@@ -40,15 +41,33 @@ class Grip:
         if self.releaseCMD != None :
             self.releaseCMD()
 
+
+def window_control_top():
+    global window_flag_topalways
+    window_flag_topalways = not(window_flag_topalways)
+    root.wm_attributes("-topmost", window_flag_topalways)
+
+
+def window_control_fullscreen():
+    global window_flag_fullscreen
+    window_flag_fullscreen = not(window_flag_fullscreen)
+    root.attributes('-fullscreen', window_flag_fullscreen)
+
+
 def main():
+    global root, window_flag_topalways, window_flag_fullscreen
+    window_flag_topalways = 0
+    window_flag_fullscreen = 0
+
     root = Tk()
     root.title("STAND LAUNCHER")
     root.geometry("300x200")
     root.overrideredirect(0)
 
 
+
     # ==================== FRAME CONTROL ====================
-    frame_control = Frame(root, bg="#505050", width=200, height=20)
+    frame_control = Frame(root, bg="#505050")
     frame_control.pack(side='top', fill=BOTH, expand=0)
     '''Would Be great if it could be specified to only be moved
     when dragging with the Frame above.'''
@@ -57,16 +76,16 @@ def main():
     button_window_exit = Button(frame_control, text="X", width=3, height=1, bg="#FF3333", fg="white", command=lambda: exit())
     button_window_exit.pack(side='right')
 
-    button_window_fullscreen = Button(frame_control, text="^", width=3, height=1, bg="white", fg="black", command=lambda: exit())
+    button_window_fullscreen = Button(frame_control, text="^", width=3, height=1, bg="white", fg="black", command=window_control_fullscreen)
     button_window_fullscreen.pack(side='right')
 
-    button_window_down = Button(frame_control, text="_", width=3, height=1, bg="white", fg="black", command=lambda: exit())
+    button_window_down = Button(frame_control, text="_", width=3, height=1, bg="white", fg="black", command=lambda: root.iconify())
     button_window_down.pack(side='right')
 
-    button_window_topalways = Button(frame_control, text="top", width=3, height=1, bg="white", fg="black", command=lambda: exit())
+    button_window_topalways = Button(frame_control, text="top", width=3, height=1, bg="white", fg="black", command=window_control_top)
     button_window_topalways.pack(side='right')
 
-    button_window_settings = Button(frame_control, text="Настройки", height=1, bg="white", fg="black", command=lambda: exit())
+    button_window_settings = Button(frame_control, text="Настройки", height=1, bg="white", fg="black", command=lambda: None)
     button_window_settings.pack(side='right')
 
 
