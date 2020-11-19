@@ -1,4 +1,3 @@
-from tkinter import *
 import tkinter as tk
 
 
@@ -77,44 +76,44 @@ class Gui(tk.Frame):
 
     def create_widgets(self):
         # ==================== FRAME CONTROL ====================
-        frame_control = Frame(self.master, bg="#505050")
-        frame_control.pack(side='top', fill=BOTH, expand=0)
+        frame_control = tk.Frame(self.master, bg="#505050")
+        frame_control.pack(side='top', fill=tk.BOTH, expand=0)
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
         grip = Grip(frame_control)
 
-        button_window_exit = Button(frame_control,
+        button_window_exit = tk.Button(frame_control,
                                     text="X", width=3, height=1,
                                     bg="#FF3333", fg="white",
                                     command=lambda: exit())
         button_window_exit.pack(side='right')
 
         button_window_fullscreen_color = ("white", "#33FF33")
-        button_window_fullscreen = Button(frame_control,
+        button_window_fullscreen = tk.Button(frame_control,
                                           text="^", width=3, height=1,
                                           bg=button_window_fullscreen_color[int(self.window_flag_fullscreen)], fg="black",
                                           command=self.window_control_fullscreen)
         button_window_fullscreen.pack(side='right')
 
-        button_window_down = Button(frame_control,
+        button_window_down = tk.Button(frame_control,
                                     text="_", width=3, height=1,
                                     bg="white", fg="black",
                                     command=lambda: self.master.iconify())
         button_window_down.pack(side='right')
 
-        button_window_topalways = Button(frame_control,
+        button_window_topalways = tk.Button(frame_control,
                                          text="top", width=3, height=1,
                                          bg="white", fg="black",
                                          command=self.window_control_top)
         button_window_topalways.pack(side='right')
 
-        button_window_independent = Button(frame_control,
+        button_window_independent = tk.Button(frame_control,
                                            text="I", width=3, height=1,
                                            bg="white", fg="black",
                                            command=self.window_control_independent)
         button_window_independent.pack(side='right')
 
-        button_window_settings = Button(frame_control,
+        button_window_settings = tk.Button(frame_control,
                                         text="Настройки", height=1,
                                         bg="white", fg="black",
                                         command=lambda: None)
@@ -122,13 +121,13 @@ class Gui(tk.Frame):
 
 
         # ==================== FRAME MAIN ====================
-        frame_back = Frame(self.master, bg="grey")
+        frame_back = tk.Frame(self.master, bg="grey")
         frame_back.pack_propagate(0)
-        frame_back.pack(side='top', fill=BOTH, expand=1)
+        frame_back.pack(side='top', fill=tk.BOTH, expand=1)
 
 
 def main():
-    root = Tk()
+    root = tk.Tk()
     app = Gui(master=root)
     app.mainloop()
 
