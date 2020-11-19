@@ -51,7 +51,7 @@ class Gui(tk.Frame):
         self.window_flag_fullscreen = 0
         self.window_flag_independent = 0
         self.button_color_set_normal = ("white", "#77FF77")
-        self.window_state = ['normal', "zoomed"]
+        self.window_state = ('normal', "zoomed")
 
         super().__init__(master)
         self.master = master
@@ -75,24 +75,23 @@ class Gui(tk.Frame):
             self.master.wm_attributes('-fullscreen', self.window_flag_fullscreen)
 
 
-
     def window_control_independent(self):
         self.window_flag_independent = not (self.window_flag_independent)
         self.button_window_independent["bg"] = self.button_color_set_normal[int(self.window_flag_independent)]
         self.master.wm_overrideredirect(self.window_flag_independent)
 
 
+    def window_move_to_00(self):
+        self.master.geometry('+0+0')
 
     def window_geometry(self):
-        w = 300
-        h = 200
-
-        sw = self.master.winfo_screenwidth()
-        sh = self.master.winfo_screenheight()
-
-        x = (sw - w) / 2
-        y = (sh - h) / 2
-        self.master.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        window_width = 300
+        window_height = 200
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+        x = (screen_width - window_width) / 2
+        y = (screen_height - window_height) / 2
+        self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
     def create_widgets(self):
         # ==================== FRAME CONTROL ====================
@@ -107,38 +106,44 @@ class Gui(tk.Frame):
                                     text="X", width=3, height=1,
                                     bg="#FF3333", fg="white",
                                     command=lambda: exit())
-        self.button_window_exit.pack(side='right')
+        self.button_window_exit.pack(side='left')
 
         self.button_window_fullscreen = tk.Button(frame_control,
                                           text="^", width=3, height=1,
                                           bg=self.button_color_set_normal[int(self.window_flag_fullscreen)], fg="black",
                                           command=self.window_control_fullscreen)
-        self.button_window_fullscreen.pack(side='right')
+        self.button_window_fullscreen.pack(side='left')
 
         self.button_window_down = tk.Button(frame_control,
                                     text="_", width=3, height=1,
                                     bg="white", fg="black",
                                     command=lambda: self.master.iconify())
-        self.button_window_down.pack(side='right')
+        self.button_window_down.pack(side='left')
+
+        self.button_window_moveto00 = tk.Button(frame_control,
+                                         text="(0.0)", width=3, height=1,
+                                         bg=self.button_color_set_normal[int(self.window_flag_topalways)], fg="black",
+                                         command=self.window_move_to_00)
+        self.button_window_moveto00.pack(side='left')
 
         self.button_window_topalways = tk.Button(frame_control,
                                          text="top", width=3, height=1,
                                          bg=self.button_color_set_normal[int(self.window_flag_topalways)], fg="black",
                                          command=self.window_control_top)
-        self.button_window_topalways.pack(side='right')
+        self.button_window_topalways.pack(side='left')
 
         self.button_window_independent = tk.Button(frame_control,
                                               text="I", width=3, height=1,
                                               bg=self.button_color_set_normal[int(self.window_flag_independent)],
                                               fg="black",
                                            command=self.window_control_independent)
-        self.button_window_independent.pack(side='right')
+        self.button_window_independent.pack(side='left')
 
         self.button_window_settings = tk.Button(frame_control,
                                         text="Настройки", height=1,
                                         bg="white", fg="black",
                                         command=lambda: None)
-        self.button_window_settings.pack(side='right')
+        self.button_window_settings.pack(side='left')
 
 
         # ==================== FRAME MAIN ====================
