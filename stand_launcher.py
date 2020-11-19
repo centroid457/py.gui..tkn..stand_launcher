@@ -62,7 +62,6 @@ class Gui(tk.Frame):
 
     def window_control_top(self, setdefault=False):
         self.window_flag_topalways = 0 if setdefault else not (self.window_flag_topalways)
-        print(self.window_flag_topalways)
         self.button_window_topalways["bg"] = self.button_color_set_normal[int(self.window_flag_topalways)]
         self.master.wm_attributes("-topmost", self.window_flag_topalways)
 
@@ -85,7 +84,6 @@ class Gui(tk.Frame):
         if moveto00:   # only move to (0,0)
             self.master.geometry("+0+0")
             return
-
 
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
@@ -133,11 +131,11 @@ class Gui(tk.Frame):
                                          command=lambda:self.window_geometry(moveto00=True))
         self.button_window_moveto00.pack(side='left')
 
-        self.button_window_make_fullscreen = tk.Button(frame_control,
+        self.button_window_make_as_started = tk.Button(frame_control,
                                          text="begin", height=1,
                                          bg=self.button_color_set_normal[int(self.window_flag_topalways)], fg="black",
-                                         command=lambda:self.window_geometry())
-        self.button_window_make_fullscreen.pack(side='left')
+                                         command=self.window_geometry)
+        self.button_window_make_as_started.pack(side='left')
 
         self.button_window_topalways = tk.Button(frame_control,
                                          text="top", width=3, height=1,
