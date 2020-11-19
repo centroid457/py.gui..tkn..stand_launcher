@@ -58,8 +58,8 @@ class Gui(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("STAND LAUNCHER")
-        self.create_widgets()
-        self.window_geometry()
+        self.create_gui_structure()
+        self.create_window_geometry()
 
 
     # BUTTON FUNCTIONS
@@ -89,7 +89,8 @@ class Gui(tk.Frame):
         else:
             self.frame_settings.grid_remove()
 
-    def window_geometry(self, moveto00=False):
+
+    def create_window_geometry(self, moveto00=False):
         if moveto00:   # only move to (0,0)
             self.master.geometry("+0+0")
             return
@@ -108,7 +109,7 @@ class Gui(tk.Frame):
         self.window_control_independent(setdefault=True)
         self.frame_settings_open(setdefault=True)
 
-    def create_widgets(self):
+    def create_gui_structure(self):
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure([1,2], weight=0)
         self.master.rowconfigure(3, weight=1)
@@ -119,41 +120,75 @@ class Gui(tk.Frame):
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
         grip = Grip(self.frame_control)
+        self.create_control_buttons()
 
-        # ======= FRAME-1 / BUTTONS --------------------
+
+        # ======= FRAME-2 (SETTINGS) ====================
+        self.frame_settings = tk.Frame(self.master, bg="#505050", height=30)
+        self.frame_settings.pack_propagate(0)   # hear it is necessary
+        self.frame_settings.grid(row=2, sticky="ew")
+
+        self.label_null = tk.Label(self.frame_settings, text="ПУСТО", fg="white", bg="#505050")
+        self.label_null.pack(side="left")
+
+
+        # ======= FRAME-3 (MAIN WORK SET) ====================
+        self.frame_main_work = tk.Frame(self.master, bg="grey")
+        self.frame_main_work.grid(row=3, sticky="snew")
+
+        # ======= FRAME-3 /1 frame LEFT-main menu -----------------
+        self.frame_menu_left = tk.Frame(self.frame_main_work, bg="grey", width=200, height=100)
+        self.frame_menu_left.pack_propagate(0)
+        self.frame_menu_left.pack(side='left', fill=tk.BOTH, expand=0)
+
+        # ======= FRAME-1 /2 frame CENTER-main work aria -----------------
+        self.frame_work_aria = tk.Frame(self.frame_main_work, bg="#ffffff", width=200)
+        self.frame_work_aria.pack_propagate(0)
+        self.frame_work_aria.pack(side='left', fill=tk.BOTH, expand=1)
+
+        # ======= FRAME-1 /3 frame RIGHT-error aria -----------------
+        self.frame_error_aria = tk.Frame(self.frame_main_work, bg="grey", width=200)
+        self.frame_error_aria.pack_propagate(0)
+        self.frame_error_aria.pack(side='left', fill=tk.BOTH, expand=0)
+
+    def create_control_buttons(self):
         self.button_window_exit = tk.Button(self.frame_control,
-                                    text="X", width=3, height=1,
-                                    bg="#FF3333", fg="white",
-                                    command=lambda: exit())
+                                            text="X", width=3, height=1,
+                                            bg="#FF3333", fg="white",
+                                            command=lambda: exit())
         self.button_window_exit.pack(side='left')
 
         self.button_window_fullscreen = tk.Button(self.frame_control,
                                                   text="^", width=3, height=1,
-                                                  bg=self.color_button_set_normal[int(self.window_flag_fullscreen)], fg="black",
+                                                  bg=self.color_button_set_normal[int(self.window_flag_fullscreen)],
+                                                  fg="black",
                                                   command=self.window_control_fullscreen)
         self.button_window_fullscreen.pack(side='left')
 
         self.button_window_down = tk.Button(self.frame_control,
-                                    text="_", width=3, height=1,
-                                    bg="white", fg="black",
-                                    command=lambda: self.master.iconify())
+                                            text="_", width=3, height=1,
+                                            bg="white", fg="black",
+                                            command=lambda: self.master.iconify())
         self.button_window_down.pack(side='left')
 
         self.button_window_moveto00 = tk.Button(self.frame_control,
                                                 text="(0.0)", width=3, height=1,
-                                                bg=self.color_button_set_normal[int(self.window_flag_topalways)], fg="black",
-                                                command=lambda:self.window_geometry(moveto00=True))
+                                                bg=self.color_button_set_normal[int(self.window_flag_topalways)],
+                                                fg="black",
+                                                command=lambda: self.create_window_geometry(moveto00=True))
         self.button_window_moveto00.pack(side='left')
 
-        self.button_window_make_as_started = tk.Button(self.frame_control,
+        self.button_window_set_as_started = tk.Button(self.frame_control,
                                                        text="begin", height=1,
-                                                       bg=self.color_button_set_normal[int(self.window_flag_topalways)], fg="black",
-                                                       command=self.window_geometry)
-        self.button_window_make_as_started.pack(side='left')
+                                                       bg=self.color_button_set_normal[int(self.window_flag_topalways)],
+                                                       fg="black",
+                                                       command=self.create_window_geometry)
+        self.button_window_set_as_started.pack(side='left')
 
         self.button_window_topalways = tk.Button(self.frame_control,
                                                  text="top", width=3, height=1,
-                                                 bg=self.color_button_set_normal[int(self.window_flag_topalways)], fg="black",
+                                                 bg=self.color_button_set_normal[int(self.window_flag_topalways)],
+                                                 fg="black",
                                                  command=self.window_control_top)
         self.button_window_topalways.pack(side='left')
 
@@ -165,39 +200,16 @@ class Gui(tk.Frame):
         self.button_window_independent.pack(side='left')
 
         self.button_window_settings = tk.Button(self.frame_control,
-                                        text="Настройки", height=1,
-                                        bg="white", fg="black",
-                                        command=self.frame_settings_open)
+                                                text="Настройки", height=1,
+                                                bg="white", fg="black",
+                                                command=self.frame_settings_open)
         self.button_window_settings.pack(side='left')
 
 
-        # ======= FRAME-2 (SETTINGS) ====================
-        self.frame_settings = tk.Frame(self.master, bg="#505050", height=30)
-        self.frame_settings.pack_propagate(0)   # hear it is necessary
-        self.frame_settings.grid(row=2, sticky="ew")
+    def create_main_menu(self):
+        pass
 
-
-        # ======= FRAME-3 (MAIN WORK SET) ====================
-        self.frame_main_work = tk.Frame(self.master, bg="grey")
-        self.frame_main_work.grid(row=3, sticky="snew")
-
-
-
-
-        # ======= FRAME-3 /1 LEFT-main menu -----------------
-        self.frame_menu_left = tk.Frame(self.frame_main_work, bg="grey", width=200, height=100)
-        self.frame_menu_left.pack_propagate(0)
-        self.frame_menu_left.pack(side='left', fill=tk.BOTH, expand=0)
-
-        # ======= FRAME-1 /2 CENTER-main work aria -----------------
-        self.frame_work_aria = tk.Frame(self.frame_main_work, bg="#ffffff")
-        self.frame_work_aria.pack_propagate(0)
-        self.frame_work_aria.pack(side='left', fill=tk.BOTH, expand=1)
-
-        # ======= FRAME-1 /3 RIGHT-error aria -----------------
-        self.frame_error_aria = tk.Frame(self.frame_main_work, bg="grey", width=200)
-        self.frame_error_aria.pack_propagate(0)
-        self.frame_error_aria.pack(side='left', fill=tk.BOTH, expand=0)
+        
 
 def main():
     root = tk.Tk()
