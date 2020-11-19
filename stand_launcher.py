@@ -109,6 +109,7 @@ class Gui(tk.Frame):
         self.window_control_independent(setdefault=True)
         self.frame_settings_open(setdefault=True)
 
+
     def create_gui_structure(self):
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure([1,2], weight=0)
@@ -116,7 +117,7 @@ class Gui(tk.Frame):
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
         self.frame_control = tk.Frame(self.master, bg="#505050")
-        self.frame_control.grid(row=1, sticky="nsew")
+        self.frame_control.grid(row=1, sticky="nsew", padx=1, pady=1)
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
         grip = Grip(self.frame_control)
@@ -126,30 +127,32 @@ class Gui(tk.Frame):
         # ======= FRAME-2 (SETTINGS) ====================
         self.frame_settings = tk.Frame(self.master, bg="#505050", height=30)
         self.frame_settings.pack_propagate(0)   # hear it is necessary
-        self.frame_settings.grid(row=2, sticky="ew")
-
-        self.label_null = tk.Label(self.frame_settings, text="ПУСТО", fg="white", bg="#505050")
-        self.label_null.pack(side="left")
+        self.frame_settings.grid(row=2, sticky="ew", padx=1, pady=1)
+        self.create_settings_aria(self.frame_settings)
 
 
         # ======= FRAME-3 (MAIN WORK SET) ====================
         self.frame_main_work = tk.Frame(self.master, bg="grey")
-        self.frame_main_work.grid(row=3, sticky="snew")
+        self.frame_main_work.grid(row=3, sticky="snew", padx=1, pady=1)
 
-        # ======= FRAME-3 /1 frame LEFT-main menu -----------------
+        # ------- FRAME-3 /1 frame LEFT-main menu -----------------
         self.frame_menu_left = tk.Frame(self.frame_main_work, bg="grey", width=200, height=100)
+        self.frame_menu_left.pack(side='left', fill=tk.BOTH, expand=0, padx=1, pady=1)
         self.frame_menu_left.pack_propagate(0)
-        self.frame_menu_left.pack(side='left', fill=tk.BOTH, expand=0)
+        self.create_work_menu(self.frame_menu_left)
 
-        # ======= FRAME-1 /2 frame CENTER-main work aria -----------------
+        # ------- FRAME-1 /2 frame CENTER-main work aria -----------------
         self.frame_work_aria = tk.Frame(self.frame_main_work, bg="#ffffff", width=200)
+        self.frame_work_aria.pack(side='left', fill=tk.BOTH, expand=1, padx=1, pady=1)
         self.frame_work_aria.pack_propagate(0)
-        self.frame_work_aria.pack(side='left', fill=tk.BOTH, expand=1)
+        self.create_work_aria(self.frame_work_aria)
 
-        # ======= FRAME-1 /3 frame RIGHT-error aria -----------------
+        # ------- FRAME-1 /3 frame RIGHT-error aria -----------------
         self.frame_error_aria = tk.Frame(self.frame_main_work, bg="grey", width=200)
+        self.frame_error_aria.pack(side='left', fill=tk.BOTH, expand=0, padx=1, pady=1)
         self.frame_error_aria.pack_propagate(0)
-        self.frame_error_aria.pack(side='left', fill=tk.BOTH, expand=0)
+        self.create_work_error_eria(self.frame_error_aria)
+
 
     def create_control_buttons(self):
         self.button_window_exit = tk.Button(self.frame_control,
@@ -206,10 +209,21 @@ class Gui(tk.Frame):
         self.button_window_settings.pack(side='left')
 
 
-    def create_main_menu(self):
-        pass
+    def create_settings_aria(self, master):
+        self.create_null_label(master)
 
-        
+    def create_work_menu(self, master):
+        self.create_null_label(master)
+
+    def create_work_aria(self, master):
+        self.create_null_label(master)
+
+    def create_work_error_eria(self, master):
+        self.create_null_label(master)
+
+    def create_null_label(self, master):
+        self.label_null = tk.Label(master, text="ПУСТО", fg="white", bg="#505050")
+        self.label_null.pack(side="left", fill="x", expand=0)
 
 def main():
     root = tk.Tk()
