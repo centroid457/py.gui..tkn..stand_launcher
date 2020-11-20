@@ -63,7 +63,6 @@ class Gui(tk.Frame):
         self.create_gui_structure()
         self.create_window_geometry()
 
-
     def create_window_geometry(self, moveto00=False):
         if moveto00:   # only move to (0,0)
             self.master.geometry("+0+0")
@@ -78,6 +77,12 @@ class Gui(tk.Frame):
         y = (screen_height - window_height) / 2
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
+        # set all widgets to default
+        self.window_control_fullscreen(flag=False)
+        self.window_control_top(flag=False)
+        self.window_control_independent(flag=False)
+        self.frame_settings_open(flag=False)
+        self.get_button_data()
 
     def create_gui_structure(self):
         self.master.columnconfigure(0, weight=1)
@@ -244,7 +249,6 @@ class Gui(tk.Frame):
 
     def window_control_top(self, flag=False):
         self.master.wm_attributes("-topmost", flag)
-
 
     def window_control_independent(self, flag=False):
         """make window independent from OS explorer"""
