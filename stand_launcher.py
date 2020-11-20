@@ -62,34 +62,6 @@ class Gui(tk.Frame):
         self.create_window_geometry()
 
 
-    # BUTTON FUNCTIONS
-    def window_control_top(self, setdefault=False):
-        self.window_flag_topalways = 0 if setdefault else not (self.window_flag_topalways)
-        #self.button_window_topalways["bg"] = self.color_button_set_normal[int(self.window_flag_topalways)]
-        self.master.wm_attributes("-topmost", self.window_flag_topalways)
-
-    def window_control_fullscreen(self, setdefault=False):
-        self.window_flag_fullscreen = 0 if setdefault else not (self.window_flag_fullscreen)
-        #self.button_window_fullscreen["bg"] = self.color_button_set_normal[int(self.window_flag_fullscreen)]
-        self.master.state(self.window_state[int(self.window_flag_fullscreen)])
-        if not self.window_flag_fullscreen:
-            self.master.wm_attributes('-fullscreen', self.window_flag_fullscreen)
-
-    def window_control_independent(self, setdefault=False):
-        """make window independent from OS explorer"""
-        self.window_flag_independent = 0 if setdefault else not (self.window_flag_independent)
-        #self.button_window_independent["bg"] = self.color_button_set_normal[int(self.window_flag_independent)]
-        self.master.wm_overrideredirect(self.window_flag_independent)
-
-    def frame_settings_open(self, setdefault=False):
-        self.window_flag_frame_settings_open = 0 if setdefault else not (self.window_flag_frame_settings_open)
-        #self.button_window_settings["bg"] = self.color_button_set_normal[int(self.window_flag_frame_settings_open)]
-        if self.window_flag_frame_settings_open:
-            self.frame_settings.grid()
-        else:
-            self.frame_settings.grid_remove()
-
-
     def create_window_geometry(self, moveto00=False):
         if moveto00:   # only move to (0,0)
             self.master.geometry("+0+0")
@@ -153,6 +125,7 @@ class Gui(tk.Frame):
         self.frame_error_aria.pack_propagate(0)
         self.create_work_error_eria(self.frame_error_aria)
 
+
     def get_button_data(self):
         self.button_data = {
             "button_window_exit":{
@@ -212,20 +185,52 @@ class Gui(tk.Frame):
                 },
             }
 
+    def create_control_buttons(self, master):
+        self.get_button_data()
+        for i in self.button_data:
+            self.create_button(master, i)
 
     def create_button(self, frame, button_type):
         btn = tk.Button(frame)
         btn["text"]=self.button_data[button_type]["text"]
         btn["width"]=3 if len(btn["text"]) < 3 else None
         btn["bg"]=self.button_data[button_type]["bg"]
-        btn['command']=self.button_data[button_type]['command']
+        btn.bind("<Button-1>", self.buttons_handle)
         btn.pack(side=self.button_data[button_type]['side'])
 
+    def buttons_handle(self, event):
+        for button_id in self.button_data:
+            if self.button_data[button_id]["text"] == event.widget["text"]:
+                self.button_data[button_id]["command"]()
+                return
 
-    def create_control_buttons(self, master):
-        self.get_button_data()
-        for i in self.button_data:
-            self.create_button(master, i)
+    # BUTTON FUNCTIONS
+    def window_control_top(self, setdefault=False):
+        self.window_flag_topalways = 0 if setdefault else not (self.window_flag_topalways)
+        #self.button_window_topalways["bg"] = self.color_button_set_normal[int(self.window_flag_topalways)]
+        self.master.wm_attributes("-topmost", self.window_flag_topalways)
+
+    def window_control_fullscreen(self, setdefault=False):
+        self.window_flag_fullscreen = 0 if setdefault else not (self.window_flag_fullscreen)
+        #self.button_window_fullscreen["bg"] = self.color_button_set_normal[int(self.window_flag_fullscreen)]
+        self.master.state(self.window_state[int(self.window_flag_fullscreen)])
+        if not self.window_flag_fullscreen:
+            self.master.wm_attributes('-fullscreen', self.window_flag_fullscreen)
+
+    def window_control_independent(self, setdefault=False):
+        """make window independent from OS explorer"""
+        self.window_flag_independent = 0 if setdefault else not (self.window_flag_independent)
+        #self.button_window_independent["bg"] = self.color_button_set_normal[int(self.window_flag_independent)]
+        self.master.wm_overrideredirect(self.window_flag_independent)
+
+    def frame_settings_open(self, setdefault=False):
+        self.window_flag_frame_settings_open = 0 if setdefault else not (self.window_flag_frame_settings_open)
+        #self.button_window_settings["bg"] = self.color_button_set_normal[int(self.window_flag_frame_settings_open)]
+        if self.window_flag_frame_settings_open:
+            self.frame_settings.grid()
+        else:
+            self.frame_settings.grid_remove()
+
 
 
     def create_settings_aria(self, master):
