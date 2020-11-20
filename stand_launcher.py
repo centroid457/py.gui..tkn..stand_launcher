@@ -78,11 +78,6 @@ class Gui(tk.Frame):
         y = (screen_height - window_height) / 2
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
-        self.window_control_top(setdefault=True)
-        self.window_control_fullscreen(setdefault=True)
-        self.window_control_independent(setdefault=True)
-        self.frame_settings_open(setdefault=True)
-
 
     def create_gui_structure(self):
         self.master.columnconfigure(0, weight=1)
@@ -153,13 +148,15 @@ class Gui(tk.Frame):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_data = {
             "button_window_exit":{
+                "flag": None,
                 "text": "X",
                 "bg": deque(["#FF6666"]),
-                "command": exit,
+                "command": lambda _: exit(),
                 "side": "left",
                 },
 
             "button_window_fullscreen":{
+                "flag": False,
                 "text": "^",
                 "bg": deque(color_button_normal_set),
                 "command": self.window_control_fullscreen,
@@ -167,27 +164,31 @@ class Gui(tk.Frame):
                 },
 
             "button_window_down":{
+                "flag": None,
                 "text": "_",
                 "bg": deque(["white"]),
-                "command": lambda: self.master.iconify(),
+                "command": lambda _: self.master.iconify(),
                 "side": "left",
                 },
 
             "button_window_moveto00": {
+                "flag": None,
                 "text": "(0.0)",
                 "bg": deque(["white"]),
-                "command": lambda: self.create_window_geometry(moveto00=True),
+                "command": lambda _: self.create_window_geometry(moveto00=True),
                 "side": "left",
                 },
 
             "button_window_set_as_started": {
+                "flag": None,
                 "text": "begin",
                 "bg": deque(["white"]),
-                "command": self.create_window_geometry,
+                "command": lambda _: self.create_window_geometry(),
                 "side": "left",
                 },
 
             "button_window_topalways": {
+                "flag": False,
                 "text": "top",
                 "bg": deque(color_button_normal_set),
                 "command": self.window_control_top,
@@ -195,6 +196,7 @@ class Gui(tk.Frame):
                 },
 
             "button_window_independent": {
+                "flag": False,
                 "text": "I",
                 "bg": deque(color_button_normal_set),
                 "command": self.window_control_independent,
@@ -202,6 +204,7 @@ class Gui(tk.Frame):
                 },
 
             "button_window_settings": {
+                "flag": False,
                 "text": "Настройки",
                 "bg": deque(color_button_normal_set),
                 "command": self.frame_settings_open,
@@ -226,29 +229,29 @@ class Gui(tk.Frame):
         for button_id in self.button_data:
             if self.button_data[button_id]["text"] == event.widget["text"]:
                 self.button_data[button_id]["bg"].rotate()
+                flag_old = self.button_data[button_id]["flag"]
+                flag_new = None if flag_old == None else not(flag_old)
+                self.button_data[button_id]["flag"] = flag_new
                 event.widget["bg"]=self.button_data[button_id]["bg"][0]
-                self.button_data[button_id]["command"]()
+                self.button_data[button_id]["command"](flag_new)
                 return
 
     # BUTTON FUNCTIONS
-    def window_control_top(self, setdefault=False):
-        self.window_flag_topalways = 0 if setdefault else not (self.window_flag_topalways)
-        self.master.wm_attributes("-topmost", self.window_flag_topalways)
+    def window_control_fullscreen(self, flag=False):
+        self.master.state(self.window_state[int(flag)])
+        if not flag:
+            self.master.wm_attributes('-fullscreen', flag)
 
-    def window_control_fullscreen(self, setdefault=False):
-        self.window_flag_fullscreen = 0 if setdefault else not (self.window_flag_fullscreen)
-        self.master.state(self.window_state[int(self.window_flag_fullscreen)])
-        if not self.window_flag_fullscreen:
-            self.master.wm_attributes('-fullscreen', self.window_flag_fullscreen)
+    def window_control_top(self, flag=False):
+        self.master.wm_attributes("-topmost", flag)
 
-    def window_control_independent(self, setdefault=False):
+
+    def window_control_independent(self, flag=False):
         """make window independent from OS explorer"""
-        self.window_flag_independent = 0 if setdefault else not (self.window_flag_independent)
-        self.master.wm_overrideredirect(self.window_flag_independent)
+        self.master.wm_overrideredirect(flag)
 
-    def frame_settings_open(self, setdefault=False):
-        self.window_flag_frame_settings_open = 0 if setdefault else not (self.window_flag_frame_settings_open)
-        if self.window_flag_frame_settings_open:
+    def frame_settings_open(self, flag=False):
+        if flag:
             self.frame_settings.grid()
         else:
             self.frame_settings.grid_remove()
