@@ -1,6 +1,9 @@
 import tkinter as tk
 
 
+# #################################################
+# MOUSE MOVING ABILITY
+# #################################################
 class Grip:
     ''' Makes a window dragable by mouse '''
     def __init__ (self, parent, disable=None, releasecmd=None) :
@@ -45,6 +48,9 @@ class Grip:
             self.releaseCMD()
 
 
+# #################################################
+# MAIN GUI
+# #################################################
 class Gui(tk.Frame):
     """ main GUI window """
     def __init__(self, master=None):
@@ -126,6 +132,27 @@ class Gui(tk.Frame):
         self.create_work_error_eria(self.frame_error_aria)
 
 
+    def create_settings_aria(self, master):
+        self.create_null_label(master)
+
+    def create_work_menu(self, master):
+        self.create_null_label(master)
+
+    def create_work_aria(self, master):
+        self.create_null_label(master)
+
+    def create_work_error_eria(self, master):
+        self.create_null_label(master)
+
+
+    def create_null_label(self, master):
+        self.label_null = tk.Label(master, text="ПУСТО", fg="white", bg="#505050")
+        self.label_null.pack(side="left", fill="x", expand=0)
+
+
+    # #################################################
+    # BUTTONS
+    # #################################################
     def get_button_data(self):
         self.button_data = {
             "button_window_exit":{
@@ -231,24 +258,6 @@ class Gui(tk.Frame):
         else:
             self.frame_settings.grid_remove()
 
-
-
-    def create_settings_aria(self, master):
-        self.create_null_label(master)
-
-    def create_work_menu(self, master):
-        self.create_null_label(master)
-
-    def create_work_aria(self, master):
-        self.create_null_label(master)
-
-    def create_work_error_eria(self, master):
-        self.create_null_label(master)
-
-
-    def create_null_label(self, master):
-        self.label_null = tk.Label(master, text="ПУСТО", fg="white", bg="#505050")
-        self.label_null.pack(side="left", fill="x", expand=0)
 
 def main():
     root = tk.Tk()
