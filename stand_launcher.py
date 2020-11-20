@@ -6,8 +6,8 @@ from collections import deque
 # MOUSE MOVING ABILITY
 # #################################################
 class Grip:
-    ''' Makes a window dragable by mouse '''
-    def __init__ (self, parent, disable=None, releasecmd=None) :
+    """ Makes a window dragable by mouse """
+    def __init__(self, parent, disable=None, releasecmd=None):
         self.parent = parent
         self.root = parent.winfo_toplevel()
 
@@ -20,8 +20,7 @@ class Grip:
         self.parent.bind('<Button-1>', self.relative_position)
         self.parent.bind('<ButtonRelease-1>', self.drag_unbind)
 
-
-    def relative_position (self, event) :
+    def relative_position(self, event):
         cx, cy = self.parent.winfo_pointerxy()
         geo = self.root.geometry().split("+")
         self.oriX, self.oriY = int(geo[1]), int(geo[2])
@@ -30,22 +29,20 @@ class Grip:
 
         self.parent.bind('<Motion>', self.drag_wid)
 
-
-    def drag_wid (self, event) :
+    def drag_wid(self, event):
         cx, cy = self.parent.winfo_pointerxy()
         d = self.disable
         x = cx - self.relX
         y = cy - self.relY
-        if d == 'x' :
+        if d == 'x':
             x = self.oriX
-        elif d == 'y' :
+        elif d == 'y':
             y = self.oriY
         self.root.geometry('+%i+%i' % (x, y))
 
-
-    def drag_unbind (self, event) :
+    def drag_unbind(self, event):
         self.parent.unbind('<Motion>')
-        if self.releaseCMD != None :
+        if self.releaseCMD != None:
             self.releaseCMD()
 
 
@@ -81,7 +78,7 @@ class Gui(tk.Frame):
 
     def create_gui_structure(self):
         self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure([1,2], weight=0)
+        self.master.rowconfigure([1, 2], weight=0)
         self.master.rowconfigure(3, weight=1)
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
@@ -92,13 +89,11 @@ class Gui(tk.Frame):
         grip = Grip(self.frame_control)
         self.create_control_buttons(self.frame_control)
 
-
         # ======= FRAME-2 (SETTINGS) ====================
         self.frame_settings = tk.Frame(self.master, bg="#505050", height=30)
         self.frame_settings.pack_propagate(0)   # hear it is necessary
         self.frame_settings.grid(row=2, sticky="ew", padx=1, pady=1)
         self.create_settings_aria(self.frame_settings)
-
 
         # ======= FRAME-3 (MAIN WORK SET) ====================
         self.frame_main_work = tk.Frame(self.master, bg="grey")
@@ -122,7 +117,6 @@ class Gui(tk.Frame):
         self.frame_error_aria.pack_propagate(0)
         self.create_work_error_eria(self.frame_error_aria)
 
-
     def create_settings_aria(self, master):
         self.create_null_label(master)
 
@@ -135,11 +129,9 @@ class Gui(tk.Frame):
     def create_work_error_eria(self, master):
         self.create_null_label(master)
 
-
     def create_null_label(self, master):
         self.label_null = tk.Label(master, text="ПУСТО", fg="white", bg="#505050")
         self.label_null.pack(side="left", fill="x", expand=0)
-
 
     # #################################################
     # BUTTONS
@@ -147,7 +139,7 @@ class Gui(tk.Frame):
     def get_default_buttons_data(self):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_data = {
-            "button_window_exit":{
+            "button_window_exit": {
                 "flag": None,
                 "text": "X",
                 "bg": deque(["#FF6666"]),
@@ -155,7 +147,7 @@ class Gui(tk.Frame):
                 "side": "left",
                 },
 
-            "button_window_fullscreen":{
+            "button_window_fullscreen": {
                 "flag": False,
                 "text": "^",
                 "bg": deque(color_button_normal_set),
@@ -163,7 +155,7 @@ class Gui(tk.Frame):
                 "side": "left",
                 },
 
-            "button_window_down":{
+            "button_window_down": {
                 "flag": None,
                 "text": "_",
                 "bg": deque(["white"]),
@@ -181,7 +173,7 @@ class Gui(tk.Frame):
 
             "button_window_reset": {
                 "flag": None,
-                "text": "reset",
+                "text": "Wreset",
                 "bg": deque(["white"]),
                 "command": lambda widget: self.window_reset(widget=widget),
                 "side": "left",
@@ -219,24 +211,24 @@ class Gui(tk.Frame):
 
     def create_button(self, frame, button_type):
         btn = tk.Button(frame)
-        btn["text"]=self.button_data[button_type]["text"]
-        btn["width"]=3 if len(btn["text"]) < 3 else None
-        btn["bg"]=self.button_data[button_type]["bg"][0]
+        btn["text"] = self.button_data[button_type]["text"]
+        btn["width"] = 3 if len(btn["text"]) < 3 else None
+        btn["bg"] = self.button_data[button_type]["bg"][0]
         btn.bind("<Button-1>", self.buttons_handle)
         btn.pack(side=self.button_data[button_type]['side'])
 
     def buttons_handle(self, event):
         for button_id in self.button_data:
             if self.button_data[button_id]["text"] == event.widget["text"]:
-                if self.button_data[button_id]["text"] == "reset":
+                if self.button_data[button_id]["text"] == "Wreset":
                     self.button_data[button_id]["command"](widget=event.widget)
                     return
 
                 self.button_data[button_id]["bg"].rotate()
                 flag_old = self.button_data[button_id]["flag"]
-                flag_new = None if flag_old == None else not(flag_old)
+                flag_new = None if flag_old == None else not (flag_old)
                 self.button_data[button_id]["flag"] = flag_new
-                event.widget["bg"]=self.button_data[button_id]["bg"][0]
+                event.widget["bg"] = self.button_data[button_id]["bg"][0]
                 self.button_data[button_id]["command"](flag=flag_new)
                 return
 
@@ -260,7 +252,7 @@ class Gui(tk.Frame):
         self.get_default_buttons_data()
         remaining_buttons_to_reset = self.button_data.copy()
 
-        parent_widget_name = widget.winfo_parent()      #=.!frame
+        parent_widget_name = widget.winfo_parent()      # .!frame
         parent_widget_obj = widget._nametowidget(parent_widget_name)
         button_obj_list = parent_widget_obj.pack_slaves()
 
