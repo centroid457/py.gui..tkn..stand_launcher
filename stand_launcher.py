@@ -77,12 +77,7 @@ class Gui(tk.Frame):
         y = (screen_height - window_height) / 2
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
-        # set all widgets to default
-        self.window_control_fullscreen(flag=False)
-        self.window_control_top(flag=False)
-        self.window_control_independent(flag=False)
-        self.frame_settings_open(flag=False)
-        self.get_button_data()
+        self.window_set_default_all_functions()
 
     def create_gui_structure(self):
         self.master.columnconfigure(0, weight=1)
@@ -149,14 +144,14 @@ class Gui(tk.Frame):
     # #################################################
     # BUTTONS
     # #################################################
-    def get_button_data(self):
+    def get_default_buttons_data(self):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_data = {
             "button_window_exit":{
                 "flag": None,
                 "text": "X",
                 "bg": deque(["#FF6666"]),
-                "command": lambda _: exit(),
+                "command": lambda flag: exit(),
                 "side": "left",
                 },
 
@@ -164,7 +159,7 @@ class Gui(tk.Frame):
                 "flag": False,
                 "text": "^",
                 "bg": deque(color_button_normal_set),
-                "command": self.window_control_fullscreen,
+                "command": lambda flag: self.window_control_fullscreen(flag=flag),
                 "side": "left",
                 },
 
@@ -172,7 +167,7 @@ class Gui(tk.Frame):
                 "flag": None,
                 "text": "_",
                 "bg": deque(["white"]),
-                "command": lambda _: self.master.iconify(),
+                "command": lambda flag: self.master.iconify(),
                 "side": "left",
                 },
 
@@ -180,15 +175,15 @@ class Gui(tk.Frame):
                 "flag": None,
                 "text": "(0.0)",
                 "bg": deque(["white"]),
-                "command": lambda _: self.create_window_geometry(moveto00=True),
+                "command": lambda flag: self.create_window_geometry(moveto00=True),
                 "side": "left",
                 },
 
-            "button_window_set_as_started": {
+            "button_window_reset": {
                 "flag": None,
-                "text": "begin",
+                "text": "reset",
                 "bg": deque(["white"]),
-                "command": lambda _: self.create_window_geometry(),
+                "command": lambda widget: self.window_reset(widget=widget),
                 "side": "left",
                 },
 
@@ -196,7 +191,7 @@ class Gui(tk.Frame):
                 "flag": False,
                 "text": "top",
                 "bg": deque(color_button_normal_set),
-                "command": self.window_control_top,
+                "command": lambda flag: self.window_control_top(flag=flag),
                 "side": "left",
                 },
 
@@ -204,7 +199,7 @@ class Gui(tk.Frame):
                 "flag": False,
                 "text": "I",
                 "bg": deque(color_button_normal_set),
-                "command": self.window_control_independent,
+                "command": lambda flag: self.window_control_independent(flag=flag),
                 "side": "left",
                 },
 
@@ -212,13 +207,13 @@ class Gui(tk.Frame):
                 "flag": False,
                 "text": "Настройки",
                 "bg": deque(color_button_normal_set),
-                "command": self.frame_settings_open,
+                "command": lambda flag: self.frame_settings_open(flag=flag),
                 "side": "left",
                 },
             }
 
     def create_control_buttons(self, master):
-        self.get_button_data()
+        self.get_default_buttons_data()
         for i in self.button_data:
             self.create_button(master, i)
 
@@ -233,15 +228,26 @@ class Gui(tk.Frame):
     def buttons_handle(self, event):
         for button_id in self.button_data:
             if self.button_data[button_id]["text"] == event.widget["text"]:
+                if self.button_data[button_id]["text"] == "reset":
+                    self.button_data[button_id]["command"](widget=event.widget)
+                    return
+
                 self.button_data[button_id]["bg"].rotate()
                 flag_old = self.button_data[button_id]["flag"]
                 flag_new = None if flag_old == None else not(flag_old)
                 self.button_data[button_id]["flag"] = flag_new
                 event.widget["bg"]=self.button_data[button_id]["bg"][0]
-                self.button_data[button_id]["command"](flag_new)
+                self.button_data[button_id]["command"](flag=flag_new)
                 return
 
     # BUTTON FUNCTIONS
+    def window_set_default_all_functions(self):
+        self.window_control_fullscreen(flag=False)
+        self.window_control_top(flag=False)
+        self.window_control_independent(flag=False)
+        self.frame_settings_open(flag=False)
+        self.get_default_buttons_data()
+
     def window_control_fullscreen(self, flag=False):
         self.master.state(self.window_state[int(flag)])
         if not flag:
@@ -249,6 +255,24 @@ class Gui(tk.Frame):
 
     def window_control_top(self, flag=False):
         self.master.wm_attributes("-topmost", flag)
+
+    def window_reset(self, widget):
+        self.get_default_buttons_data()
+        remaining_buttons_to_reset = self.button_data.copy()
+
+        parent_widget_name = widget.winfo_parent()      #=.!frame
+        parent_widget_obj = widget._nametowidget(parent_widget_name)
+        button_obj_list = parent_widget_obj.pack_slaves()
+
+        for widget_obj in button_obj_list:
+            for button_id in remaining_buttons_to_reset:
+                if remaining_buttons_to_reset[button_id]["text"] == widget_obj["text"]:
+                    poped_button = remaining_buttons_to_reset.pop(button_id)
+                    widget_obj["bg"] = poped_button["bg"][0]
+                    break
+
+        self.window_set_default_all_functions()
+        self.create_window_geometry()
 
     def window_control_independent(self, flag=False):
         """make window independent from OS explorer"""
