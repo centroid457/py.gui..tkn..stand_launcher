@@ -65,12 +65,12 @@ class Gui(tk.Frame):
     # BUTTON FUNCTIONS
     def window_control_top(self, setdefault=False):
         self.window_flag_topalways = 0 if setdefault else not (self.window_flag_topalways)
-        self.button_window_topalways["bg"] = self.color_button_set_normal[int(self.window_flag_topalways)]
+        #self.button_window_topalways["bg"] = self.color_button_set_normal[int(self.window_flag_topalways)]
         self.master.wm_attributes("-topmost", self.window_flag_topalways)
 
     def window_control_fullscreen(self, setdefault=False):
         self.window_flag_fullscreen = 0 if setdefault else not (self.window_flag_fullscreen)
-        self.button_window_fullscreen["bg"] = self.color_button_set_normal[int(self.window_flag_fullscreen)]
+        #self.button_window_fullscreen["bg"] = self.color_button_set_normal[int(self.window_flag_fullscreen)]
         self.master.state(self.window_state[int(self.window_flag_fullscreen)])
         if not self.window_flag_fullscreen:
             self.master.wm_attributes('-fullscreen', self.window_flag_fullscreen)
@@ -78,12 +78,12 @@ class Gui(tk.Frame):
     def window_control_independent(self, setdefault=False):
         """make window independent from OS explorer"""
         self.window_flag_independent = 0 if setdefault else not (self.window_flag_independent)
-        self.button_window_independent["bg"] = self.color_button_set_normal[int(self.window_flag_independent)]
+        #self.button_window_independent["bg"] = self.color_button_set_normal[int(self.window_flag_independent)]
         self.master.wm_overrideredirect(self.window_flag_independent)
 
     def frame_settings_open(self, setdefault=False):
         self.window_flag_frame_settings_open = 0 if setdefault else not (self.window_flag_frame_settings_open)
-        self.button_window_settings["bg"] = self.color_button_set_normal[int(self.window_flag_frame_settings_open)]
+        #self.button_window_settings["bg"] = self.color_button_set_normal[int(self.window_flag_frame_settings_open)]
         if self.window_flag_frame_settings_open:
             self.frame_settings.grid()
         else:
@@ -153,61 +153,79 @@ class Gui(tk.Frame):
         self.frame_error_aria.pack_propagate(0)
         self.create_work_error_eria(self.frame_error_aria)
 
+    def get_button_data(self):
+        self.button_data = {
+            "button_window_exit":{
+                "text" : "X",
+                "bg" : "#FF6666",
+                "command" : exit,
+                "side" : "left",
+                },
+
+            "button_window_fullscreen":{
+                "text": "^",
+                "bg": self.color_button_set_normal[int(self.window_flag_fullscreen)],
+                "command": self.window_control_fullscreen,
+                "side": "left",
+                },
+
+            "button_window_down":{
+                "text": "_",
+                "bg": "white",
+                "command": lambda: self.master.iconify(),
+                "side": "left",
+                },
+
+            "button_window_moveto00": {
+                "text": "(0.0)",
+                "bg": self.color_button_set_normal[int(self.window_flag_topalways)],
+                "command": lambda: self.create_window_geometry(moveto00=True),
+                "side": "left",
+                },
+
+            "button_window_set_as_started": {
+                "text": "begin",
+                "bg": self.color_button_set_normal[int(self.window_flag_topalways)],
+                "command": self.create_window_geometry,
+                "side": "left",
+                },
+
+            "button_window_topalways": {
+                "text": "top",
+                "bg": self.color_button_set_normal[int(self.window_flag_topalways)],
+                "command": self.window_control_top,
+                "side": "left",
+                },
+
+            "button_window_independent": {
+                "text": "I",
+                "bg": self.color_button_set_normal[int(self.window_flag_independent)],
+                "command": self.window_control_independent,
+                "side": "left",
+                },
+
+            "button_window_settings": {
+                "text": "Настройки",
+                "bg": "white",
+                "command": self.frame_settings_open,
+                "side": "left",
+                },
+            }
+
+
+    def create_button(self, frame, button_type):
+        btn = tk.Button(frame)
+        btn["text"]=self.button_data[button_type]["text"]
+        btn["width"]=3 if len(btn["text"]) < 3 else None
+        btn["bg"]=self.button_data[button_type]["bg"]
+        btn['command']=self.button_data[button_type]['command']
+        btn.pack(side=self.button_data[button_type]['side'])
+
 
     def create_control_buttons(self, master):
-
-        self.button_window_exit = tk.Button(master)
-        self.button_window_exit["text"]="X"
-        self.button_window_exit["width"]=3
-        self.button_window_exit["bg"]="#FF6666"
-        self.button_window_exit["command"]=lambda: exit()
-        self.button_window_exit.pack(side='left')
-
-        self.button_window_fullscreen = tk.Button(master)
-        self.button_window_fullscreen["text"]="^"
-        self.button_window_fullscreen["width"]=3
-        self.button_window_fullscreen["bg"]=self.color_button_set_normal[int(self.window_flag_fullscreen)]
-        self.button_window_fullscreen["command"]=self.window_control_fullscreen
-        self.button_window_fullscreen.pack(side='left')
-
-        self.button_window_down = tk.Button(master)
-        self.button_window_down["text"]="_"
-        self.button_window_down["width"]=3
-        self.button_window_down["bg"]="white"
-        self.button_window_down["command"]=lambda: self.master.iconify()
-        self.button_window_down.pack(side='left')
-
-        self.button_window_moveto00 = tk.Button(master)
-        self.button_window_moveto00["text"]="(0.0)"
-        self.button_window_moveto00["width"]=3
-        self.button_window_moveto00["bg"]=self.color_button_set_normal[int(self.window_flag_topalways)]
-        self.button_window_moveto00["command"]=lambda: self.create_window_geometry(moveto00=True)
-        self.button_window_moveto00.pack(side='left')
-
-
-        self.button_window_set_as_started = tk.Button(master, text="begin",
-                                                       bg=self.color_button_set_normal[int(self.window_flag_topalways)],
-                                                       command=self.create_window_geometry)
-        self.button_window_set_as_started.pack(side='left')
-
-        self.button_window_topalways = tk.Button(master, text="top", width=3,
-                                                 bg=self.color_button_set_normal[int(self.window_flag_topalways)],
-                                                 command=self.window_control_top)
-        self.button_window_topalways.pack(side='left')
-
-        self.button_window_independent = tk.Button(master, text="I", width=3,
-                                                   bg=self.color_button_set_normal[int(self.window_flag_independent)],
-                                                   command=self.window_control_independent)
-        self.button_window_independent.pack(side='left')
-
-        self.button_window_settings = tk.Button(master, text="Настройки",
-                                                bg="white",
-                                                command=self.frame_settings_open)
-        self.button_window_settings.pack(side='left')
-
-        print(master.pack_slaves())
-        for button in master.pack_slaves():
-            print(button["text"])
+        self.get_button_data()
+        for i in self.button_data:
+            self.create_button(master, i)
 
 
     def create_settings_aria(self, master):
