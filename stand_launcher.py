@@ -139,10 +139,10 @@ class Gui(tk.Frame):
     def get_default_buttons_data(self):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_data = {
-            "button_window_exit": {
-                "flag": None,
-                "text": "X",
-                "bg": deque(["#FF6666"]),
+            "button_window_exit": {             # first level it's only id! you can change it any time
+                "flag": None,                   # None mean it will always do the same things, flag not used
+                "text": "X",                    # text on the button
+                "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
                 "command": lambda flag: exit(),
                 "side": "left",
                 },
@@ -171,9 +171,9 @@ class Gui(tk.Frame):
                 "side": "left",
                 },
 
-            "button_window_reset": {
+            "button_window_make_default": {
                 "flag": None,
-                "text": "Wreset",
+                "text": "default",      # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
                 "bg": deque(["white"]),
                 "command": lambda widget: self.window_reset(widget=widget),
                 "side": "left",
@@ -220,7 +220,7 @@ class Gui(tk.Frame):
     def buttons_handle(self, event):
         for button_id in self.button_data:
             if self.button_data[button_id]["text"] == event.widget["text"]:
-                if self.button_data[button_id]["text"] == "Wreset":
+                if self.button_data[button_id]["text"] == "default":
                     self.button_data[button_id]["command"](widget=event.widget)
                     return
 
