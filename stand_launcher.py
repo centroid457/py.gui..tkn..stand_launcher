@@ -3,6 +3,7 @@ from collections import deque
 import sys
 import os
 from tempfile import NamedTemporaryFile
+from glob import glob
 from time import sleep
 
 
@@ -304,15 +305,19 @@ class Gui(Frame):
 
 def main():
     check_program_instances()
+
     root = Tk()
     app = Gui(master=root)
     app.mainloop()
 
 def check_program_instances():
+    global temp_file        # do not delete it! else change method!!!
     prefix = "started_"
     suffix = "_instance.check"
     dir_current = os.path.dirname(__file__)
-    NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
+    if len(glob(f"{prefix}*{suffix}")):
+        exit()
+    temp_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
 
 
 if __name__ == '__main__':
