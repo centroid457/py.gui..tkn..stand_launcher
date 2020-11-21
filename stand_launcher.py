@@ -144,6 +144,7 @@ class Gui(Frame):
     # #################################################
     def get_default_buttons_data(self):
         color_button_normal_set = ["white", "#77FF77"]
+        self.button_make_window_default_name="default"
         self.button_data = {
             "button_window_exit": {             # first level it's only id! you can change it any time
                 "flag": None,                   # None mean it will always do the same things, flag not used
@@ -179,7 +180,7 @@ class Gui(Frame):
 
             "button_window_set_default": {
                 "flag": None,
-                "text": "default",  # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
+                "text": self.button_make_window_default_name,  # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
                 "bg": deque(["white"]),
                 "command": lambda widget: self.window_set_default(widget=widget),
                 "side": "left",
@@ -234,7 +235,7 @@ class Gui(Frame):
     def buttons_handle(self, event):
         for button_id in self.button_data:
             if self.button_data[button_id]["text"] == event.widget["text"]:
-                if self.button_data[button_id]["text"] == "default":
+                if self.button_data[button_id]["text"] == self.button_make_window_default_name:
                     self.button_data[button_id]["command"](widget=event.widget)
                     return
 
