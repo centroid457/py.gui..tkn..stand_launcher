@@ -57,6 +57,7 @@ class Gui(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("STAND LAUNCHER")
+        self.master["background"] = "black"
         self.create_gui_structure()
         self.create_window_geometry()
 
@@ -83,7 +84,7 @@ class Gui(tk.Frame):
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
         self.frame_control = tk.Frame(self.master, bg="#505050")
-        self.frame_control.grid(row=1, sticky="nsew", padx=1, pady=1)
+        self.frame_control.grid(row=1, sticky="nsew", padx=5, pady=5)
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
         grip = Grip(self.frame_control)
@@ -163,19 +164,27 @@ class Gui(tk.Frame):
                 "side": "left",
                 },
 
+            "button_program_reset": {
+                "flag": None,
+                "text": "reset",
+                "bg": deque(["#FF6666"]),
+                "command": lambda flag: self.program_reset(),
+                "side": "left",
+                },
+
+            "button_window_set_default": {
+                "flag": None,
+                "text": "default",  # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
+                "bg": deque(["white"]),
+                "command": lambda widget: self.window_set_default(widget=widget),
+                "side": "left",
+                },
+
             "button_window_moveto00": {
                 "flag": None,
                 "text": "(0.0)",
                 "bg": deque(["white"]),
                 "command": lambda flag: self.create_window_geometry(moveto00=True),
-                "side": "left",
-                },
-
-            "button_window_make_default": {
-                "flag": None,
-                "text": "default",      # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
-                "bg": deque(["white"]),
-                "command": lambda widget: self.window_reset(widget=widget),
                 "side": "left",
                 },
 
@@ -248,7 +257,7 @@ class Gui(tk.Frame):
     def window_control_top(self, flag=False):
         self.master.wm_attributes("-topmost", flag)
 
-    def window_reset(self, widget):
+    def window_set_default(self, widget):
         self.get_default_buttons_data()
         remaining_buttons_to_reset = self.button_data.copy()
 
@@ -276,11 +285,15 @@ class Gui(tk.Frame):
         else:
             self.frame_settings.grid_remove()
 
+    def program_reset(self):
+        pass
+
 
 def main():
     root = tk.Tk()
     app = Gui(master=root)
-    app.mainloop()
+    z=app.mainloop()
+    print(z)
 
 if __name__ == '__main__':
     main()
