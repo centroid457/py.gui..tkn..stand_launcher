@@ -312,7 +312,7 @@ def main():
 
 def check_program_instances():
     global temp_file        # do not delete it! else change method!!!
-    prefix = "started_"
+    prefix = ".started_"
     suffix = "_instance.check"
     dir_current = os.path.dirname(__file__)
     if len(glob(f"{prefix}*{suffix}")):
