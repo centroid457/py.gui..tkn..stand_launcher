@@ -88,8 +88,8 @@ class Gui(Frame):
         self.master.rowconfigure(3, weight=1)
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
-        self.frame_control = Frame(self.master, bg="#505050")
-        self.frame_control.grid(row=1, sticky="nsew", padx=5, pady=5)
+        self.frame_control = Frame(self.master, bg="#101010")
+        self.frame_control.grid(row=1, sticky="nsew", padx=7, pady=7)
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
         grip = Grip(self.frame_control)
