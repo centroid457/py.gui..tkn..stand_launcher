@@ -1,4 +1,4 @@
-import tkinter as tk
+from tkinter import Tk, Frame, Button, Label, BOTH
 from collections import deque
 
 
@@ -49,7 +49,7 @@ class Grip:
 # #################################################
 # MAIN GUI
 # #################################################
-class Gui(tk.Frame):
+class Gui(Frame):
     """ main GUI window """
     def __init__(self, master=None):
         self.window_state = ('normal', "zoomed")
@@ -83,7 +83,7 @@ class Gui(tk.Frame):
         self.master.rowconfigure(3, weight=1)
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
-        self.frame_control = tk.Frame(self.master, bg="#505050")
+        self.frame_control = Frame(self.master, bg="#505050")
         self.frame_control.grid(row=1, sticky="nsew", padx=5, pady=5)
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
@@ -91,30 +91,30 @@ class Gui(tk.Frame):
         self.create_control_buttons(self.frame_control)
 
         # ======= FRAME-2 (SETTINGS) ====================
-        self.frame_settings = tk.Frame(self.master, bg="#505050", height=30)
+        self.frame_settings = Frame(self.master, bg="#505050", height=30)
         self.frame_settings.pack_propagate(0)   # hear it is necessary
         self.frame_settings.grid(row=2, sticky="ew", padx=1, pady=1)
         self.create_settings_aria(self.frame_settings)
 
         # ======= FRAME-3 (MAIN WORK SET) ====================
-        self.frame_main_work = tk.Frame(self.master, bg="grey")
+        self.frame_main_work = Frame(self.master, bg="grey")
         self.frame_main_work.grid(row=3, sticky="snew", padx=1, pady=1)
 
         # ------- FRAME-3 /1 frame LEFT-main menu -----------------
-        self.frame_menu_left = tk.Frame(self.frame_main_work, bg="grey", width=200, height=100)
-        self.frame_menu_left.pack(side='left', fill=tk.BOTH, expand=0, padx=1, pady=1)
+        self.frame_menu_left = Frame(self.frame_main_work, bg="grey", width=200, height=100)
+        self.frame_menu_left.pack(side='left', fill=BOTH, expand=0, padx=1, pady=1)
         self.frame_menu_left.pack_propagate(0)
         self.create_work_menu(self.frame_menu_left)
 
         # ------- FRAME-1 /2 frame CENTER-main work aria -----------------
-        self.frame_work_aria = tk.Frame(self.frame_main_work, bg="#ffffff", width=200)
-        self.frame_work_aria.pack(side='left', fill=tk.BOTH, expand=1, padx=1, pady=1)
+        self.frame_work_aria = Frame(self.frame_main_work, bg="#ffffff", width=200)
+        self.frame_work_aria.pack(side='left', fill=BOTH, expand=1, padx=1, pady=1)
         self.frame_work_aria.pack_propagate(0)
         self.create_work_aria(self.frame_work_aria)
 
         # ------- FRAME-1 /3 frame RIGHT-error aria -----------------
-        self.frame_error_aria = tk.Frame(self.frame_main_work, bg="grey", width=200)
-        self.frame_error_aria.pack(side='left', fill=tk.BOTH, expand=0, padx=1, pady=1)
+        self.frame_error_aria = Frame(self.frame_main_work, bg="grey", width=200)
+        self.frame_error_aria.pack(side='left', fill=BOTH, expand=0, padx=1, pady=1)
         self.frame_error_aria.pack_propagate(0)
         self.create_work_error_eria(self.frame_error_aria)
 
@@ -131,7 +131,7 @@ class Gui(tk.Frame):
         self.create_null_label(master)
 
     def create_null_label(self, master):
-        self.label_null = tk.Label(master, text="ПУСТО", fg="white", bg="#505050")
+        self.label_null = Label(master, text="ПУСТО", fg="white", bg="#505050")
         self.label_null.pack(side="left", fill="x", expand=0)
 
     # #################################################
@@ -219,7 +219,7 @@ class Gui(tk.Frame):
             self.create_button(master, i)
 
     def create_button(self, frame, button_type):
-        btn = tk.Button(frame)
+        btn = Button(frame)
         btn["text"] = self.button_data[button_type]["text"]
         btn["width"] = 3 if len(btn["text"]) < 3 else None
         btn["bg"] = self.button_data[button_type]["bg"][0]
@@ -290,10 +290,9 @@ class Gui(tk.Frame):
 
 
 def main():
-    root = tk.Tk()
+    root = Tk()
     app = Gui(master=root)
-    z=app.mainloop()
-    print(z)
+    app.mainloop()
 
 if __name__ == '__main__':
     main()
