@@ -1,5 +1,7 @@
 from tkinter import Tk, Frame, Button, Label, BOTH
 from collections import deque
+import sys
+import os
 
 
 # #################################################
@@ -77,6 +79,9 @@ class Gui(Frame):
 
         self.window_set_default_all_functions()
 
+    # #################################################
+    # FRAMES
+    # #################################################
     def create_gui_structure(self):
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure([1, 2], weight=0)
@@ -286,7 +291,11 @@ class Gui(Frame):
             self.frame_settings.grid_remove()
 
     def program_reset(self):
-        pass
+        """Restarts the current program.
+        Note: this function does not return. Any cleanup action (like
+        saving data) must be done before calling this function."""
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
 
 
 def main():
