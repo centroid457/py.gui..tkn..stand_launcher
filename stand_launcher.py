@@ -2,9 +2,8 @@ from tkinter import Tk, Frame, Button, Label, BOTH
 from collections import deque
 import sys
 import os
-from tempfile import NamedTemporaryFile, TemporaryFile
+from tempfile import NamedTemporaryFile
 from time import sleep
-from subprocess import Popen
 
 
 # #################################################
@@ -299,11 +298,12 @@ class Gui(Frame):
         Note: this function does not return. Any cleanup action (like
         saving data) must be done before calling this function."""
         python_exe = sys.executable
+        # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
         os.execl(python_exe, python_exe, *sys.argv)
-        #sleep(3)
+
 
 def main():
-    #check_program_instances()
+    check_program_instances()
     root = Tk()
     app = Gui(master=root)
     app.mainloop()
@@ -312,9 +312,8 @@ def check_program_instances():
     prefix = "started_"
     suffix = "_instance.check"
     dir_current = os.path.dirname(__file__)
-    temp_file = TemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
-    print(temp_file.name)  # C:\!CENTROID\ProjectsPYTHON\test2\started_65hqjser_instance.check
-    #sleep(3)
+    NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
+
 
 if __name__ == '__main__':
     main()
