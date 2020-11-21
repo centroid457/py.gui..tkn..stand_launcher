@@ -2,6 +2,9 @@ from tkinter import Tk, Frame, Button, Label, BOTH
 from collections import deque
 import sys
 import os
+from tempfile import NamedTemporaryFile, TemporaryFile
+from time import sleep
+from subprocess import Popen
 
 
 # #################################################
@@ -89,7 +92,7 @@ class Gui(Frame):
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
         self.frame_control = Frame(self.master, bg="#101010")
-        self.frame_control.grid(row=1, sticky="nsew", padx=7, pady=7)
+        self.frame_control.grid(row=1, sticky="nsew", padx=10, pady=10)
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
         grip = Grip(self.frame_control)
@@ -98,12 +101,12 @@ class Gui(Frame):
         # ======= FRAME-2 (SETTINGS) ====================
         self.frame_settings = Frame(self.master, bg="#505050", height=30)
         self.frame_settings.pack_propagate(0)   # hear it is necessary
-        self.frame_settings.grid(row=2, sticky="ew", padx=1, pady=1)
+        self.frame_settings.grid(row=2, sticky="ew", padx=10, pady=0)
         self.create_settings_aria(self.frame_settings)
 
         # ======= FRAME-3 (MAIN WORK SET) ====================
         self.frame_main_work = Frame(self.master, bg="grey")
-        self.frame_main_work.grid(row=3, sticky="snew", padx=1, pady=1)
+        self.frame_main_work.grid(row=3, sticky="snew", padx=10, pady=10)
 
         # ------- FRAME-3 /1 frame LEFT-main menu -----------------
         self.frame_menu_left = Frame(self.frame_main_work, bg="grey", width=200, height=100)
@@ -295,14 +298,23 @@ class Gui(Frame):
         """Restarts the current program.
         Note: this function does not return. Any cleanup action (like
         saving data) must be done before calling this function."""
-        python = sys.executable
-        os.execl(python, python, *sys.argv)
-
+        python_exe = sys.executable
+        os.execl(python_exe, python_exe, *sys.argv)
+        #sleep(3)
 
 def main():
+    #check_program_instances()
     root = Tk()
     app = Gui(master=root)
     app.mainloop()
+
+def check_program_instances():
+    prefix = "started_"
+    suffix = "_instance.check"
+    dir_current = os.path.dirname(__file__)
+    temp_file = TemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
+    print(temp_file.name)  # C:\!CENTROID\ProjectsPYTHON\test2\started_65hqjser_instance.check
+    #sleep(3)
 
 if __name__ == '__main__':
     main()
