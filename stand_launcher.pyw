@@ -149,9 +149,9 @@ class Gui(Frame):
         self.button_data = {
             "button_window_blank": {
                 "flag": None,
-                "text": None,
+                "text": chr(9995),
                 "bg": deque(["white"]),
-                "command": lambda widget: self.window_set_default(widget=widget),
+                "command": lambda flag: None,
                 "side": "left",
             },
             "button_window_switch_to_default": {
@@ -163,7 +163,7 @@ class Gui(Frame):
             },
             "button_window_short": {
                 "flag": False,
-                "text": chr(9624),      # "".join([chr(i) for i in range(10160,10180)])
+                "text": chr(9624),
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_short(flag=flag),
                 "side": "left",
@@ -269,7 +269,7 @@ class Gui(Frame):
 
     def window_short(self, flag=False):
         self.window_control_fullscreen(False)
-        window_width = 135       # it does not matter if less then about 120!!!
+        window_width = 130       # it does not matter if less then about 120!!!
         window_height = 45
         if flag:
             self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
