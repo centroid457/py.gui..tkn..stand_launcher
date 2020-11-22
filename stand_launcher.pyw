@@ -64,14 +64,14 @@ class Gui(Frame):
         self.master = master
         self.gui_general_configure()
         self.create_gui_structure()
-        self.create_window_geometry()
+        self.create_gui_geometry()
 
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
         self.master["background"] = "black"
         self.master.protocol('WM_DELETE_WINDOW', self.program_exit)
 
-    def create_window_geometry(self, moveto00=False):
+    def create_gui_geometry(self, moveto00=False):
         if moveto00:   # only move to (0,0)
             self.master.geometry("+0+0")
             return
@@ -250,7 +250,7 @@ class Gui(Frame):
 
     # BUTTON FUNCTIONS
     def window_move_to_00(self):
-        self.create_window_geometry(moveto00=True)
+        self.create_gui_geometry(moveto00=True)
 
     def window_set_default_all_functions(self):
         self.window_control_fullscreen(flag=False)
@@ -283,7 +283,7 @@ class Gui(Frame):
                     break
 
         self.window_set_default_all_functions()
-        self.create_window_geometry()
+        self.create_gui_geometry()
 
     def window_control_independent(self, flag=False):
         """make window independent from OS explorer"""
