@@ -8,6 +8,7 @@ from time import sleep
 
 # DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! it will brake program_reset()!
 
+
 # #################################################
 # MOUSE MOVING ABILITY
 # #################################################
@@ -48,7 +49,7 @@ class Grip:
 
     def drag_unbind(self, event):
         self.parent.unbind('<Motion>')
-        if self.releaseCMD != None:
+        if self.releaseCMD is not None:
             self.releaseCMD()
 
 
@@ -152,7 +153,7 @@ class Gui(Frame):
     # #################################################
     def get_default_buttons_data(self):
         color_button_normal_set = ["white", "#77FF77"]
-        self.button_make_window_default_name="default"
+        self.button_make_window_default_name = "default"
         self.button_data = {
             "button_window_set_default": {
                 "flag": None,
@@ -240,9 +241,9 @@ class Gui(Frame):
                     self.button_data[button_id]["command"](widget=event.widget)
                     return
 
-                self.button_data[button_id]["bg"].rotate()
+                self.button_data[button_id]["bg"].rotate(1)
                 flag_old = self.button_data[button_id]["flag"]
-                flag_new = None if flag_old == None else not (flag_old)
+                flag_new = None if flag_old is None else not flag_old
                 self.button_data[button_id]["flag"] = flag_new
                 event.widget["bg"] = self.button_data[button_id]["bg"][0]
                 self.button_data[button_id]["command"](flag=flag_new)
@@ -312,12 +313,14 @@ class Gui(Frame):
     def program_save_state(self):
         pass
 
+
 def main():
     check_program_instances()
 
     root = Tk()
     app = Gui(master=root)
     app.mainloop()
+
 
 def check_program_instances():
     global temp_file        # do not delete it! else change method!!!
