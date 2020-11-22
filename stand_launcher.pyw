@@ -310,6 +310,7 @@ class Gui(Frame):
 
     def program_exit(self):
         self.program_save_state()
+        print("correct exit")
         sys.exit()
 
     def program_save_state(self):
