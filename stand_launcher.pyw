@@ -194,7 +194,7 @@ class Gui(Frame):
                 "flag": None,
                 "text": "(0.0)",
                 "bg": deque(["white"]),
-                "command": lambda flag: self.create_window_geometry(moveto00=True),
+                "command": lambda flag: self.window_move_to_00(),
                 "side": "left",
             },
             "button_window_topalways": {
@@ -249,6 +249,9 @@ class Gui(Frame):
                 return
 
     # BUTTON FUNCTIONS
+    def window_move_to_00(self):
+        self.create_window_geometry(moveto00=True)
+
     def window_set_default_all_functions(self):
         self.window_control_fullscreen(flag=False)
         self.window_control_top(flag=False)
