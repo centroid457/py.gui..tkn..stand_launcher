@@ -6,6 +6,7 @@ from tempfile import NamedTemporaryFile
 from glob import glob
 from time import sleep
 
+# DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! it will brake program_reset()!
 
 # #################################################
 # MOUSE MOVING ABILITY
@@ -61,10 +62,14 @@ class Gui(Frame):
 
         super().__init__(master)
         self.master = master
-        self.master.title("STAND LAUNCHER")
-        self.master["background"] = "black"
+        self.gui_general_configure()
         self.create_gui_structure()
         self.create_window_geometry()
+
+    def gui_general_configure(self):
+        self.master.title("STAND LAUNCHER")
+        self.master["background"] = "black"
+        self.master.protocol('WM_DELETE_WINDOW', self.program_exit)
 
     def create_window_geometry(self, moveto00=False):
         if moveto00:   # only move to (0,0)
