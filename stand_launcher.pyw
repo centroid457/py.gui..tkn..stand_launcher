@@ -96,7 +96,7 @@ class Gui(Frame):
         self.frame_control.grid(row=1, sticky="nsew", padx=10, pady=10)
         '''Would Be great if it could be specified to only be moved
         when dragging with the Frame above.'''
-        grip = Grip(self.frame_control)
+        grip = Grip(self.master)
         self.create_control_buttons(self.frame_control)
 
         # ======= FRAME-2 (SETTINGS) ====================
