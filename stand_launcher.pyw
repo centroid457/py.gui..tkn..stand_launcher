@@ -154,78 +154,71 @@ class Gui(Frame):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_make_window_default_name="default"
         self.button_data = {
+            "button_window_set_default": {
+                "flag": None,
+                "text": self.button_make_window_default_name,
+                # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
+                "bg": deque(["white"]),
+                "command": lambda widget: self.window_set_default(widget=widget),
+                "side": "left",
+            },
             "button_window_exit": {             # first level it's only id! you can change it any time
                 "flag": None,                   # None mean it will always do the same things, flag not used
                 "text": "X",                    # text on the button
                 "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
                 "command": lambda flag: self.program_exit(),
                 "side": "left",
-                },
-
+            },
             "button_window_fullscreen": {
                 "flag": False,
                 "text": "^",
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_fullscreen(flag=flag),
                 "side": "left",
-                },
-
+            },
             "button_window_down": {
                 "flag": None,
                 "text": "_",
                 "bg": deque(["white"]),
                 "command": lambda flag: self.master.iconify(),
                 "side": "left",
-                },
-
+            },
             "button_program_reset": {
                 "flag": None,
                 "text": "reset",
                 "bg": deque(["#FF6666"]),
                 "command": lambda flag: self.program_reset(),
                 "side": "left",
-                },
-
-            "button_window_set_default": {
-                "flag": None,
-                "text": self.button_make_window_default_name,  # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
-                "bg": deque(["white"]),
-                "command": lambda widget: self.window_set_default(widget=widget),
-                "side": "left",
-                },
-
+            },
             "button_window_moveto00": {
                 "flag": None,
                 "text": "(0.0)",
                 "bg": deque(["white"]),
                 "command": lambda flag: self.create_window_geometry(moveto00=True),
                 "side": "left",
-                },
-
+            },
             "button_window_topalways": {
                 "flag": False,
                 "text": "top",
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_top(flag=flag),
                 "side": "left",
-                },
-
+            },
             "button_window_independent": {
                 "flag": False,
                 "text": "I",
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_independent(flag=flag),
                 "side": "left",
-                },
-
+            },
             "button_window_settings": {
                 "flag": False,
                 "text": "Настройки",
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.frame_settings_open(flag=flag),
                 "side": "left",
-                },
-            }
+            },
+        }
 
     def create_control_buttons(self, master):
         self.get_default_buttons_data()
