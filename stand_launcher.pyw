@@ -147,7 +147,14 @@ class Gui(Frame):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_switch_window_to_default_name = "default"
         self.button_data = {
-            "button_window_set_default": {
+            "button_window_blank": {
+                "flag": None,
+                "text": None,
+                "bg": deque(["white"]),
+                "command": lambda widget: self.window_set_default(widget=widget),
+                "side": "left",
+            },
+            "button_window_switch_to_default": {
                 "flag": None,
                 "text": self.button_switch_window_to_default_name,
                 "bg": deque(["white"]),
@@ -221,16 +228,18 @@ class Gui(Frame):
 
     def create_control_buttons(self, master):
         self.get_default_buttons_data()
-        for i in self.button_data:
-            self.create_button(master, i)
+        for button_id in self.button_data:
+            self.create_button(master, button_id)
 
-    def create_button(self, frame, button_type):
+    def create_button(self, frame, button_id):
         btn = Button(frame)
-        btn["text"] = self.button_data[button_type]["text"]
+        btn["text"] = self.button_data[button_id]["text"]
+        if btn["text"] == "":       # disable blank buttons
+            btn["state"] = "disabled"
         btn["width"] = 3 if len(btn["text"]) < 3 else None
-        btn["bg"] = self.button_data[button_type]["bg"][0]
+        btn["bg"] = self.button_data[button_id]["bg"][0]
         btn.bind("<Button-1>", self.buttons_handle)
-        btn.pack(side=self.button_data[button_type]['side'])
+        btn.pack(side=self.button_data[button_id]['side'])
 
     def buttons_handle(self, event):
         for button_id in self.button_data:
@@ -332,6 +341,7 @@ def check_program_instances():
     suffix = "_instance.check"
     dir_current = os.path.dirname(__file__)
     if len(glob(f"{prefix}*{suffix}")):
+        print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
         exit()
     temp_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
 
