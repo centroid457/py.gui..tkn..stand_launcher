@@ -6,7 +6,7 @@ from tempfile import NamedTemporaryFile
 from glob import glob
 from time import sleep
 
-# DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! it will brake program_reset()!
+# DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! it will brake program_restart()!
 
 
 # #################################################
@@ -182,11 +182,11 @@ class Gui(Frame):
                 "command": lambda flag: self.master.iconify(),
                 "side": "left",
             },
-            "button_program_reset": {
+            "button_program_restart": {
                 "flag": None,
-                "text": "reset",
+                "text": "restart",
                 "bg": deque(["#FF6666"]),
-                "command": lambda flag: self.program_reset(),
+                "command": lambda flag: self.program_restart(),
                 "side": "left",
             },
             "button_window_moveto00": {
@@ -300,7 +300,7 @@ class Gui(Frame):
         else:
             self.frame_settings.grid_remove()
 
-    def program_reset(self):
+    def program_restart(self):
         """Restarts the current program.
         Note: this function does not return. Any cleanup action (like
         saving data) must be done before calling this function."""
