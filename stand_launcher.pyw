@@ -268,7 +268,8 @@ class Gui(Frame):
         self.master.geometry("+0+0")
 
     def window_short(self, flag=False):
-        window_width = 135       # it does not metter if less then about 120!!!
+        self.window_control_fullscreen(False)
+        window_width = 135       # it does not matter if less then about 120!!!
         window_height = 45
         if flag:
             self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
