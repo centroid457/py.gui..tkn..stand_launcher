@@ -93,9 +93,7 @@ class Gui(Frame):
         # ======= FRAME-1 (WINDOW CONTROL) ====================
         self.frame_control = Frame(self.master, bg="#101010")
         self.frame_control.grid(row=1, sticky="nsew", padx=10, pady=10)
-        '''Would Be great if it could be specified to only be moved
-        when dragging with the Frame above.'''
-        grip = Grip(self.master)
+        Grip(self.master)   # make window grabbable
         self.create_control_buttons(self.frame_control)
 
         # ======= FRAME-2 (SETTINGS) ====================
