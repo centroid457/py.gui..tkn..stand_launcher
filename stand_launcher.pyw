@@ -70,18 +70,13 @@ class Gui(Frame):
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
         self.master["background"] = "black"
-        self.master.protocol('WM_DELETE_WINDOW', self.program_exit)
+        self.master.protocol('WM_DELETE_WINDOW', self.program_exit)     # intersept gui exit()
 
-    def create_gui_geometry(self, moveto00=False):
-        if moveto00:   # only move to (0,0)
-            self.master.geometry("+0+0")
-            return
-
+    def create_gui_geometry(self):
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
         window_width = 800
         window_height = 200
-
         x = (screen_width - window_width) / 2
         y = (screen_height - window_height) / 2
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
@@ -158,9 +153,15 @@ class Gui(Frame):
             "button_window_set_default": {
                 "flag": None,
                 "text": self.button_make_window_default_name,
-                # DO NOT CHANGE NAME!!! it will couse button not working! see button handler!
                 "bg": deque(["white"]),
                 "command": lambda widget: self.window_set_default(widget=widget),
+                "side": "left",
+            },
+            "button_window_short": {
+                "flag": False,
+                "text": "short",
+                "bg": deque(color_button_normal_set),
+                "command": lambda flag: self.window_short(flag=flag),
                 "side": "left",
             },
             "button_window_exit": {             # first level it's only id! you can change it any time
@@ -250,15 +251,21 @@ class Gui(Frame):
                 return
 
     # BUTTON FUNCTIONS
-    def window_move_to_00(self):
-        self.create_gui_geometry(moveto00=True)
-
     def window_set_default_all_functions(self):
+        self.get_default_buttons_data()
         self.window_control_fullscreen(flag=False)
         self.window_control_top(flag=False)
         self.window_control_independent(flag=False)
         self.frame_settings_open(flag=False)
-        self.get_default_buttons_data()
+
+    def window_move_to_00(self):
+        self.master.geometry("+0+0")
+
+    def window_short(self, flag=False):
+        window_width = 135       # it does not metter if less then about 120!!!
+        window_height = 45
+        if flag:
+            self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
 
     def window_control_fullscreen(self, flag=False):
         self.master.state(self.window_state[int(flag)])
