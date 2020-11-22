@@ -153,7 +153,7 @@ class Gui(Frame):
                 "flag": None,                   # None mean it will always do the same things, flag not used
                 "text": "X",                    # text on the button
                 "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
-                "command": lambda flag: exit(),
+                "command": lambda flag: self.program_exit(),
                 "side": "left",
                 },
 
@@ -298,10 +298,17 @@ class Gui(Frame):
         """Restarts the current program.
         Note: this function does not return. Any cleanup action (like
         saving data) must be done before calling this function."""
+        self.program_save_state()
         python_exe = sys.executable
         # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
         os.execl(python_exe, python_exe, *sys.argv)
 
+    def program_exit(self):
+        self.program_save_state()
+        sys.exit()
+
+    def program_save_state(self):
+        pass
 
 def main():
     check_program_instances()
