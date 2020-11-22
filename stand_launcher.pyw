@@ -12,8 +12,8 @@ from time import sleep
 # #################################################
 # MOUSE MOVING ABILITY
 # #################################################
-class Grip:
-    """ Makes a window dragable by mouse """
+class Make_gui_draggable:
+    """ Makes a window draggable by mouse """
     def __init__(self, parent, disable=None, releasecmd=None):
         self.parent = parent
         self.root = parent.winfo_toplevel()
@@ -93,7 +93,7 @@ class Gui(Frame):
         # ======= FRAME-1 (WINDOW CONTROL) ====================
         self.frame_control = Frame(self.master, bg="#101010")
         self.frame_control.grid(row=1, sticky="nsew", padx=10, pady=10)
-        Grip(self.master)   # make window grabbable
+        Make_gui_draggable(self.master)
         self.create_control_buttons(self.frame_control)
 
         # ======= FRAME-2 (SETTINGS) ====================
