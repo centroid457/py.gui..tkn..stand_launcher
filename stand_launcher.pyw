@@ -163,21 +163,21 @@ class Gui(Frame):
             },
             "button_window_short": {
                 "flag": False,
-                "text": "short",
+                "text": chr(9624),      # "".join([chr(i) for i in range(10160,10180)])
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_short(flag=flag),
                 "side": "left",
             },
             "button_window_exit": {             # first level it's only id! you can change it any time
                 "flag": None,                   # None mean it will always do the same things, flag not used
-                "text": "X",                    # text on the button
+                "text": chr(9587),              # text on the button
                 "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
                 "command": lambda flag: self.program_exit(),
                 "side": "left",
             },
             "button_window_fullscreen": {
                 "flag": False,
-                "text": "^",
+                "text": chr(9744),
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_fullscreen(flag=flag),
                 "side": "left",
@@ -198,7 +198,7 @@ class Gui(Frame):
             },
             "button_window_moveto00": {
                 "flag": None,
-                "text": "(0.0)",
+                "text": chr(8689),
                 "bg": deque(["white"]),
                 "command": lambda flag: self.window_move_to_00(),
                 "side": "left",
@@ -212,7 +212,7 @@ class Gui(Frame):
             },
             "button_window_independent": {
                 "flag": False,
-                "text": "I",
+                "text": chr(10043),
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_independent(flag=flag),
                 "side": "left",
