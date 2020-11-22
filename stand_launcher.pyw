@@ -60,7 +60,6 @@ class Gui(Frame):
     """ main GUI window """
     def __init__(self, master=None):
         self.window_state = ('normal', "zoomed")
-
         super().__init__(master)
         self.master = master
         self.gui_general_configure()
@@ -148,11 +147,11 @@ class Gui(Frame):
     # #################################################
     def get_default_buttons_data(self):
         color_button_normal_set = ["white", "#77FF77"]
-        self.button_make_window_default_name = "default"
+        self.button_switch_window_to_default_name = "default"
         self.button_data = {
             "button_window_set_default": {
                 "flag": None,
-                "text": self.button_make_window_default_name,
+                "text": self.button_switch_window_to_default_name,
                 "bg": deque(["white"]),
                 "command": lambda widget: self.window_set_default(widget=widget),
                 "side": "left",
@@ -238,7 +237,7 @@ class Gui(Frame):
     def buttons_handle(self, event):
         for button_id in self.button_data:
             if self.button_data[button_id]["text"] == event.widget["text"]:
-                if self.button_data[button_id]["text"] == self.button_make_window_default_name:
+                if self.button_data[button_id]["text"] == self.button_switch_window_to_default_name:
                     self.button_data[button_id]["command"](widget=event.widget)
                     return
 
