@@ -4,9 +4,11 @@ import sys
 import os
 from tempfile import NamedTemporaryFile
 from glob import glob
+from PIL import Image, ImageDraw, ImageFont
+import pystray
 from time import sleep
 
-# DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! it will brake program_restart()!
+# DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
 
 
 # #################################################
@@ -62,12 +64,14 @@ class Gui(Frame):
         self.window_state = ('normal', "zoomed")
         super().__init__(master)
         self.master = master
+        self.program_icon = self.create_icon()[1]
         self.gui_general_configure()
         self.create_gui_structure()
         self.create_gui_geometry()
 
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
+        self.master.iconbitmap(self.program_icon)
         self.master["background"] = "black"
         self.master.protocol('WM_DELETE_WINDOW', self.program_exit)     # intersept gui exit()
 
@@ -81,6 +85,24 @@ class Gui(Frame):
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
         self.window_set_default_all_functions()
+
+    def create_icon(self):
+        from PIL import Image, ImageDraw, ImageFont
+        program_image_name = "program_icon.ico"
+        box = 32
+        size_ico = (box, box)
+        band_gradient = Image.linear_gradient("L")
+        R = band_gradient.copy()
+        G = R.copy().rotate(90)
+        B = R.copy().rotate(-90)
+        sheet = Image.merge("RGB", (R, G, B))
+        font = ImageFont.truetype("arial.ttf", 190)
+        drawing = ImageDraw.Draw(sheet)
+        drawing.text((9, 20), "TE", font=font, fill=(0, 0, 255))
+        sheet.thumbnail(size_ico)
+        sheet.save(program_image_name)
+        # sheet.show()
+        return (sheet, program_image_name)
 
     # #################################################
     # FRAMES
@@ -330,21 +352,19 @@ class Gui(Frame):
 
 def main():
     check_program_instances()
-
     root = Tk()
     app = Gui(master=root)
     app.mainloop()
 
-
 def check_program_instances():
-    global temp_file        # do not delete it! else change method!!!
+    global temporary_file        # do not delete it! else change method!!!
     prefix = ".started_"
     suffix = "_instance.check"
     dir_current = os.path.dirname(__file__)
     if len(glob(f"{prefix}*{suffix}")):
         print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
         exit()
-    temp_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
+    temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
 
 
 if __name__ == '__main__':
