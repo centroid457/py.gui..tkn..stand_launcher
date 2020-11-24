@@ -189,7 +189,7 @@ class Gui(Frame):
                 "flag": None,
                 "text": "_",
                 "bg": deque(["white"]),
-                "command": lambda flag: self.master.window_control_minimize(),
+                "command": lambda flag: self.window_control_minimize(),
                 "side": "left",
             },
             "button_program_restart": {
@@ -247,15 +247,21 @@ class Gui(Frame):
 
     def buttons_handle(self, event):
         for button_id in self.buttons_data_active:
+            # finding data line corresponding to pressed button
             if self.buttons_data_active[button_id]["text"] == event.widget["text"]:
+                # if find - use data
                 if self.buttons_data_active[button_id]["text"] == self.button_switch_window_to_default_name:
+                    # if fined the special button just execute its lambda!
                     self.buttons_data_active[button_id]["command"](widget=event.widget)
                     return
 
+                # ROTATE data: FLAG and BG
                 self.buttons_data_active[button_id]["bg"].rotate(1)
                 flag_old = self.buttons_data_active[button_id]["flag"]
                 flag_new = None if flag_old is None else not flag_old
                 self.buttons_data_active[button_id]["flag"] = flag_new
+
+                # CHANGE rotated data in windget
                 event.widget["bg"] = self.buttons_data_active[button_id]["bg"][0]
                 self.buttons_data_active[button_id]["command"](flag=flag_new)
                 return
@@ -283,9 +289,11 @@ class Gui(Frame):
         if not flag:
             self.master.wm_attributes('-fullscreen', flag)
 
-    def window_control_minimize(self, flag=False):
-        if not flag:
+    def window_control_minimize(self):
+        if not self.buttons_data_active["button_window_independent"]["flag"]:
             self.master.iconify()
+        else:
+            self.master.withdraw()
 
     def window_control_top(self, flag=False):
         self.master.wm_attributes("-topmost", flag)
@@ -322,11 +330,12 @@ class Gui(Frame):
 def main():
     check_program_instances()
 
-    tray_thread = Thread(target=tray_icon_start, daemon=True)
-    tray_thread.start()
-
     root = Tk()
     root.protocol('WM_DELETE_WINDOW', program_exit)  # intersept gui exit()
+
+    tray_thread = Thread(target=tray_icon_start, args=(root,), daemon=True)
+    tray_thread.start()
+
     app = Gui(master=root)
     app.mainloop()
 
@@ -360,7 +369,8 @@ def program_save_state(save_data=None):
 # #################################################
 # TRAY
 # #################################################
-def tray_icon_start():
+def tray_icon_start(root):
+    root = root
     tray_icon_obj = Icon('tray name')
 
     # ИКОНКА
