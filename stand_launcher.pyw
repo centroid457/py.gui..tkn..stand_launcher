@@ -85,7 +85,6 @@ class Gui(Frame):
 
         self.window_set_default_all_functions()
 
-
     # #################################################
     # FRAMES
     # #################################################
@@ -147,10 +146,10 @@ class Gui(Frame):
     # #################################################
     # BUTTONS
     # #################################################
-    def get_default_buttons_data(self):
+    def set_default_buttons_data(self):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_switch_window_to_default_name = "default"   # button_name wich make window as default state!
-        self.buttons_data = {
+        buttons_data_default = {
             "button_window_blank": {
                 "flag": None,
                 "text": chr(9995),
@@ -229,40 +228,41 @@ class Gui(Frame):
                 "side": "left",
             },
         }
+        self.buttons_data_active = buttons_data_default
 
     def create_control_buttons(self, master):
-        self.get_default_buttons_data()
-        for button_id in self.buttons_data:
+        self.set_default_buttons_data()
+        for button_id in self.buttons_data_active:
             self.create_button(master, button_id)
 
     def create_button(self, frame, button_id):
         btn = Button(frame)
-        btn["text"] = self.buttons_data[button_id]["text"]
+        btn["text"] = self.buttons_data_active[button_id]["text"]
         if btn["text"] == "":       # disable blank buttons
             btn["state"] = "disabled"
         btn["width"] = 3 if len(btn["text"]) < 3 else None
-        btn["bg"] = self.buttons_data[button_id]["bg"][0]
+        btn["bg"] = self.buttons_data_active[button_id]["bg"][0]
         btn.bind("<Button-1>", self.buttons_handle)
-        btn.pack(side=self.buttons_data[button_id]['side'])
+        btn.pack(side=self.buttons_data_active[button_id]['side'])
 
     def buttons_handle(self, event):
-        for button_id in self.buttons_data:
-            if self.buttons_data[button_id]["text"] == event.widget["text"]:
-                if self.buttons_data[button_id]["text"] == self.button_switch_window_to_default_name:
-                    self.buttons_data[button_id]["command"](widget=event.widget)
+        for button_id in self.buttons_data_active:
+            if self.buttons_data_active[button_id]["text"] == event.widget["text"]:
+                if self.buttons_data_active[button_id]["text"] == self.button_switch_window_to_default_name:
+                    self.buttons_data_active[button_id]["command"](widget=event.widget)
                     return
 
-                self.buttons_data[button_id]["bg"].rotate(1)
-                flag_old = self.buttons_data[button_id]["flag"]
+                self.buttons_data_active[button_id]["bg"].rotate(1)
+                flag_old = self.buttons_data_active[button_id]["flag"]
                 flag_new = None if flag_old is None else not flag_old
-                self.buttons_data[button_id]["flag"] = flag_new
-                event.widget["bg"] = self.buttons_data[button_id]["bg"][0]
-                self.buttons_data[button_id]["command"](flag=flag_new)
+                self.buttons_data_active[button_id]["flag"] = flag_new
+                event.widget["bg"] = self.buttons_data_active[button_id]["bg"][0]
+                self.buttons_data_active[button_id]["command"](flag=flag_new)
                 return
 
     # BUTTON FUNCTIONS
     def window_set_default_all_functions(self):
-        self.get_default_buttons_data()
+        self.set_default_buttons_data()
         self.window_control_fullscreen(flag=False)
         self.window_control_top(flag=False)
         self.window_control_independent(flag=False)
@@ -291,8 +291,8 @@ class Gui(Frame):
         self.master.wm_attributes("-topmost", flag)
 
     def window_set_default(self, widget):
-        self.get_default_buttons_data()
-        remaining_buttons_to_reset = self.buttons_data.copy()
+        self.set_default_buttons_data()
+        remaining_buttons_to_reset = self.buttons_data_active.copy()
 
         parent_widget_name = widget.winfo_parent()      # .!frame
         parent_widget_obj = widget._nametowidget(parent_widget_name)
