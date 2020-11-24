@@ -5,7 +5,8 @@ import os
 from tempfile import NamedTemporaryFile
 from glob import glob
 from PIL import Image, ImageDraw, ImageFont
-import pystray
+from pystray import Icon, Menu, MenuItem
+from threading import Thread
 from time import sleep
 
 # DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
@@ -64,16 +65,14 @@ class Gui(Frame):
         self.window_state = ('normal', "zoomed")
         super().__init__(master)
         self.master = master
-        self.program_icon = self.create_icon()[1]
         self.gui_general_configure()
         self.create_gui_structure()
         self.create_gui_geometry()
 
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
-        self.master.iconbitmap(self.program_icon)
+        self.master.iconbitmap(create_icon()[0])
         self.master["background"] = "black"
-        self.master.protocol('WM_DELETE_WINDOW', self.program_exit)     # intersept gui exit()
 
     def create_gui_geometry(self):
         screen_width = self.master.winfo_screenwidth()
@@ -86,23 +85,6 @@ class Gui(Frame):
 
         self.window_set_default_all_functions()
 
-    def create_icon(self):
-        from PIL import Image, ImageDraw, ImageFont
-        program_image_name = "program_icon.ico"
-        box = 32
-        size_ico = (box, box)
-        band_gradient = Image.linear_gradient("L")
-        R = band_gradient.copy()
-        G = R.copy().rotate(90)
-        B = R.copy().rotate(-90)
-        sheet = Image.merge("RGB", (R, G, B))
-        font = ImageFont.truetype("arial.ttf", 190)
-        drawing = ImageDraw.Draw(sheet)
-        drawing.text((9, 20), "TE", font=font, fill=(0, 0, 255))
-        sheet.thumbnail(size_ico)
-        sheet.save(program_image_name)
-        # sheet.show()
-        return (sheet, program_image_name)
 
     # #################################################
     # FRAMES
@@ -194,7 +176,7 @@ class Gui(Frame):
                 "flag": None,                   # None mean it will always do the same things, flag not used
                 "text": chr(9587),              # text on the button
                 "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
-                "command": lambda flag: self.program_exit(),
+                "command": lambda flag: program_exit(),
                 "side": "left",
             },
             "button_window_fullscreen": {
@@ -204,7 +186,7 @@ class Gui(Frame):
                 "command": lambda flag: self.window_control_fullscreen(flag=flag),
                 "side": "left",
             },
-            "button_window_down": {
+            "button_window_minimize": {
                 "flag": None,
                 "text": "_",
                 "bg": deque(["white"]),
@@ -215,7 +197,7 @@ class Gui(Frame):
                 "flag": None,
                 "text": "restart",
                 "bg": deque(["#FF6666"]),
-                "command": lambda flag: self.program_restart(),
+                "command": lambda flag: program_restart(),
                 "side": "left",
             },
             "button_window_moveto00": {
@@ -301,6 +283,10 @@ class Gui(Frame):
         if not flag:
             self.master.wm_attributes('-fullscreen', flag)
 
+    def window_control_minimize(self, flag=False):
+        if not flag:
+            self.master.iconify()
+
     def window_control_top(self, flag=False):
         self.master.wm_attributes("-topmost", flag)
 
@@ -332,27 +318,15 @@ class Gui(Frame):
         else:
             self.frame_settings.grid_remove()
 
-    def program_restart(self):
-        """Restarts the current program.
-        Note: this function does not return. Any cleanup action (like
-        saving data) must be done before calling this function."""
-        self.program_save_state()
-        python_exe = sys.executable
-        # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
-        os.execl(python_exe, python_exe, *sys.argv)
-
-    def program_exit(self):
-        self.program_save_state()
-        print("correct exit")
-        sys.exit()
-
-    def program_save_state(self):
-        pass
-
 
 def main():
     check_program_instances()
+
+    tray_thread = Thread(target=tray_icon_start, daemon=True)
+    tray_thread.start()
+
     root = Tk()
+    root.protocol('WM_DELETE_WINDOW', program_exit)  # intersept gui exit()
     app = Gui(master=root)
     app.mainloop()
 
@@ -366,6 +340,67 @@ def check_program_instances():
         exit()
     temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
 
+def program_restart():
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function."""
+    program_save_state()
+    python_exe = sys.executable
+    # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
+    os.execl(python_exe, python_exe, *sys.argv)
+
+def program_exit():
+    program_save_state()
+    print("correct exit")
+    sys.exit()
+
+def program_save_state(save_data=None):
+    pass
+
+# #################################################
+# TRAY
+# #################################################
+def tray_icon_start():
+    tray_icon_obj = Icon('tray name')
+
+    # ИКОНКА
+    icon_file_obj = create_icon()[1]
+    tray_icon_obj.icon = icon_file_obj
+
+    # МЕНЮ
+    menu = Menu(
+        MenuItem(text='РАСКРЫТЬ', action=tray_action_show_gui, default=True),
+        MenuItem(text='ВЫХОД', action=tray_action_exit)
+    )
+    tray_icon_obj.menu = menu
+
+    # ЗАПУСК
+    #print("start trey")
+    tray_icon_obj.run()
+    #print("exit tray")
+
+def tray_action_show_gui(tray_icon_obj_infunc, MenuItem):
+    tray_icon_obj_infunc.stop()
+
+def tray_action_exit(tray_icon_obj_infunc, MenuItem):
+    tray_icon_obj_infunc.stop()
+
+def create_icon():
+    program_image_name = "program_icon.ico"
+    box = 32
+    size_ico = (box, box)
+    band_gradient = Image.linear_gradient("L")
+    R = band_gradient.copy()
+    G = R.copy().rotate(90)
+    B = R.copy().rotate(-90)
+    image_obj = Image.merge("RGB", (R, G, B))
+    font = ImageFont.truetype("arial.ttf", 190)
+    drawing = ImageDraw.Draw(image_obj)
+    drawing.text((9, 20), "ST", font=font, fill=(0, 0, 0))
+    image_obj.thumbnail(size_ico)
+    image_obj.save(program_image_name)
+    # sheet.show()
+    return (program_image_name, image_obj)
 
 if __name__ == '__main__':
     main()
