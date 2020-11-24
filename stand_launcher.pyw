@@ -1,13 +1,20 @@
-from tkinter import Tk, Frame, Button, Label, BOTH
-from collections import deque
-import sys
+# #################################################
+# LIBS
+# #################################################
 import os
-from tempfile import NamedTemporaryFile
+import sys
+
 from glob import glob
-from PIL import Image, ImageDraw, ImageFont
-from pystray import Icon, Menu, MenuItem
-from threading import Thread
 from time import sleep
+from tkinter import Tk, Frame, Button, Label, BOTH
+from tempfile import NamedTemporaryFile
+from threading import Thread
+from collections import deque
+
+# NEED TO INSTALL
+from PIL import Image, ImageDraw, ImageFont     # pip3 install pillow
+from pystray import Icon, Menu, MenuItem        # pip3 install pystray
+
 
 # DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
 
@@ -394,7 +401,7 @@ def tray_action_show_gui(tray_icon_obj_infunc, MenuItem, root):
 
 def tray_action_exit(tray_icon_obj_infunc, MenuItem, root):
     root.destroy()
-    program_exit()
+    #program_exit()     # still not working!
 
 def create_icon():
     program_image_name = "program_icon.ico"
