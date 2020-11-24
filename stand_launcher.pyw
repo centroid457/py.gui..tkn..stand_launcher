@@ -346,7 +346,7 @@ def check_program_instances():
     dir_current = os.path.dirname(__file__)
     if len(glob(f"{prefix}*{suffix}")):
         print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
-        exit()
+        sys.exit()
     temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
 
 def program_restart():
@@ -369,8 +369,8 @@ def program_save_state(save_data=None):
 # #################################################
 # TRAY
 # #################################################
-def tray_icon_start(root):
-    root = root
+def tray_icon_start(master):
+    root = master
     tray_icon_obj = Icon('tray name')
 
     # ИКОНКА
@@ -379,8 +379,8 @@ def tray_icon_start(root):
 
     # МЕНЮ
     menu = Menu(
-        MenuItem(text='РАСКРЫТЬ', action=tray_action_show_gui, default=True),
-        MenuItem(text='ВЫХОД', action=tray_action_exit)
+        MenuItem(text='РАСКРЫТЬ', action=lambda: tray_action_show_gui(tray_icon_obj, MenuItem, root), default=True),
+        MenuItem(text='ВЫХОД', action=lambda: tray_action_exit(tray_icon_obj, MenuItem, root))
     )
     tray_icon_obj.menu = menu
 
@@ -389,11 +389,12 @@ def tray_icon_start(root):
     tray_icon_obj.run()
     #print("exit tray")
 
-def tray_action_show_gui(tray_icon_obj_infunc, MenuItem):
-    tray_icon_obj_infunc.stop()
+def tray_action_show_gui(tray_icon_obj_infunc, MenuItem, root):
+    root.deiconify()
 
-def tray_action_exit(tray_icon_obj_infunc, MenuItem):
-    tray_icon_obj_infunc.stop()
+def tray_action_exit(tray_icon_obj_infunc, MenuItem, root):
+    root.destroy()
+    program_exit()
 
 def create_icon():
     program_image_name = "program_icon.ico"
