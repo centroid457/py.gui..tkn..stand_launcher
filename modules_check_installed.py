@@ -12,7 +12,7 @@ from glob import glob
 
 modules_need_to_install = {
     # "IMPORT NAME IN PROJECT", "PIP INSTALL NAME")
-    # differetn names
+    # different names
     "PIL": "pillow",
     "wx": "wxPython",
 
@@ -55,16 +55,20 @@ def find_all_python_files(path=None):
 
 def find_all_importing_modules(file_list):
     print(file_list)
-    modules_found = []
-    for line in fileinput.input(files=file_list):
-        print(line)
-        mask_for_import = r'\s*import\s+.+(\s+as\s+.+)?'
-        mask_for_from_import = r'\s*from\s+.+\s+import\s+.*'
+    modules_found = set()
+    try:
+        for line in fileinput.input(files=file_list, mode="r"):
+            print(f"[descriptor={fileinput.fileno():2}]\tfile=[{fileinput.filename()}]\tline=[{fileinput.filelineno()}]\t[{line}]")
+            mask_for_import = r'\s*import\s+(.+)(\s+as\s+.+)?[\t\r\n\f]*'
+            mask_for_from_import = r'\s*from\s+(.+)\s+import\s+.*[\t\r\n\f]*'
 
-        match1 = re.fullmatch(mask_for_import, line)
-        match2 = re.fullmatch(mask_for_from_import, line)
-        if match1: modules_found.append(match1)
-        if match2: modules_found.append(match2)
+            match1 = re.fullmatch(mask_for_import, line)
+            match2 = re.fullmatch(mask_for_from_import, line)
+            if match1: modules_found.add(match1[1])
+            if match2: modules_found.add(match2[1])
+            print(match1, match2)
+    except:
+        pass
 
     print(modules_found)
     return modules_found
