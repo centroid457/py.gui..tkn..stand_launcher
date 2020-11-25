@@ -15,7 +15,6 @@ from collections import deque
 from PIL import Image, ImageDraw, ImageFont     # pip3 install pillow
 from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 
-
 # DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
 
 
@@ -99,22 +98,23 @@ class Gui(Frame):
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure([1, 2], weight=0)
         self.master.rowconfigure(3, weight=1)
+        pad_external = 10
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
         self.frame_control = Frame(self.master, bg="#101010")
-        self.frame_control.grid(row=1, sticky="nsew", padx=10, pady=10)
+        self.frame_control.grid(row=1, sticky="nsew", padx=pad_external, pady=pad_external)
         Make_gui_draggable(self.master)
         self.create_control_buttons(self.frame_control)
 
         # ======= FRAME-2 (SETTINGS) ====================
         self.frame_settings = Frame(self.master, bg="#505050", height=30)
         self.frame_settings.pack_propagate(0)   # hear it is necessary
-        self.frame_settings.grid(row=2, sticky="ew", padx=10, pady=0)
+        self.frame_settings.grid(row=2, sticky="ew", padx=pad_external, pady=0)
         self.create_settings_aria(self.frame_settings)
 
         # ======= FRAME-3 (MAIN WORK SET) ====================
         self.frame_main_work = Frame(self.master, bg="grey")
-        self.frame_main_work.grid(row=3, sticky="snew", padx=10, pady=10)
+        self.frame_main_work.grid(row=3, sticky="snew", padx=pad_external, pady=pad_external)
 
         # ------- FRAME-3 /1 frame LEFT-main menu -----------------
         self.frame_menu_left = Frame(self.frame_main_work, bg="grey", width=200, height=100)
