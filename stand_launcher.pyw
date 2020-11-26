@@ -376,13 +376,16 @@ def program_restart():
     # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
     os.execl(python_exe, python_exe, *sys.argv)
 
+
 def program_exit():
     program_save_state()
     print("correct exit")
     sys.exit()
 
+
 def program_save_state(save_data=None):
     pass
+
 
 def create_icon():
     if os.path.exists(program_image_name):
@@ -402,34 +405,29 @@ def create_icon():
     # sheet.show()
     return
 
+
 # #################################################
 # TRAY
 # #################################################
 def tray_icon_start(master):
     root = master
     tray_icon_obj = Icon('tray name')
-
-    # ИКОНКА
     tray_icon_obj.icon = Image.open(program_image_name)
-
-    # МЕНЮ
     menu = Menu(
         MenuItem(text='РАСКРЫТЬ', action=lambda: tray_action_show_gui(tray_icon_obj, MenuItem, root), default=True),
         MenuItem(text='ВЫХОД', action=lambda: tray_action_exit(tray_icon_obj, MenuItem, root))
     )
     tray_icon_obj.menu = menu
-
-    # ЗАПУСК
-    #print("start trey")
     tray_icon_obj.run()
-    #print("exit tray")
+
 
 def tray_action_show_gui(tray_icon_obj_infunc, MenuItem, root):
     root.deiconify()
 
+
 def tray_action_exit(tray_icon_obj_infunc, MenuItem, root):
     root.destroy()
-    #program_exit()     # still not working!
+    # program_exit()     # still not working!
 
 
 if __name__ == '__main__':
