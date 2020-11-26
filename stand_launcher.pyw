@@ -86,7 +86,7 @@ class Gui(Frame):
 
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
-        self.master.iconbitmap(create_icon()[0])
+        self.master.iconbitmap(program_image_name)
         self.master["background"] = "black"
 
     def create_gui_geometry(self):
@@ -345,6 +345,7 @@ class Gui(Frame):
 
 def main():
     check_program_instances()
+    create_icon()
 
     root = Tk()
     root.protocol('WM_DELETE_WINDOW', program_exit)  # intersept gui exit()
@@ -383,6 +384,24 @@ def program_exit():
 def program_save_state(save_data=None):
     pass
 
+def create_icon():
+    if os.path.exists(program_image_name):
+        return
+    box = 32
+    size_ico = (box, box)
+    band_gradient = Image.linear_gradient("L")
+    R = band_gradient.copy()
+    G = R.copy().rotate(90)
+    B = R.copy().rotate(-90)
+    image_obj = Image.merge("RGB", (R, G, B))
+    font = ImageFont.truetype("arial.ttf", 190)
+    drawing = ImageDraw.Draw(image_obj)
+    drawing.text((9, 20), "ST", font=font, fill=(0, 0, 0))
+    image_obj.thumbnail(size_ico)
+    image_obj.save(program_image_name)
+    # sheet.show()
+    return
+
 # #################################################
 # TRAY
 # #################################################
@@ -391,8 +410,7 @@ def tray_icon_start(master):
     tray_icon_obj = Icon('tray name')
 
     # ИКОНКА
-    icon_file_obj = create_icon()[1]
-    tray_icon_obj.icon = icon_file_obj
+    tray_icon_obj.icon = Image.open(program_image_name)
 
     # МЕНЮ
     menu = Menu(
@@ -413,21 +431,6 @@ def tray_action_exit(tray_icon_obj_infunc, MenuItem, root):
     root.destroy()
     #program_exit()     # still not working!
 
-def create_icon():
-    box = 32
-    size_ico = (box, box)
-    band_gradient = Image.linear_gradient("L")
-    R = band_gradient.copy()
-    G = R.copy().rotate(90)
-    B = R.copy().rotate(-90)
-    image_obj = Image.merge("RGB", (R, G, B))
-    font = ImageFont.truetype("arial.ttf", 190)
-    drawing = ImageDraw.Draw(image_obj)
-    drawing.text((9, 20), "ST", font=font, fill=(0, 0, 0))
-    image_obj.thumbnail(size_ico)
-    image_obj.save(program_image_name)
-    # sheet.show()
-    return (program_image_name, image_obj)
 
 if __name__ == '__main__':
     main()
