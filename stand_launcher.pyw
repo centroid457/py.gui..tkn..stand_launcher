@@ -1,3 +1,5 @@
+# DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
+
 # #################################################
 # LIBS
 # #################################################
@@ -14,8 +16,6 @@ from collections import deque
 # NEED TO INSTALL
 from PIL import Image, ImageDraw, ImageFont     # pip3 install pillow
 from pystray import Icon, Menu, MenuItem        # pip3 install pystray
-
-# DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
 
 # #################################################
 # SETTINGS
