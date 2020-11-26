@@ -17,6 +17,15 @@ from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 
 # DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
 
+# #################################################
+# SETTINGS
+# #################################################
+folder_for_auxiliary_project_files_wo_slashes = "project_files"
+if not os.path.isdir(folder_for_auxiliary_project_files_wo_slashes):
+    os.mkdir(folder_for_auxiliary_project_files_wo_slashes)
+
+program_image_name = folder_for_auxiliary_project_files_wo_slashes + "/program_icon.ico"
+
 
 # #################################################
 # MOUSE MOVING ABILITY
@@ -351,10 +360,11 @@ def check_program_instances():
     prefix = ".started_"
     suffix = "_instance.check"
     dir_current = os.path.dirname(__file__)
-    if len(glob(f"{prefix}*{suffix}")):
+    dir_destination = dir_current + "/" + folder_for_auxiliary_project_files_wo_slashes + "/"
+    if len(glob(f"{dir_destination}{prefix}*{suffix}")):
         print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
         sys.exit()
-    temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_current)
+    temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_destination)
 
 def program_restart():
     """Restarts the current program.
@@ -404,7 +414,6 @@ def tray_action_exit(tray_icon_obj_infunc, MenuItem, root):
     #program_exit()     # still not working!
 
 def create_icon():
-    program_image_name = "program_icon.ico"
     box = 32
     size_ico = (box, box)
     band_gradient = Image.linear_gradient("L")
