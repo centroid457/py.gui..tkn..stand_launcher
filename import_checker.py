@@ -46,7 +46,7 @@ def main():
 
 def find_all_python_files(path=None):
     files_found_list = []
-    for file_name in glob("*.py*"):
+    for file_name in glob("**/*.py*", recursive=True):
         if file_name != os.path.basename(__file__):
             files_found_list.append(file_name)
 
