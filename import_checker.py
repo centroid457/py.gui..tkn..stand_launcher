@@ -65,13 +65,19 @@ def find_all_importing_modules(file_list):
 
         match1 = re.fullmatch(mask_for_import, line)
         match2 = re.fullmatch(mask_for_from_import, line)
-        if match1: modules_found.add(match1[1])
-        if match2: modules_found.add(match2[1])
         #print(match1, match2)
+
+        found_text_group = match1[1] if match1 else match2[1] if match2 else None
+        if found_text_group not None:
+            modules_found.update(parse_raw_modules_data(found_text_group))
 
     print(modules_found)
     return modules_found
 
+def parse_raw_modules_data(raw_modules_data):
+    raw_modules_data_wo_spaces = re.sub(r'\s', '', raw_modules_data)
+    modules_names_list = raw_modules_data_wo_spaces.split(sep=",")
+    return set(modules_names_list)
 
 def detect_incorrect_modules():
     pass
