@@ -80,6 +80,7 @@ class Gui(Frame):
         super().__init__(master)
         self.master = master
         self.window_state = ('normal', "zoomed")
+        self.create_icon()
 
         Thread(target=self.tray_icon_start, args=(), daemon=True).start()
 
@@ -107,6 +108,23 @@ class Gui(Frame):
     # #################################################
     # TRAY
     # #################################################
+    def create_icon(self):
+        if os.path.exists(program_image_name):
+            return
+        box = 32
+        size_ico = (box, box)
+        band_gradient = Image.linear_gradient("L")
+        R = band_gradient.copy()
+        G = R.copy().rotate(90)
+        B = R.copy().rotate(-90)
+        image_obj = Image.merge("RGB", (R, G, B))
+        font = ImageFont.truetype("arial.ttf", 190)
+        drawing = ImageDraw.Draw(image_obj)
+        drawing.text((9, 20), "ST", font=font, fill=(0, 0, 0))
+        image_obj.thumbnail(size_ico)
+        image_obj.save(program_image_name)
+        return
+
     def tray_icon_start(self):
         tray_icon_obj = Icon('tray name')
         tray_icon_obj.icon = Image.open(program_image_name)
@@ -359,7 +377,6 @@ class Gui(Frame):
 
 def main():
     check_program_instances()
-    create_icon()
 
     root = Tk()
     root.protocol('WM_DELETE_WINDOW', program_exit)  # intersept gui exit()
@@ -396,24 +413,6 @@ def program_exit():
 
 def program_save_state(save_data=None):
     pass
-
-
-def create_icon():
-    if os.path.exists(program_image_name):
-        return
-    box = 32
-    size_ico = (box, box)
-    band_gradient = Image.linear_gradient("L")
-    R = band_gradient.copy()
-    G = R.copy().rotate(90)
-    B = R.copy().rotate(-90)
-    image_obj = Image.merge("RGB", (R, G, B))
-    font = ImageFont.truetype("arial.ttf", 190)
-    drawing = ImageDraw.Draw(image_obj)
-    drawing.text((9, 20), "ST", font=font, fill=(0, 0, 0))
-    image_obj.thumbnail(size_ico)
-    image_obj.save(program_image_name)
-    return
 
 
 if __name__ == '__main__':
