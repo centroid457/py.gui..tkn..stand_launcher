@@ -19,7 +19,7 @@ from PIL import Image, ImageDraw, ImageFont     # pip3 install pillow
 from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 
 # #################################################
-# SETTINGS
+# SETTINGS = dirnames / filenames
 # #################################################
 dirname_current = os.path.dirname(__file__)
 dirname_for_auxiliary_project_files_wo_slashes = "settings"
@@ -232,7 +232,7 @@ class Gui(Frame):
     def set_gui_default(self):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_switch_window_to_default_name = "default"   # button_name wich make window as default state!
-        buttons_data_default = {
+        buttons_main_gui_data_default = {
             "button_window_blank": {
                 "flag": None,
                 "text": chr(9995),
@@ -300,42 +300,42 @@ class Gui(Frame):
                 "command": lambda flag: self.frame_settings_open(flag=flag),
             },
         }
-        self.buttons_data_active = buttons_data_default
+        self.buttons_main_gui_data_active = buttons_main_gui_data_default
 
     def create_control_buttons(self, master):
         self.set_gui_default()
-        for button_id in self.buttons_data_active:
+        for button_id in self.buttons_main_gui_data_active:
             self.create_button(master, button_id)
 
     def create_button(self, frame, button_id):
         btn = Button(frame)
-        btn["text"] = self.buttons_data_active[button_id]["text"]
+        btn["text"] = self.buttons_main_gui_data_active[button_id]["text"]
         if btn["text"] == "":       # disable blank buttons
             btn["state"] = "disabled"
         btn["width"] = 3 if len(btn["text"]) < 3 else None
-        btn["bg"] = self.buttons_data_active[button_id]["bg"][0]
+        btn["bg"] = self.buttons_main_gui_data_active[button_id]["bg"][0]
         btn.bind("<Button-1>", self.buttons_handle)
         btn.pack(side="left")
 
     def buttons_handle(self, event):
-        for button_id in self.buttons_data_active:
+        for button_id in self.buttons_main_gui_data_active:
             # finding data line corresponding to pressed button
-            if self.buttons_data_active[button_id]["text"] == event.widget["text"]:
+            if self.buttons_main_gui_data_active[button_id]["text"] == event.widget["text"]:
                 # if find - use data
-                if self.buttons_data_active[button_id]["text"] == self.button_switch_window_to_default_name:
+                if self.buttons_main_gui_data_active[button_id]["text"] == self.button_switch_window_to_default_name:
                     # if fined the special button just execute its lambda!
-                    self.buttons_data_active[button_id]["command"](widget=event.widget)
+                    self.buttons_main_gui_data_active[button_id]["command"](widget=event.widget)
                     return
 
                 # ROTATE data: FLAG and BG
-                self.buttons_data_active[button_id]["bg"].rotate(1)
-                flag_old = self.buttons_data_active[button_id]["flag"]
+                self.buttons_main_gui_data_active[button_id]["bg"].rotate(1)
+                flag_old = self.buttons_main_gui_data_active[button_id]["flag"]
                 flag_new = None if flag_old is None else not flag_old
-                self.buttons_data_active[button_id]["flag"] = flag_new
+                self.buttons_main_gui_data_active[button_id]["flag"] = flag_new
 
                 # CHANGE rotated data in windget
-                event.widget["bg"] = self.buttons_data_active[button_id]["bg"][0]
-                self.buttons_data_active[button_id]["command"](flag=flag_new)
+                event.widget["bg"] = self.buttons_main_gui_data_active[button_id]["bg"][0]
+                self.buttons_main_gui_data_active[button_id]["command"](flag=flag_new)
                 return
 
     # BUTTON FUNCTIONS
@@ -362,7 +362,7 @@ class Gui(Frame):
             self.master.wm_attributes('-fullscreen', flag)
 
     def window_control_minimize(self):
-        if not self.buttons_data_active["button_window_independent"]["flag"]:
+        if not self.buttons_main_gui_data_active["button_window_independent"]["flag"]:
             self.master.iconify()
         else:
             self.master.withdraw()
@@ -372,7 +372,7 @@ class Gui(Frame):
 
     def window_set_default(self, widget):
         self.set_gui_default()
-        remaining_buttons_to_reset = self.buttons_data_active.copy()
+        remaining_buttons_to_reset = self.buttons_main_gui_data_active.copy()
 
         parent_widget_name = widget.winfo_parent()      # .!frame
         parent_widget_obj = widget._nametowidget(parent_widget_name)
