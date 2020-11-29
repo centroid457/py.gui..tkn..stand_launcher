@@ -82,10 +82,10 @@ class Make_gui_draggable:
 # #################################################
 class Gui(Frame):
     """ main GUI window """
-    def __init__(self, master=None):
-        super().__init__(master)
+    def __init__(self, root=None):
+        super().__init__(root)
         if not self.check_program_instances():
-            self.master = master
+            self.root = root
             self.window_state = ('normal', "zoomed")
             self.create_icon()
 
@@ -96,6 +96,7 @@ class Gui(Frame):
             self.create_gui_geometry()
 
     def __del__(self):
+        print("execute destructor")
         self.program_save_state()
 
     def check_program_instances(self):
@@ -111,21 +112,21 @@ class Gui(Frame):
             dir=dirname_for_auxiliary_project_files_w_slashes)
 
     def gui_general_configure(self):
-        self.master.title("STAND LAUNCHER")
-        self.master.iconbitmap(filename_program_image)
-        self.master.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
-        self.master["background"] = "black"
+        self.root.title("STAND LAUNCHER")
+        self.root.iconbitmap(filename_program_image)
+        self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
+        self.root["background"] = "black"
 
     def create_gui_geometry(self):
-        screen_width = self.master.winfo_screenwidth()
-        screen_height = self.master.winfo_screenheight()
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
         window_width = 800
         window_height = 200
         x = (screen_width - window_width) / 2
         y = (screen_height - window_height) / 2
-        self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
+        self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
-        self.window_set_default_all_functions()
+        self.load_gui_settings()
 
     # #################################################
     # TRAY
@@ -158,7 +159,7 @@ class Gui(Frame):
         tray_icon_obj.run()
 
     def tray_action_show_gui(self, tray_icon_obj_infunc, MenuItem):
-        self.master.deiconify()
+        self.root.deiconify()
 
     def tray_action_exit(self, tray_icon_obj_infunc, MenuItem):
         self.program_exit()
@@ -168,25 +169,25 @@ class Gui(Frame):
     # FRAMES
     # #################################################
     def create_gui_structure(self):
-        self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure([1, 2], weight=0)
-        self.master.rowconfigure(3, weight=1)
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure([1, 2], weight=0)
+        self.root.rowconfigure(3, weight=1)
         pad_external = 10
 
         # ======= FRAME-1 (WINDOW CONTROL) ====================
-        self.frame_control = Frame(self.master, bg="#101010")
+        self.frame_control = Frame(self.root, bg="#101010")
         self.frame_control.grid(row=1, sticky="nsew", padx=pad_external, pady=pad_external)
-        Make_gui_draggable(self.master)
+        Make_gui_draggable(self.root)
         self.create_control_buttons(self.frame_control)
 
         # ======= FRAME-2 (SETTINGS) ====================
-        self.frame_settings = Frame(self.master, bg="#505050", height=30)
+        self.frame_settings = Frame(self.root, bg="#505050", height=30)
         self.frame_settings.pack_propagate(0)   # hear it is necessary
         self.frame_settings.grid(row=2, sticky="ew", padx=pad_external, pady=0)
         self.create_settings_aria(self.frame_settings)
 
         # ======= FRAME-3 (MAIN WORK SET) ====================
-        self.frame_main_work = Frame(self.master, bg="grey")
+        self.frame_main_work = Frame(self.root, bg="grey")
         self.frame_main_work.grid(row=3, sticky="snew", padx=pad_external, pady=pad_external)
 
         # ------- FRAME-3 /1 frame LEFT-main menu -----------------
@@ -207,32 +208,37 @@ class Gui(Frame):
         self.frame_error_aria.pack_propagate(0)
         self.create_work_error_eria(self.frame_error_aria)
 
-    def create_settings_aria(self, master):
-        self.create_null_label(master)
+    def create_settings_aria(self, root):
+        self.create_null_label(root)
 
-    def create_work_menu(self, master):
-        self.create_null_label(master)
+    def create_work_menu(self, root):
+        self.create_null_label(root)
 
-    def create_work_aria(self, master):
-        self.create_null_label(master)
+    def create_work_aria(self, root):
+        self.create_null_label(root)
 
-    def create_work_error_eria(self, master):
-        self.create_null_label(master)
+    def create_work_error_eria(self, root):
+        self.create_null_label(root)
 
-    def create_null_label(self, master):
-        self.label_null = Label(master, text="ПУСТО", fg="white", bg="#505050")
+    def create_null_label(self, root):
+        self.label_null = Label(root, text="ПУСТО", fg="white", bg="#505050")
         self.label_null.pack(side="left", fill="x", expand=0)
 
     # #################################################
     # BUTTONS
     # #################################################
     def load_gui_settings(self):
-        pass
+        if os.path.exists(filename_program_save_state):
+            with open(filename_program_save_state, 'rb') as file:
+                self.buttons_main_gui_control_data_active = pickle.load(file)
+        else:
+            self.set_gui_default()
+            self.gui_apply_settings(set_default=True)
 
     def set_gui_default(self):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_switch_window_to_default_name = "default"   # button_name wich make window as default state!
-        buttons_main_gui_data_default = {
+        buttons_main_gui_control_data_default = {
             "button_window_blank": {
                 "flag": None,
                 "text": chr(9995),
@@ -300,79 +306,80 @@ class Gui(Frame):
                 "command": lambda flag: self.frame_settings_open(flag=flag),
             },
         }
-        self.buttons_main_gui_data_active = buttons_main_gui_data_default
+        self.buttons_main_gui_control_data_active = buttons_main_gui_control_data_default
 
-    def create_control_buttons(self, master):
+    def create_control_buttons(self, root):
         self.set_gui_default()
-        for button_id in self.buttons_main_gui_data_active:
-            self.create_button(master, button_id)
+        for button_id in self.buttons_main_gui_control_data_active:
+            self.create_button(root, button_id)
 
     def create_button(self, frame, button_id):
         btn = Button(frame)
-        btn["text"] = self.buttons_main_gui_data_active[button_id]["text"]
+        btn["text"] = self.buttons_main_gui_control_data_active[button_id]["text"]
         if btn["text"] == "":       # disable blank buttons
             btn["state"] = "disabled"
         btn["width"] = 3 if len(btn["text"]) < 3 else None
-        btn["bg"] = self.buttons_main_gui_data_active[button_id]["bg"][0]
+        btn["bg"] = self.buttons_main_gui_control_data_active[button_id]["bg"][0]
         btn.bind("<Button-1>", self.buttons_handle)
         btn.pack(side="left")
 
     def buttons_handle(self, event):
-        for button_id in self.buttons_main_gui_data_active:
+        for button_id in self.buttons_main_gui_control_data_active:
             # finding data line corresponding to pressed button
-            if self.buttons_main_gui_data_active[button_id]["text"] == event.widget["text"]:
+            if self.buttons_main_gui_control_data_active[button_id]["text"] == event.widget["text"]:
                 # if find - use data
-                if self.buttons_main_gui_data_active[button_id]["text"] == self.button_switch_window_to_default_name:
+                if self.buttons_main_gui_control_data_active[button_id]["text"] == self.button_switch_window_to_default_name:
                     # if fined the special button just execute its lambda!
-                    self.buttons_main_gui_data_active[button_id]["command"](widget=event.widget)
+                    self.buttons_main_gui_control_data_active[button_id]["command"](widget=event.widget)
                     return
 
                 # ROTATE data: FLAG and BG
-                self.buttons_main_gui_data_active[button_id]["bg"].rotate(1)
-                flag_old = self.buttons_main_gui_data_active[button_id]["flag"]
+                self.buttons_main_gui_control_data_active[button_id]["bg"].rotate(1)
+                flag_old = self.buttons_main_gui_control_data_active[button_id]["flag"]
                 flag_new = None if flag_old is None else not flag_old
-                self.buttons_main_gui_data_active[button_id]["flag"] = flag_new
+                self.buttons_main_gui_control_data_active[button_id]["flag"] = flag_new
 
                 # CHANGE rotated data in windget
-                event.widget["bg"] = self.buttons_main_gui_data_active[button_id]["bg"][0]
-                self.buttons_main_gui_data_active[button_id]["command"](flag=flag_new)
+                event.widget["bg"] = self.buttons_main_gui_control_data_active[button_id]["bg"][0]
+                self.buttons_main_gui_control_data_active[button_id]["command"](flag=flag_new)
                 return
 
     # BUTTON FUNCTIONS
-    def window_set_default_all_functions(self):
-        self.set_gui_default()
-        self.window_control_fullscreen(flag=False)
-        self.window_control_top(flag=False)
-        self.window_control_independent(flag=False)
-        self.frame_settings_open(flag=False)
+    def gui_apply_settings(self, set_default=False):
+        if set_default == True:
+            self.set_gui_default()
+            self.window_control_fullscreen(flag=False)
+            self.window_control_top(flag=False)
+            self.window_control_independent(flag=False)
+            self.frame_settings_open(flag=False)
 
     def window_move_to_00(self):
-        self.master.geometry("+0+0")
+        self.root.geometry("+0+0")
 
     def window_short(self, flag=False):
         self.window_control_fullscreen(False)
         window_width = 130       # it does not matter if less then about 120!!!
         window_height = 45
         if flag:
-            self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
+            self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
 
     def window_control_fullscreen(self, flag=False):
-        self.master.state(self.window_state[int(flag)])
+        self.root.state(self.window_state[int(flag)])
         if not flag:
-            self.master.wm_attributes('-fullscreen', flag)
+            self.root.wm_attributes('-fullscreen', flag)
 
     def window_control_minimize(self):
-        if not self.buttons_main_gui_data_active["button_window_independent"]["flag"]:
-            self.master.iconify()
+        if not self.buttons_main_gui_control_data_active["button_window_independent"]["flag"]:
+            self.root.iconify()
         else:
-            self.master.withdraw()
+            self.root.withdraw()
 
     def window_control_top(self, flag=False):
-        self.master.wm_attributes("-topmost", flag)
+        self.root.wm_attributes("-topmost", flag)
 
     def window_set_default(self, widget):
         self.set_gui_default()
-        remaining_buttons_to_reset = self.buttons_main_gui_data_active.copy()
+        remaining_buttons_to_reset = self.buttons_main_gui_control_data_active.copy()
 
         parent_widget_name = widget.winfo_parent()      # .!frame
         parent_widget_obj = widget._nametowidget(parent_widget_name)
@@ -385,12 +392,12 @@ class Gui(Frame):
                     widget_obj["bg"] = poped_button["bg"][0]
                     break
 
-        self.window_set_default_all_functions()
+        self.gui_apply_settings(set_default=True)
         self.create_gui_geometry()
 
     def window_control_independent(self, flag=False):
         """make window independent from OS explorer"""
-        self.master.wm_overrideredirect(flag)
+        self.root.wm_overrideredirect(flag)
 
     def frame_settings_open(self, flag=False):
         if flag:
@@ -412,15 +419,17 @@ class Gui(Frame):
 
     def program_exit(self):
         print("exit")
-        self.master.destroy()
+        self.root.quit()
 
-    def program_save_state(self, save_data=None):
-
-        pass
+    def program_save_state(self, data_to_save=None):
+        data_to_save = self.buttons_main_gui_control_data_active
+        with open(filename_program_save_state, 'wb') as file:
+            pickle.dump(data_to_save, file)
+        print("ok")
 
 def main():
     root = Tk()
-    app = Gui(master=root)
+    app = Gui(root=root)
     app.mainloop()
 
 
