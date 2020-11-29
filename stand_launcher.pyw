@@ -91,6 +91,7 @@ class Gui(Frame):
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
         self.master.iconbitmap(program_image_name)
+        self.master.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
         self.master["background"] = "black"
 
     def create_gui_geometry(self):
@@ -104,6 +105,9 @@ class Gui(Frame):
 
         self.window_set_default_all_functions()
 
+
+    def __del__(self):
+        save_settings
 
     # #################################################
     # TRAY
@@ -231,7 +235,7 @@ class Gui(Frame):
                 "flag": None,                   # None mean it will always do the same things, flag not used
                 "text": chr(9587),              # text on the button
                 "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
-                "command": lambda flag: program_exit(),
+                "command": lambda flag: self.program_exit(),
             },
             "button_window_fullscreen": {
                 "flag": False,
@@ -249,7 +253,7 @@ class Gui(Frame):
                 "flag": None,
                 "text": "restart",
                 "bg": deque(["#FF6666"]),
-                "command": lambda flag: program_restart(),
+                "command": lambda flag: self.program_restart(),
             },
             "button_window_moveto00": {
                 "flag": None,
@@ -374,13 +378,27 @@ class Gui(Frame):
         else:
             self.frame_settings.grid_remove()
 
+    def program_restart(self):
+        """Restarts the current program.
+        Note: this function does not return. Any cleanup action (like
+        saving data) must be done before calling this function."""
+        self.program_save_state()
+        python_exe = sys.executable
+        # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
+        os.execl(python_exe, python_exe, *sys.argv)
+
+    def program_exit(self):
+        self.program_save_state()
+        print("correct exit")
+        sys.exit()
+
+    def program_save_state(self, save_data=None):
+        pass
 
 def main():
     check_program_instances()
 
     root = Tk()
-    root.protocol('WM_DELETE_WINDOW', program_exit)  # intersept gui exit()
-
     app = Gui(master=root)
     app.mainloop()
 
@@ -394,25 +412,6 @@ def check_program_instances():
         print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
         sys.exit()
     temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_destination)
-
-def program_restart():
-    """Restarts the current program.
-    Note: this function does not return. Any cleanup action (like
-    saving data) must be done before calling this function."""
-    program_save_state()
-    python_exe = sys.executable
-    # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
-    os.execl(python_exe, python_exe, *sys.argv)
-
-
-def program_exit():
-    program_save_state()
-    print("correct exit")
-    sys.exit()
-
-
-def program_save_state(save_data=None):
-    pass
 
 
 if __name__ == '__main__':
