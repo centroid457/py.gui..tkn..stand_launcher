@@ -235,7 +235,7 @@ class Gui(Frame):
             self.gui_apply_settings(set_default=True)
 
     def set_gui_default(self):
-        color_button_normal_set = ["white", "#77FF77"]
+        colorset_button_normal = ["white", "#77FF77"]
         self.button_switch_window_to_default_name = "default"   # button_name wich make window as default state!
         buttons_main_gui_control_data_default = {
             "button_window_blank": {
@@ -253,7 +253,7 @@ class Gui(Frame):
             "button_window_short": {
                 "flag": False,
                 "text": chr(9624),
-                "bg": color_button_normal_set,
+                "bg": colorset_button_normal,
                 "command": lambda flag: self.window_short(flag=flag),
             },
             "button_window_exit": {             # first level it's only id! you can change it any time
@@ -265,7 +265,7 @@ class Gui(Frame):
             "button_window_fullscreen": {
                 "flag": False,
                 "text": chr(9744),
-                "bg": color_button_normal_set,
+                "bg": colorset_button_normal,
                 "command": lambda flag: self.window_control_fullscreen(flag=flag),
             },
             "button_window_minimize": {
@@ -289,19 +289,19 @@ class Gui(Frame):
             "button_window_topalways": {
                 "flag": False,
                 "text": "top",
-                "bg": color_button_normal_set,
+                "bg": colorset_button_normal,
                 "command": lambda flag: self.window_control_top(flag=flag),
             },
             "button_window_independent": {
                 "flag": False,
                 "text": chr(10043),
-                "bg": color_button_normal_set,
+                "bg": colorset_button_normal,
                 "command": lambda flag: self.window_control_independent(flag=flag),
             },
             "button_window_settings": {
                 "flag": False,
                 "text": "Настройки",
-                "bg": color_button_normal_set,
+                "bg": colorset_button_normal,
                 "command": lambda flag: self.frame_settings_open(flag=flag),
             },
         }
@@ -416,7 +416,8 @@ class Gui(Frame):
         saving data) must be done before calling this function."""
         self.program_save_state()
         python_exe = sys.executable
-        # почему-то если использовать такую конструкцию - НЕЛЬЗЯ ЧТОЛИБО ВЫВОДИТЬ ЧЕРЕЗ PRINT!!!!
+        # If you want to work with correct restart button DO NOT USE ANY PRINT-function befor!!!!
+        # else programm will not actually restart (in PyCharm will not start after second Restart)
         os.execl(python_exe, python_exe, *sys.argv)
 
     def program_exit(self):
@@ -428,7 +429,7 @@ class Gui(Frame):
         data_to_save = self.buttons_main_gui_control_data_active
         #with open(filename_program_save_state, 'wb') as file:
             #pickle.dump(data_to_save, file)
-        print("ok")
+        #print("ok")
 
 def main():
     root = Tk()
