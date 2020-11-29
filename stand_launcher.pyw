@@ -114,7 +114,7 @@ class Gui(Frame):
         self.root.title("STAND LAUNCHER")
         self.root.iconbitmap(filename_program_image)
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
-        self.root["background"] = "black"
+        self.root["bg"] = "black"
 
     def create_gui_geometry(self):
         screen_width = self.root.winfo_screenwidth()
@@ -226,15 +226,14 @@ class Gui(Frame):
     # #################################################
     # BUTTONS
     # #################################################
-    def load_gui_settings(self):
-        if os.path.exists(filename_program_save_state):
+    def load_gui_settings(self, set_default=False):
+        if not set_default and os.path.exists(filename_program_save_state):
             with open(filename_program_save_state, 'rb') as file:
                 self.buttons_main_gui_control_data_active = pickle.load(file)
         else:
-            self.set_gui_default()
-            self.gui_apply_settings(set_default=True)
+            self.buttons_main_gui_control_data_active = self.get_gui_default()
 
-    def set_gui_default(self):
+    def get_gui_default(self):
         colorset_button_normal = ["white", "#77FF77"]
         self.button_switch_window_to_default_name = "default"   # button_name wich make window as default state!
         buttons_main_gui_control_data_default = {
@@ -305,10 +304,10 @@ class Gui(Frame):
                 "command": lambda flag: self.frame_settings_open(flag=flag),
             },
         }
-        self.buttons_main_gui_control_data_active = buttons_main_gui_control_data_default
+        return buttons_main_gui_control_data_default
 
     def create_gui_control_buttons(self, frame):
-        self.set_gui_default()
+        self.load_gui_settings()
         for button_id in self.buttons_main_gui_control_data_active:
             button_obj = Button(frame)
             button_data = self.buttons_main_gui_control_data_active[button_id]
@@ -347,13 +346,11 @@ class Gui(Frame):
                 return      # do not delete!
 
     # BUTTON FUNCTIONS
-    def gui_apply_settings(self, set_default=False):
-        if set_default == True:
-            self.set_gui_default()
-            self.window_control_fullscreen(flag=False)
-            self.window_control_top(flag=False)
-            self.window_control_independent(flag=False)
-            self.frame_settings_open(flag=False)
+    def gui_apply_settings(self):
+        self.window_control_fullscreen(flag=False)
+        self.window_control_top(flag=False)
+        self.window_control_independent(flag=False)
+        self.frame_settings_open(flag=False)
 
     def window_move_to_00(self):
         self.root.geometry("+0+0")
@@ -380,7 +377,9 @@ class Gui(Frame):
         self.root.wm_attributes("-topmost", flag)
 
     def window_set_default(self, widget):
-        self.set_gui_default()
+        self.load_gui_settings(set_default=True)
+        self.gui_apply_settings()
+        #return
         remaining_buttons_to_reset = self.buttons_main_gui_control_data_active.copy()
 
         parent_widget_name = widget.winfo_parent()      # .!frame
@@ -394,7 +393,7 @@ class Gui(Frame):
                     widget_obj["bg"] = poped_button["bg"][0]
                     break
 
-        self.gui_apply_settings(set_default=True)
+        self.gui_apply_settings()
         self.create_gui_geometry()
 
     def window_control_independent(self, flag=False):
