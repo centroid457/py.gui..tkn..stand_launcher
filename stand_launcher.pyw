@@ -78,6 +78,7 @@ class Gui(Frame):
     """ main GUI window """
     def __init__(self, master=None):
         super().__init__(master)
+        self.check_program_instances()
         self.master = master
         self.window_state = ('normal', "zoomed")
         self.create_icon()
@@ -107,7 +108,17 @@ class Gui(Frame):
 
 
     def __del__(self):
-        save_settings
+        self.program_save_state()
+
+    def check_program_instances(self):
+        prefix = ".started_"
+        suffix = "_instance.check"
+        dir_current = os.path.dirname(__file__)
+        dir_destination = dir_current + "/" + folder_for_auxiliary_project_files_wo_slashes + "/"
+        if len(glob(f"{dir_destination}{prefix}*{suffix}")):
+            print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
+            sys.exit()
+        self.temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_destination)
 
     # #################################################
     # TRAY
@@ -396,22 +407,9 @@ class Gui(Frame):
         pass
 
 def main():
-    check_program_instances()
-
     root = Tk()
     app = Gui(master=root)
     app.mainloop()
-
-def check_program_instances():
-    global temporary_file        # do not delete it! else change method!!!
-    prefix = ".started_"
-    suffix = "_instance.check"
-    dir_current = os.path.dirname(__file__)
-    dir_destination = dir_current + "/" + folder_for_auxiliary_project_files_wo_slashes + "/"
-    if len(glob(f"{dir_destination}{prefix}*{suffix}")):
-        print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
-        sys.exit()
-    temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_destination)
 
 
 if __name__ == '__main__':
