@@ -20,7 +20,7 @@ from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 # #################################################
 # SETTINGS
 # #################################################
-folder_for_auxiliary_project_files_wo_slashes = "project_files"
+folder_for_auxiliary_project_files_wo_slashes = "settings"
 if not os.path.isdir(folder_for_auxiliary_project_files_wo_slashes):
     os.mkdir(folder_for_auxiliary_project_files_wo_slashes)
 
@@ -81,6 +81,8 @@ class Gui(Frame):
         self.master = master
         self.window_state = ('normal', "zoomed")
 
+        Thread(target=self.tray_icon_start, args=(), daemon=True).start()
+
         self.gui_general_configure()
         self.create_gui_structure()
         self.create_gui_geometry()
@@ -100,6 +102,28 @@ class Gui(Frame):
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
         self.window_set_default_all_functions()
+
+
+    # #################################################
+    # TRAY
+    # #################################################
+    def tray_icon_start(self):
+        tray_icon_obj = Icon('tray name')
+        tray_icon_obj.icon = Image.open(program_image_name)
+        menu = Menu(
+            MenuItem(text='РАСКРЫТЬ', action=self.tray_action_show_gui, default=True),
+            MenuItem(text='ВЫХОД', action=self.tray_action_exit)
+        )
+        tray_icon_obj.menu = menu
+        tray_icon_obj.run()
+
+    def tray_action_show_gui(self, tray_icon_obj_infunc, MenuItem):
+        self.master.deiconify()
+
+    def tray_action_exit(self, tray_icon_obj_infunc, MenuItem):
+        self.master.destroy()
+        # program_exit()     # still not working!
+
 
     # #################################################
     # FRAMES
@@ -340,9 +364,6 @@ def main():
     root = Tk()
     root.protocol('WM_DELETE_WINDOW', program_exit)  # intersept gui exit()
 
-    tray_thread = Thread(target=tray_icon_start, args=(root,), daemon=True)
-    tray_thread.start()
-
     app = Gui(master=root)
     app.mainloop()
 
@@ -392,32 +413,7 @@ def create_icon():
     drawing.text((9, 20), "ST", font=font, fill=(0, 0, 0))
     image_obj.thumbnail(size_ico)
     image_obj.save(program_image_name)
-    # sheet.show()
     return
-
-
-# #################################################
-# TRAY
-# #################################################
-def tray_icon_start(master):
-    root = master
-    tray_icon_obj = Icon('tray name')
-    tray_icon_obj.icon = Image.open(program_image_name)
-    menu = Menu(
-        MenuItem(text='РАСКРЫТЬ', action=lambda: tray_action_show_gui(tray_icon_obj, MenuItem, root), default=True),
-        MenuItem(text='ВЫХОД', action=lambda: tray_action_exit(tray_icon_obj, MenuItem, root))
-    )
-    tray_icon_obj.menu = menu
-    tray_icon_obj.run()
-
-
-def tray_action_show_gui(tray_icon_obj_infunc, MenuItem, root):
-    root.deiconify()
-
-
-def tray_action_exit(tray_icon_obj_infunc, MenuItem, root):
-    root.destroy()
-    # program_exit()     # still not working!
 
 
 if __name__ == '__main__':
