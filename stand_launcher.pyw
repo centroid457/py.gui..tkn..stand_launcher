@@ -77,9 +77,10 @@ class Make_gui_draggable:
 class Gui(Frame):
     """ main GUI window """
     def __init__(self, master=None):
-        self.window_state = ('normal', "zoomed")
         super().__init__(master)
         self.master = master
+        self.window_state = ('normal', "zoomed")
+
         self.gui_general_configure()
         self.create_gui_structure()
         self.create_gui_geometry()
@@ -171,77 +172,66 @@ class Gui(Frame):
                 "text": chr(9995),
                 "bg": deque(["white"]),
                 "command": lambda flag: None,
-                "side": "left",
             },
             "button_window_switch_to_default": {
                 "flag": None,
                 "text": self.button_switch_window_to_default_name,
                 "bg": deque(["white"]),
                 "command": lambda widget: self.window_set_default(widget=widget),
-                "side": "left",
             },
             "button_window_short": {
                 "flag": False,
                 "text": chr(9624),
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_short(flag=flag),
-                "side": "left",
             },
             "button_window_exit": {             # first level it's only id! you can change it any time
                 "flag": None,                   # None mean it will always do the same things, flag not used
                 "text": chr(9587),              # text on the button
                 "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
                 "command": lambda flag: program_exit(),
-                "side": "left",
             },
             "button_window_fullscreen": {
                 "flag": False,
                 "text": chr(9744),
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_fullscreen(flag=flag),
-                "side": "left",
             },
             "button_window_minimize": {
                 "flag": None,
                 "text": "_",
                 "bg": deque(["white"]),
                 "command": lambda flag: self.window_control_minimize(),
-                "side": "left",
             },
             "button_program_restart": {
                 "flag": None,
                 "text": "restart",
                 "bg": deque(["#FF6666"]),
                 "command": lambda flag: program_restart(),
-                "side": "left",
             },
             "button_window_moveto00": {
                 "flag": None,
                 "text": chr(8689),
                 "bg": deque(["white"]),
                 "command": lambda flag: self.window_move_to_00(),
-                "side": "left",
             },
             "button_window_topalways": {
                 "flag": False,
                 "text": "top",
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_top(flag=flag),
-                "side": "left",
             },
             "button_window_independent": {
                 "flag": False,
                 "text": chr(10043),
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.window_control_independent(flag=flag),
-                "side": "left",
             },
             "button_window_settings": {
                 "flag": False,
                 "text": "Настройки",
                 "bg": deque(color_button_normal_set),
                 "command": lambda flag: self.frame_settings_open(flag=flag),
-                "side": "left",
             },
         }
         self.buttons_data_active = buttons_data_default
@@ -259,7 +249,7 @@ class Gui(Frame):
         btn["width"] = 3 if len(btn["text"]) < 3 else None
         btn["bg"] = self.buttons_data_active[button_id]["bg"][0]
         btn.bind("<Button-1>", self.buttons_handle)
-        btn.pack(side=self.buttons_data_active[button_id]['side'])
+        btn.pack(side="left")
 
     def buttons_handle(self, event):
         for button_id in self.buttons_data_active:
