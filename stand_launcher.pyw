@@ -28,7 +28,7 @@ if not os.path.isdir(dirname_for_auxiliary_project_files_w_slashes):
     os.mkdir(dirname_for_auxiliary_project_files_w_slashes)
 
 filename_program_image = dirname_for_auxiliary_project_files_w_slashes + "program_icon.ico"
-filename_program_save_state = dirname_for_auxiliary_project_files_w_slashes + "program_save_state.pickle"
+filename_program_save_state = dirname_for_auxiliary_project_files_w_slashes + ".program_save_state.pickle"
 
 filename_check_program_instances_prefix = ".started_"
 filename_check_program_instances_suffix = "_instance.check"
@@ -314,34 +314,36 @@ class Gui(Frame):
             self.create_button(root, button_id)
 
     def create_button(self, frame, button_id):
-        btn = Button(frame)
-        btn["text"] = self.buttons_main_gui_control_data_active[button_id]["text"]
-        if btn["text"] == "":       # disable blank buttons
-            btn["state"] = "disabled"
-        btn["width"] = 3 if len(btn["text"]) < 3 else None
-        btn["bg"] = self.buttons_main_gui_control_data_active[button_id]["bg"][0]
-        btn.bind("<Button-1>", self.buttons_handle)
-        btn.pack(side="left")
+        button_obj = Button(frame)
+        button_data = self.buttons_main_gui_control_data_active[button_id]
+        button_obj["text"] = button_data["text"]
+        if button_obj["text"] == "":       # disable blank buttons
+            button_obj["state"] = "disabled"
+        button_obj["width"] = 3 if len(button_obj["text"]) < 3 else None
+        button_obj["bg"] = button_data["bg"][0]
+        button_obj.bind("<Button-1>", self.buttons_handler)
+        button_obj.pack(side="left")
 
-    def buttons_handle(self, event):
+    def buttons_handler(self, event):
         for button_id in self.buttons_main_gui_control_data_active:
             # finding data line corresponding to pressed button
-            if self.buttons_main_gui_control_data_active[button_id]["text"] == event.widget["text"]:
+            button_data = self.buttons_main_gui_control_data_active[button_id]
+            if button_data["text"] == event.widget["text"]:
                 # if find - use data
-                if self.buttons_main_gui_control_data_active[button_id]["text"] == self.button_switch_window_to_default_name:
+                if button_data["text"] == self.button_switch_window_to_default_name:
                     # if fined the special button just execute its lambda!
-                    self.buttons_main_gui_control_data_active[button_id]["command"](widget=event.widget)
+                    button_data["command"](widget=event.widget)
                     return
 
                 # ROTATE data: FLAG and BG
-                self.buttons_main_gui_control_data_active[button_id]["bg"].rotate(1)
-                flag_old = self.buttons_main_gui_control_data_active[button_id]["flag"]
+                button_data["bg"].rotate(1)
+                flag_old = button_data["flag"]
                 flag_new = None if flag_old is None else not flag_old
-                self.buttons_main_gui_control_data_active[button_id]["flag"] = flag_new
+                button_data["flag"] = flag_new
 
                 # CHANGE rotated data in windget
-                event.widget["bg"] = self.buttons_main_gui_control_data_active[button_id]["bg"][0]
-                self.buttons_main_gui_control_data_active[button_id]["command"](flag=flag_new)
+                event.widget["bg"] = button_data["bg"][0]
+                button_data["command"](flag=flag_new)
                 return
 
     # BUTTON FUNCTIONS
@@ -418,13 +420,14 @@ class Gui(Frame):
         os.execl(python_exe, python_exe, *sys.argv)
 
     def program_exit(self):
+        self.program_save_state()
         print("exit")
-        self.root.quit()
+        self.root.destroy()
 
     def program_save_state(self, data_to_save=None):
         data_to_save = self.buttons_main_gui_control_data_active
-        with open(filename_program_save_state, 'wb') as file:
-            pickle.dump(data_to_save, file)
+        #with open(filename_program_save_state, 'wb') as file:
+            #pickle.dump(data_to_save, file)
         print("ok")
 
 def main():
