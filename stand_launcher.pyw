@@ -89,6 +89,19 @@ class Gui(Frame):
         self.create_gui_structure()
         self.create_gui_geometry()
 
+    def __del__(self):
+        self.program_save_state()
+
+    def check_program_instances(self):
+        prefix = ".started_"
+        suffix = "_instance.check"
+        dir_current = os.path.dirname(__file__)
+        dir_destination = dir_current + "/" + folder_for_auxiliary_project_files_wo_slashes + "/"
+        if len(glob(f"{dir_destination}{prefix}*{suffix}")):
+            print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
+            self.program_exit()
+        self.temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_destination)
+
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
         self.master.iconbitmap(program_image_name)
@@ -105,20 +118,6 @@ class Gui(Frame):
         self.master.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
 
         self.window_set_default_all_functions()
-
-
-    def __del__(self):
-        self.program_save_state()
-
-    def check_program_instances(self):
-        prefix = ".started_"
-        suffix = "_instance.check"
-        dir_current = os.path.dirname(__file__)
-        dir_destination = dir_current + "/" + folder_for_auxiliary_project_files_wo_slashes + "/"
-        if len(glob(f"{dir_destination}{prefix}*{suffix}")):
-            print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
-            sys.exit()
-        self.temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_destination)
 
     # #################################################
     # TRAY
@@ -154,8 +153,7 @@ class Gui(Frame):
         self.master.deiconify()
 
     def tray_action_exit(self, tray_icon_obj_infunc, MenuItem):
-        self.master.destroy()
-        # program_exit()     # still not working!
+        self.program_exit()
 
 
     # #################################################
@@ -389,6 +387,9 @@ class Gui(Frame):
         else:
             self.frame_settings.grid_remove()
 
+    # #################################################
+    # PROGRAM CONTROL
+    # #################################################
     def program_restart(self):
         """Restarts the current program.
         Note: this function does not return. Any cleanup action (like
@@ -401,7 +402,7 @@ class Gui(Frame):
     def program_exit(self):
         self.program_save_state()
         print("correct exit")
-        sys.exit()
+        self.master.destroy()
 
     def program_save_state(self, save_data=None):
         pass
