@@ -21,12 +21,17 @@ from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 # #################################################
 # SETTINGS
 # #################################################
-folder_for_auxiliary_project_files_wo_slashes = "settings"
-if not os.path.isdir(folder_for_auxiliary_project_files_wo_slashes):
-    os.mkdir(folder_for_auxiliary_project_files_wo_slashes)
+dirname_current = os.path.dirname(__file__)
+dirname_for_auxiliary_project_files_wo_slashes = "settings"
+dirname_for_auxiliary_project_files_w_slashes = dirname_for_auxiliary_project_files_wo_slashes + "/"
+if not os.path.isdir(dirname_for_auxiliary_project_files_w_slashes):
+    os.mkdir(dirname_for_auxiliary_project_files_w_slashes)
 
-filename_program_image = folder_for_auxiliary_project_files_wo_slashes + "/program_icon.ico"
-filename_program_save_state = folder_for_auxiliary_project_files_wo_slashes + "/program_save_state.pickle"
+filename_program_image = dirname_for_auxiliary_project_files_w_slashes + "program_icon.ico"
+filename_program_save_state = dirname_for_auxiliary_project_files_w_slashes + "program_save_state.pickle"
+
+filename_check_program_instances_prefix = ".started_"
+filename_check_program_instances_suffix = "_instance.check"
 
 # #################################################
 # MOUSE MOVING ABILITY
@@ -94,18 +99,16 @@ class Gui(Frame):
         self.program_save_state()
 
     def check_program_instances(self):
-        filename_check_program_instances_prefix = ".started_"
-        filename_check_program_instances_suffix = "_instance.check"
-        dir_current = os.path.dirname(__file__)
-        dir_destination = dir_current + "/" + folder_for_auxiliary_project_files_wo_slashes + "/"
-        if len(glob(f"{dir_destination}{filename_check_program_instances_prefix}*{filename_check_program_instances_suffix}")):
+        if len(glob(f"{dirname_for_auxiliary_project_files_w_slashes}"
+                    f"{filename_check_program_instances_prefix}"
+                    f"*{filename_check_program_instances_suffix}")):
             print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
             self.program_exit()
             return True
         self.temporary_file = NamedTemporaryFile(
             suffix=filename_check_program_instances_suffix,
             prefix=filename_check_program_instances_prefix,
-            dir=dir_destination)
+            dir=dirname_for_auxiliary_project_files_w_slashes)
 
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
