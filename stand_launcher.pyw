@@ -400,8 +400,7 @@ class Gui(Frame):
         os.execl(python_exe, python_exe, *sys.argv)
 
     def program_exit(self):
-        self.program_save_state()
-        print("correct exit")
+        print("exit")
         self.master.destroy()
 
     def program_save_state(self, save_data=None):
