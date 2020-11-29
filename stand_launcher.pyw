@@ -5,6 +5,7 @@
 # #################################################
 import os
 import sys
+import pickle
 
 from glob import glob
 from time import sleep
@@ -24,8 +25,8 @@ folder_for_auxiliary_project_files_wo_slashes = "settings"
 if not os.path.isdir(folder_for_auxiliary_project_files_wo_slashes):
     os.mkdir(folder_for_auxiliary_project_files_wo_slashes)
 
-program_image_name = folder_for_auxiliary_project_files_wo_slashes + "/program_icon.ico"
-
+filename_program_image = folder_for_auxiliary_project_files_wo_slashes + "/program_icon.ico"
+filename_program_save_state = folder_for_auxiliary_project_files_wo_slashes + "/program_save_state.pickle"
 
 # #################################################
 # MOUSE MOVING ABILITY
@@ -78,33 +79,37 @@ class Gui(Frame):
     """ main GUI window """
     def __init__(self, master=None):
         super().__init__(master)
-        self.check_program_instances()
-        self.master = master
-        self.window_state = ('normal', "zoomed")
-        self.create_icon()
+        if not self.check_program_instances():
+            self.master = master
+            self.window_state = ('normal', "zoomed")
+            self.create_icon()
 
-        Thread(target=self.tray_icon_start, args=(), daemon=True).start()
+            Thread(target=self.tray_icon_start, args=(), daemon=True).start()
 
-        self.gui_general_configure()
-        self.create_gui_structure()
-        self.create_gui_geometry()
+            self.gui_general_configure()
+            self.create_gui_structure()
+            self.create_gui_geometry()
 
     def __del__(self):
         self.program_save_state()
 
     def check_program_instances(self):
-        prefix = ".started_"
-        suffix = "_instance.check"
+        filename_check_program_instances_prefix = ".started_"
+        filename_check_program_instances_suffix = "_instance.check"
         dir_current = os.path.dirname(__file__)
         dir_destination = dir_current + "/" + folder_for_auxiliary_project_files_wo_slashes + "/"
-        if len(glob(f"{dir_destination}{prefix}*{suffix}")):
+        if len(glob(f"{dir_destination}{filename_check_program_instances_prefix}*{filename_check_program_instances_suffix}")):
             print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
             self.program_exit()
-        self.temporary_file = NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=dir_destination)
+            return True
+        self.temporary_file = NamedTemporaryFile(
+            suffix=filename_check_program_instances_suffix,
+            prefix=filename_check_program_instances_prefix,
+            dir=dir_destination)
 
     def gui_general_configure(self):
         self.master.title("STAND LAUNCHER")
-        self.master.iconbitmap(program_image_name)
+        self.master.iconbitmap(filename_program_image)
         self.master.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
         self.master["background"] = "black"
 
@@ -123,7 +128,7 @@ class Gui(Frame):
     # TRAY
     # #################################################
     def create_icon(self):
-        if os.path.exists(program_image_name):
+        if os.path.exists(filename_program_image):
             return
         box = 32
         size_ico = (box, box)
@@ -136,12 +141,12 @@ class Gui(Frame):
         drawing = ImageDraw.Draw(image_obj)
         drawing.text((9, 20), "ST", font=font, fill=(0, 0, 0))
         image_obj.thumbnail(size_ico)
-        image_obj.save(program_image_name)
+        image_obj.save(filename_program_image)
         return
 
     def tray_icon_start(self):
         tray_icon_obj = Icon('tray name')
-        tray_icon_obj.icon = Image.open(program_image_name)
+        tray_icon_obj.icon = Image.open(filename_program_image)
         menu = Menu(
             MenuItem(text='РАСКРЫТЬ', action=self.tray_action_show_gui, default=True),
             MenuItem(text='ВЫХОД', action=self.tray_action_exit)
@@ -218,7 +223,10 @@ class Gui(Frame):
     # #################################################
     # BUTTONS
     # #################################################
-    def set_default_buttons_data(self):
+    def load_gui_settings(self):
+        pass
+
+    def set_gui_default(self):
         color_button_normal_set = ["white", "#77FF77"]
         self.button_switch_window_to_default_name = "default"   # button_name wich make window as default state!
         buttons_data_default = {
@@ -292,7 +300,7 @@ class Gui(Frame):
         self.buttons_data_active = buttons_data_default
 
     def create_control_buttons(self, master):
-        self.set_default_buttons_data()
+        self.set_gui_default()
         for button_id in self.buttons_data_active:
             self.create_button(master, button_id)
 
@@ -329,7 +337,7 @@ class Gui(Frame):
 
     # BUTTON FUNCTIONS
     def window_set_default_all_functions(self):
-        self.set_default_buttons_data()
+        self.set_gui_default()
         self.window_control_fullscreen(flag=False)
         self.window_control_top(flag=False)
         self.window_control_independent(flag=False)
@@ -360,7 +368,7 @@ class Gui(Frame):
         self.master.wm_attributes("-topmost", flag)
 
     def window_set_default(self, widget):
-        self.set_default_buttons_data()
+        self.set_gui_default()
         remaining_buttons_to_reset = self.buttons_data_active.copy()
 
         parent_widget_name = widget.winfo_parent()      # .!frame
@@ -404,6 +412,7 @@ class Gui(Frame):
         self.master.destroy()
 
     def program_save_state(self, save_data=None):
+
         pass
 
 def main():
