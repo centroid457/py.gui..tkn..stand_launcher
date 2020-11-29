@@ -178,7 +178,7 @@ class Gui(Frame):
         self.frame_control = Frame(self.root, bg="#101010")
         self.frame_control.grid(row=1, sticky="nsew", padx=pad_external, pady=pad_external)
         Make_gui_draggable(self.root)
-        self.create_control_buttons(self.frame_control)
+        self.create_gui_control_buttons(self.frame_control)
 
         # ======= FRAME-2 (SETTINGS) ====================
         self.frame_settings = Frame(self.root, bg="#505050", height=30)
@@ -308,21 +308,18 @@ class Gui(Frame):
         }
         self.buttons_main_gui_control_data_active = buttons_main_gui_control_data_default
 
-    def create_control_buttons(self, root):
+    def create_gui_control_buttons(self, frame):
         self.set_gui_default()
         for button_id in self.buttons_main_gui_control_data_active:
-            self.create_button(root, button_id)
-
-    def create_button(self, frame, button_id):
-        button_obj = Button(frame)
-        button_data = self.buttons_main_gui_control_data_active[button_id]
-        button_obj["text"] = button_data["text"]
-        if button_obj["text"] == "":       # disable blank buttons
-            button_obj["state"] = "disabled"
-        button_obj["width"] = 3 if len(button_obj["text"]) < 3 else None
-        button_obj["bg"] = button_data["bg"][0]
-        button_obj.bind("<Button-1>", self.buttons_handler)
-        button_obj.pack(side="left")
+            button_obj = Button(frame)
+            button_data = self.buttons_main_gui_control_data_active[button_id]
+            button_obj["text"] = button_data["text"]
+            if button_obj["text"] == "":       # disable blank buttons
+                button_obj["state"] = "disabled"
+            button_obj["width"] = 3 if len(button_data["text"]) < 3 else None
+            button_obj["bg"] = button_data["bg"][0]
+            button_obj.bind("<Button-1>", self.buttons_handler)
+            button_obj.pack(side="left")
 
     def buttons_handler(self, event):
         for button_id in self.buttons_main_gui_control_data_active:
