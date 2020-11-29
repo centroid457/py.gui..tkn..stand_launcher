@@ -12,7 +12,6 @@ from time import sleep
 from tkinter import Tk, Frame, Button, Label, BOTH
 from tempfile import NamedTemporaryFile
 from threading import Thread
-from collections import deque
 
 # NEED TO INSTALL
 from PIL import Image, ImageDraw, ImageFont     # pip3 install pillow
@@ -242,67 +241,67 @@ class Gui(Frame):
             "button_window_blank": {
                 "flag": None,
                 "text": chr(9995),
-                "bg": deque(["white"]),
+                "bg": ["white"],
                 "command": lambda flag: None,
             },
             "button_window_switch_to_default": {
                 "flag": None,
                 "text": self.button_switch_window_to_default_name,
-                "bg": deque(["white"]),
+                "bg": ["white"],
                 "command": lambda widget: self.window_set_default(widget=widget),
             },
             "button_window_short": {
                 "flag": False,
                 "text": chr(9624),
-                "bg": deque(color_button_normal_set),
+                "bg": color_button_normal_set,
                 "command": lambda flag: self.window_short(flag=flag),
             },
             "button_window_exit": {             # first level it's only id! you can change it any time
                 "flag": None,                   # None mean it will always do the same things, flag not used
                 "text": chr(9587),              # text on the button
-                "bg": deque(["#FF6666"]),       # second color is for flaged button state, it will rotating
+                "bg": ["#FF6666"],       # second color is for flaged button state, it will rotating
                 "command": lambda flag: self.program_exit(),
             },
             "button_window_fullscreen": {
                 "flag": False,
                 "text": chr(9744),
-                "bg": deque(color_button_normal_set),
+                "bg": color_button_normal_set,
                 "command": lambda flag: self.window_control_fullscreen(flag=flag),
             },
             "button_window_minimize": {
                 "flag": None,
                 "text": "_",
-                "bg": deque(["white"]),
+                "bg": ["white"],
                 "command": lambda flag: self.window_control_minimize(),
             },
             "button_program_restart": {
                 "flag": None,
                 "text": "restart",
-                "bg": deque(["#FF6666"]),
+                "bg": ["#FF6666"],
                 "command": lambda flag: self.program_restart(),
             },
             "button_window_moveto00": {
                 "flag": None,
                 "text": chr(8689),
-                "bg": deque(["white"]),
+                "bg": ["white"],
                 "command": lambda flag: self.window_move_to_00(),
             },
             "button_window_topalways": {
                 "flag": False,
                 "text": "top",
-                "bg": deque(color_button_normal_set),
+                "bg": color_button_normal_set,
                 "command": lambda flag: self.window_control_top(flag=flag),
             },
             "button_window_independent": {
                 "flag": False,
                 "text": chr(10043),
-                "bg": deque(color_button_normal_set),
+                "bg": color_button_normal_set,
                 "command": lambda flag: self.window_control_independent(flag=flag),
             },
             "button_window_settings": {
                 "flag": False,
                 "text": "Настройки",
-                "bg": deque(color_button_normal_set),
+                "bg": color_button_normal_set,
                 "command": lambda flag: self.frame_settings_open(flag=flag),
             },
         }
@@ -332,16 +331,20 @@ class Gui(Frame):
                     button_data["command"](widget=event.widget)
                     return
 
-                # ROTATE data: FLAG and BG
-                button_data["bg"].rotate(1)
+                # CHANGE FLAG
                 flag_old = button_data["flag"]
-                flag_new = None if flag_old is None else not flag_old
-                button_data["flag"] = flag_new
+                if flag_old is not None:
+                    flag_new = not flag_old
+                    button_data["flag"] = flag_new
+                    # CHANGE windget
+                    event.widget["bg"] = button_data["bg"][flag_new]
+                else:
+                    flag_new = None
 
-                # CHANGE rotated data in windget
-                event.widget["bg"] = button_data["bg"][0]
+                # EXECUTE COMMAND
                 button_data["command"](flag=flag_new)
-                return
+                # EXIT for-cycle
+                return      # do not delete!
 
     # BUTTON FUNCTIONS
     def gui_apply_settings(self, set_default=False):
