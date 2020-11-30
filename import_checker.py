@@ -7,12 +7,15 @@ offer try to install.
 
 import re
 import os
+import sys
 import pkgutil
 import fileinput
+import subprocess
 from glob import glob
+from tkinter import Tk, Frame, Button, Label, BOTH
 
 
-modules_must_install = {
+modules_can_install = {
     # "IMPORT NAME IN PROJECT", "PIP INSTALL NAME")
     # different names
     "PIL": "pillow",
@@ -34,14 +37,13 @@ modules_must_install = {
 
 
 def main():
-    modules_found_built_in = []
-    modules_found_installed = []
-    modules_found_not_installed = []
-    modules_found_not_recognized = []
-
     python_files_found_in_directory_list = find_all_python_files()
     modules_found_in_files_set = find_all_importing_modules(python_files_found_in_directory_list)
     ranked_modules_dict = rank_modules(modules_found_in_files_set)
+
+    root = Tk()
+    app = Gui(root=root, modules_data=ranked_modules_dict)
+    app.mainloop()
 
 
 def find_all_python_files(path=None):
@@ -51,7 +53,7 @@ def find_all_python_files(path=None):
         if file_name != os.path.basename(__file__):
             files_found_list.append(file_name)
 
-    print(files_found_list)
+    #print(files_found_list)
     return files_found_list
 
 
@@ -74,7 +76,7 @@ def find_all_importing_modules(file_list):
         if found_text_group is not None:
             modules_found.update(_parse_raw_modules_data(found_text_group))
 
-    print(modules_found)
+    #print(modules_found)
     return modules_found
 
 
@@ -94,7 +96,7 @@ def rank_modules(modules_in_files_set):
             modules_in_files_ranked_dict.update({module: "###BAD###"})
 
 
-    print(modules_in_files_ranked_dict)
+    #print(modules_in_files_ranked_dict)
     return modules_in_files_ranked_dict
 
 
@@ -112,5 +114,92 @@ def _get_system_modules():
     #print(modules_in_system)
     return modules_in_system
 
+
+class Gui(Frame):
+    """ main GUI window """
+    def __init__(self, root=None, modules_data=None):
+        super().__init__(root)
+        self.root = root
+        self.modules_data = modules_data
+        self.gui_general_configure()
+        self.create_gui_structure()
+        self.create_gui_geometry()
+        self.fill_modules()
+
+    def gui_general_configure(self):
+        self.root.title("IMPORT CHECHER")
+        self.root["bg"] = "black"
+
+    def create_gui_geometry(self):
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        window_width = 800
+        window_height = 200
+        x = (screen_width - window_width) / 2
+        y = (screen_height - window_height) / 2
+        self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
+
+    # #################################################
+    # FRAMES
+    # #################################################
+    def create_gui_structure(self):
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure([1, 2], weight=0)
+        self.root.rowconfigure(3, weight=1)
+        pad_external = 10
+
+        # ======= FRAME-1 (WINDOW CONTROL) ====================
+        self.frame_control = Frame(self.root, bg="#101010")
+        self.frame_control.grid(row=1, sticky="nsew", padx=pad_external, pady=pad_external)
+
+        # ======= FRAME-2 (INFO) ====================
+        self.frame_info = Frame(self.root, bg="#505050", height=30)
+        self.frame_info.pack_propagate(0)  # hear it is necessary
+        self.frame_info.grid(row=2, sticky="ew", padx=pad_external, pady=0)
+
+        # ======= FRAME-3 (MODULES) ====================
+        self.frame_modules = Frame(self.root, bg="grey")
+        self.frame_modules.grid(row=3, sticky="snew", padx=pad_external, pady=pad_external)
+
+        # ------- FRAME-3 /1 GOOD -----------------
+        self.frame_modules_good = Frame(self.frame_modules, bg="#55FF55", width=200, height=200)
+        self.frame_modules_good.pack(side='left', fill=BOTH, expand=1, padx=1, pady=1)
+        self.frame_modules_good.pack_propagate(1)
+
+        # ------- FRAME-1 /2 TRY -----------------
+        self.frame_modules_try_install = Frame(self.frame_modules, bg="#FF5555")
+        self.frame_modules_try_install.pack(side='left', fill=BOTH, expand=1, padx=1, pady=1)
+        self.frame_modules_try_install.pack_propagate(1)
+
+
+    def fill_modules(self):
+        for module in self.modules_data:
+            if self.modules_data[module] != "###BAD###":
+                Label(self.frame_modules_good, text=module, fg="black", bg="#55FF55").pack(fill="x", expand=0)
+            else:
+                btn = Button(self.frame_modules_try_install, text=module)
+                btn["command"] = self.install_module(module)
+                btn.pack()
+
+    def install_module(self, module_name):
+        if module_name in modules_can_install:
+            return lambda: (
+                subprocess.run(f"py -m pip install {modules_can_install[module_name]}"),
+                self.program_restart()
+            )
+        else:
+            return lambda: (
+                subprocess.run(f"py -m pip install {module_name}"),
+                self.program_restart()
+            )
+
+    def program_restart(self):
+        """Restarts the current program.
+        Note: this function does not return. Any cleanup action (like
+        saving data) must be done before calling this function."""
+        python_exe = sys.executable
+        # If you want to work with correct restart button DO NOT USE ANY PRINT-function befor!!!!
+        # else programm will not actually restart (in PyCharm will not start after second Restart)
+        os.execl(python_exe, python_exe, *sys.argv)
 
 main()
