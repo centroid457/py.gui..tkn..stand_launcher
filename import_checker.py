@@ -7,10 +7,12 @@ offer try to install.
 
 import re
 import os
+import pkgutil
 import fileinput
 from glob import glob
 
-modules_need_to_install = {
+
+modules_must_install = {
     # "IMPORT NAME IN PROJECT", "PIP INSTALL NAME")
     # different names
     "PIL": "pillow",
@@ -32,19 +34,18 @@ modules_need_to_install = {
 
 
 def main():
-    python_files_found_in_directory = []
-
-    modules_found_all = []
     modules_found_built_in = []
     modules_found_installed = []
     modules_found_not_installed = []
     modules_found_not_recognized = []
 
-    python_files_found_in_directory = find_all_python_files()
-    modules_found_all = find_all_importing_modules(python_files_found_in_directory)
+    python_files_found_in_directory_list = find_all_python_files()
+    modules_found_in_files_set = find_all_importing_modules(python_files_found_in_directory_list)
+    rank_modules_result = rank_modules(modules_found_in_files_set)
 
 
 def find_all_python_files(path=None):
+    # by default find all modules in current directory with all subdirectories
     files_found_list = []
     for file_name in glob("**/*.py*", recursive=True):
         if file_name != os.path.basename(__file__):
@@ -55,6 +56,8 @@ def find_all_python_files(path=None):
 
 
 def find_all_importing_modules(file_list):
+    # 1. find all import strings in all files
+    # 2. parse all module names in them
     modules_found = set()
 
     openhook = fileinput.hook_encoded(encoding="utf8", errors=None)
@@ -69,20 +72,57 @@ def find_all_importing_modules(file_list):
 
         found_text_group = match1[1] if match1 else match2[1] if match2 else None
         if found_text_group is not None:
-            modules_found.update(parse_raw_modules_data(found_text_group))
+            modules_found.update(_parse_raw_modules_data(found_text_group))
 
     print(modules_found)
     return modules_found
 
 
-def parse_raw_modules_data(raw_modules_data):
+def _parse_raw_modules_data(raw_modules_data):
     raw_modules_data_wo_spaces = re.sub(r'\s', '', raw_modules_data)
     modules_names_list = raw_modules_data_wo_spaces.split(sep=",")
     return set(modules_names_list)
 
+def rank_modules(modules_set):
+    modules_installed_set = set()
+    modules_not_installed_set = set()
 
-def detect_incorrect_modules():
-    pass
+    (modules_in_system_1_DLLs,
+    modules_in_system_2_lib,
+    modules_in_system_3_site_packages) = get_system_modules()
+
+    for module in modules_set:
+        print(module)
+        modules_installed_set.add(module)
+        modules_not_installed_set.add(module)
+    print(modules_installed_set, modules_not_installed_set)
+    return (modules_installed_set, modules_not_installed_set)
+
+
+def get_system_modules():
+    modules_in_system_1_DLLs = set()
+    modules_in_system_2_lib = set()
+    modules_in_system_3_site_packages = set()
+
+    for module_in_system in pkgutil.iter_modules():
+        my_string = str(module_in_system.module_finder)
+        # print(my_string)
+        mask = r".*[\\/]+([^\\/']+)['\)]+$"
+        match = re.fullmatch(mask, my_string)
+        if match[1] == "DLLs":
+            modules_in_system_1_DLLs.add(module_in_system.name)
+        elif match[1] == "lib":
+            modules_in_system_2_lib.add(module_in_system.name)
+        elif match[1] == "site-packages":
+            modules_in_system_3_site_packages.add(module_in_system.name)
+
+    print("DLLs", modules_in_system_1_DLLs)
+    print("lib", modules_in_system_2_lib)
+    print("site-packages", modules_in_system_3_site_packages)
+    return (modules_in_system_1_DLLs,
+            modules_in_system_2_lib,
+            modules_in_system_3_site_packages
+            )
 
 
 main()
