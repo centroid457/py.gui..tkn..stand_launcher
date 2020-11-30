@@ -347,10 +347,25 @@ class Gui(Frame):
 
     # BUTTON FUNCTIONS
     def gui_apply_settings(self):
+        #self.widgets_all_iter()
         self.window_control_fullscreen(flag=False)
         self.window_control_top(flag=False)
         self.window_control_independent(flag=False)
         self.frame_settings_open(flag=False)
+
+    def widgets_all_iter(self, my_frame=None, level="."):
+        if my_frame == None:
+            my_frame = self.root
+        frame_childrens = my_frame.children
+        for wgt in frame_childrens:
+            wgt_current_name = wgt
+            if wgt[0:6] == "!frame":
+                print(level + wgt_current_name)
+                widgets_all_iter(my_frame=frame_childrens[wgt], level=level + wgt_current_name)
+
+            elif wgt[0:7] == "!button":
+                print(level + wgt_current_name)
+                change_widget(frame_childrens[wgt])
 
     def window_move_to_00(self):
         self.root.geometry("+0+0")
@@ -379,7 +394,7 @@ class Gui(Frame):
     def window_set_default(self, widget):
         self.load_gui_settings(set_default=True)
         self.gui_apply_settings()
-        #return
+        return
         remaining_buttons_to_reset = self.buttons_main_gui_control_data_active.copy()
 
         parent_widget_name = widget.winfo_parent()      # .!frame
