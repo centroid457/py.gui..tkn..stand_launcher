@@ -194,20 +194,16 @@ class Gui(Frame):
                 Label(self.frame_modules_good, text=module, fg="black", bg="#55FF55").pack(fill="x", expand=0)
             else:
                 btn = Button(self.frame_modules_try_install, text=f"pip install [{module}]")
-                btn["command"] = self.install_module(module)
+                btn["command"] = self.start_install_module(module)
                 btn.pack()
 
-    def install_module(self, module_name):
-        if module_name in modules_can_install:
-            return lambda: (
-                subprocess.run(f"py -m pip install {modules_can_install[module_name]}"),
-                self.program_restart()
-            )
-        else:
-            return lambda: (
-                subprocess.run(f"py -m pip install {module_name}"),
-                self.program_restart()
-            )
+    def start_install_module(self, module_name):
+        module_name_cmd = modules_can_install[module_name] if module_name in modules_can_install else module_name
+        return lambda: (
+            subprocess.run(f"py -m pip install {module_name_cmd}"),
+            self.program_restart()
+        )
+
 
     def program_restart(self):
         """Restarts the current program.
