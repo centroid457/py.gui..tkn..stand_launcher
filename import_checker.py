@@ -1,4 +1,9 @@
 """
+*********************
+HOW TO USE:
+import import_checker
+import_checker.main(file_for_path=__file__)
+*********************
 it will find import in all files only in current directory!
 Check modules which will import in project.
 find not installed.
@@ -13,6 +18,8 @@ import fileinput
 import subprocess
 from glob import glob
 from tkinter import Tk, Frame, Button, Label, BOTH
+
+sys.dont_write_bytecode = True  # do not compyle modules, will not appiar files modulename_*.pyc with new folder __pycache__
 
 
 modules_can_install = {
@@ -36,8 +43,9 @@ modules_can_install = {
 }
 
 
-def main():
-    python_files_found_in_directory_list = find_all_python_files()
+def main(file_for_path=__file__):
+    path_find_wo_slash = os.path.dirname(file_for_path)
+    python_files_found_in_directory_list = find_all_python_files(path=path_find_wo_slash)
     modules_found_in_files_set = find_all_importing_modules(python_files_found_in_directory_list)
     ranked_modules_dict = rank_modules(modules_found_in_files_set)
 
@@ -46,14 +54,14 @@ def main():
     app.mainloop()
 
 
-def find_all_python_files(path=None):
+def find_all_python_files(path):
     # by default find all modules in current directory with all subdirectories
     files_found_list = []
-    for file_name in glob("**/*.py*", recursive=True):
+    for file_name in glob(path+"/**/*.py*", recursive=True):
         if file_name != os.path.basename(__file__):
             files_found_list.append(file_name)
 
-    #print(files_found_list)
+    print(files_found_list)
     return files_found_list
 
 
@@ -94,7 +102,6 @@ def rank_modules(modules_in_files_set):
             modules_in_files_ranked_dict.update({module:modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
         except:
             modules_in_files_ranked_dict.update({module: "###BAD###"})
-
 
     #print(modules_in_files_ranked_dict)
     return modules_in_files_ranked_dict
@@ -202,4 +209,6 @@ class Gui(Frame):
         # else programm will not actually restart (in PyCharm will not start after second Restart)
         os.execl(python_exe, python_exe, *sys.argv)
 
-main()
+
+if __name__ == '__main__':
+    main()
