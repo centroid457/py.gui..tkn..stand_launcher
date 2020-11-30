@@ -14,6 +14,9 @@ Offer try to install.
 ---------------------
 WHY DON'T USE MODULEFINDER???
 Because it work incorrect! can't find TIME anв SYS modules!
+---------------------
+TEST LINE
+import TEST_LINE
 """
 
 import re
@@ -45,6 +48,8 @@ modules_can_install = {
     "pygame": "pygame",
     "requests": "requests",
 }
+
+mark_module_bad = "###BAD###"
 
 
 def main(file_for_path=__file__):
@@ -105,7 +110,7 @@ def rank_modules(modules_in_files_set):
             exec(f'import {module}')
             modules_in_files_ranked_dict.update({module:modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
         except:
-            modules_in_files_ranked_dict.update({module: "###BAD###"})
+            modules_in_files_ranked_dict.update({module: mark_module_bad})
 
     #print(modules_in_files_ranked_dict)
     return modules_in_files_ranked_dict
@@ -135,7 +140,7 @@ class Gui(Frame):
         self.gui_general_configure()
         self.create_gui_structure()
         self.create_gui_geometry()
-        self.fill_modules()
+        self.fill_table()
 
     def gui_general_configure(self):
         self.root.title("IMPORT CHECHER")
@@ -183,12 +188,12 @@ class Gui(Frame):
         self.frame_modules_try_install.pack_propagate(1)
 
 
-    def fill_modules(self):
+    def fill_table(self):
         for module in self.modules_data:
-            if self.modules_data[module] != "###BAD###":
+            if self.modules_data[module] != mark_module_bad:
                 Label(self.frame_modules_good, text=module, fg="black", bg="#55FF55").pack(fill="x", expand=0)
             else:
-                btn = Button(self.frame_modules_try_install, text=module)
+                btn = Button(self.frame_modules_try_install, text=f"pip install [{module}]")
                 btn["command"] = self.install_module(module)
                 btn.pack()
 
