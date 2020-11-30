@@ -1,13 +1,19 @@
 """
-*********************
 HOW TO USE:
+1. add in .gitignore line "__pycache__"
+2. add lines in your script:
+*********************
 import import_checker
 import_checker.main(file_for_path=__file__)
 *********************
-it will find import in all files only in current directory!
+WHAT IT WILL DO
+Find all import lines in all files in the directory with recursion!
 Check modules which will import in project.
-find not installed.
-offer try to install.
+Find not installed.
+Offer try to install.
+---------------------
+WHY DON'T USE MODULEFINDER???
+Because it work incorrect! can't find TIME anв SYS modules!
 """
 
 import re
@@ -18,8 +24,6 @@ import fileinput
 import subprocess
 from glob import glob
 from tkinter import Tk, Frame, Button, Label, BOTH
-
-sys.dont_write_bytecode = True  # do not compyle modules, will not appiar files modulename_*.pyc with new folder __pycache__
 
 
 modules_can_install = {
@@ -58,10 +62,10 @@ def find_all_python_files(path):
     # by default find all modules in current directory with all subdirectories
     files_found_list = []
     for file_name in glob(path+"/**/*.py*", recursive=True):
-        if file_name != os.path.basename(__file__):
+        if file_name != os.path.basename(__file__) and os.path.splitext(file_name)[1] in (".py", ".pyw"):
             files_found_list.append(file_name)
 
-    print(files_found_list)
+    # print(files_found_list)
     return files_found_list
 
 
