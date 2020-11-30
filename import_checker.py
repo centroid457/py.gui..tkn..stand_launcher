@@ -41,7 +41,7 @@ def main():
 
     python_files_found_in_directory_list = find_all_python_files()
     modules_found_in_files_set = find_all_importing_modules(python_files_found_in_directory_list)
-    rank_modules_result = rank_modules(modules_found_in_files_set)
+    ranked_modules_dict = rank_modules(modules_found_in_files_set)
 
 
 def find_all_python_files(path=None):
@@ -86,13 +86,14 @@ def _parse_raw_modules_data(raw_modules_data):
 def rank_modules(modules_in_files_set):
     modules_in_files_ranked_dict = {}
     modules_in_system_dict = _get_system_modules()
-
-
-    return
     for module in modules_in_files_set:
-        print(module)
-        modules_in_files_ranked_dict.update({module:modules_in_system_dict[module]})
-        print(modules_in_files_ranked_dict)
+        try:
+            exec(f'import {module}')
+            modules_in_files_ranked_dict.update({module:modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
+        except:
+            modules_in_files_ranked_dict.update({module: "###BAD###"})
+
+
     print(modules_in_files_ranked_dict)
     return modules_in_files_ranked_dict
 
@@ -108,7 +109,7 @@ def _get_system_modules():
         match = re.fullmatch(mask, my_string)
         modules_in_system.update({module_in_system.name:match[1]})
 
-    print(modules_in_system)
+    #print(modules_in_system)
     return modules_in_system
 
 
