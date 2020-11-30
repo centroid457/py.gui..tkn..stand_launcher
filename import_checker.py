@@ -83,46 +83,33 @@ def _parse_raw_modules_data(raw_modules_data):
     modules_names_list = raw_modules_data_wo_spaces.split(sep=",")
     return set(modules_names_list)
 
-def rank_modules(modules_set):
-    modules_installed_set = set()
-    modules_not_installed_set = set()
+def rank_modules(modules_in_files_set):
+    modules_in_files_ranked_dict = {}
+    modules_in_system_dict = _get_system_modules()
 
-    (modules_in_system_1_DLLs,
-    modules_in_system_2_lib,
-    modules_in_system_3_site_packages) = get_system_modules()
 
-    for module in modules_set:
+    return
+    for module in modules_in_files_set:
         print(module)
-        modules_installed_set.add(module)
-        modules_not_installed_set.add(module)
-    print(modules_installed_set, modules_not_installed_set)
-    return (modules_installed_set, modules_not_installed_set)
+        modules_in_files_ranked_dict.update({module:modules_in_system_dict[module]})
+        print(modules_in_files_ranked_dict)
+    print(modules_in_files_ranked_dict)
+    return modules_in_files_ranked_dict
 
 
-def get_system_modules():
-    modules_in_system_1_DLLs = set()
-    modules_in_system_2_lib = set()
-    modules_in_system_3_site_packages = set()
+def _get_system_modules():
+    modules_in_system = {}
 
     for module_in_system in pkgutil.iter_modules():
+        #print(module_in_system.name)
         my_string = str(module_in_system.module_finder)
         # print(my_string)
         mask = r".*[\\/]+([^\\/']+)['\)]+$"
         match = re.fullmatch(mask, my_string)
-        if match[1] == "DLLs":
-            modules_in_system_1_DLLs.add(module_in_system.name)
-        elif match[1] == "lib":
-            modules_in_system_2_lib.add(module_in_system.name)
-        elif match[1] == "site-packages":
-            modules_in_system_3_site_packages.add(module_in_system.name)
+        modules_in_system.update({module_in_system.name:match[1]})
 
-    print("DLLs", modules_in_system_1_DLLs)
-    print("lib", modules_in_system_2_lib)
-    print("site-packages", modules_in_system_3_site_packages)
-    return (modules_in_system_1_DLLs,
-            modules_in_system_2_lib,
-            modules_in_system_3_site_packages
-            )
+    print(modules_in_system)
+    return modules_in_system
 
 
 main()
