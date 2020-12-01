@@ -130,7 +130,9 @@ def _get_system_modules():
     #print(modules_in_system)
     return modules_in_system
 
-
+# #################################################
+# GUI
+# #################################################
 class Gui(Frame):
     """ main GUI window """
     def __init__(self, root=None, modules_data=None):
