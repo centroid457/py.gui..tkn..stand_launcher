@@ -85,7 +85,7 @@ class Make_gui_draggable:
 class Gui(Frame):
     """ main GUI window """
     def __init__(self, root=None):
-        super().__init__(root)
+        super().__init__()
         if not self.check_program_instances():
             self.root = root
             self.window_state = ('normal', "zoomed")
