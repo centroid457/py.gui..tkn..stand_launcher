@@ -57,6 +57,7 @@ MARK_MODULE_BAD = "###BAD###"
 
 
 def main(file_for_path=__file__):
+    global python_files_found_in_directory_list
     path_find_wo_slash = os.path.dirname(file_for_path)
     python_files_found_in_directory_list = find_all_python_files(path=path_find_wo_slash)
     modules_found_in_files_set = find_all_importing_modules(python_files_found_in_directory_list)
@@ -176,8 +177,13 @@ class Gui(Frame):
 
         # ======= FRAME-2 (INFO) ====================
         self.frame_info = Frame(self.root, bg="#505050", height=30)
-        self.frame_info.pack_propagate(0)  # hear it is necessary
+        self.frame_info.pack_propagate()  # hear it is necessary
         self.frame_info.grid(row=2, sticky="ew", padx=pad_external, pady=0)
+
+        lable = Label(self.frame_info, text="if button is green - it will definitly be installed", bg="#d0d0d0")
+        lable["text"] = "\n".join(["FOUND FILES:"] + python_files_found_in_directory_list)
+        lable.pack(fill="x", expand=0)
+
 
         # ======= FRAME-3 (MODULES) ====================
         self.frame_modules = Frame(self.root, bg="grey")
@@ -192,6 +198,8 @@ class Gui(Frame):
         self.frame_modules_try_install = Frame(self.frame_modules, bg="#FF5555")
         self.frame_modules_try_install.pack(side='left', fill=BOTH, expand=1, padx=1, pady=1)
         self.frame_modules_try_install.pack_propagate(1)
+
+        Label(self.frame_modules_try_install, text="if button is green - it will definitly be installed", bg="#FF5555").pack(fill="x", expand=0)
 
 
     def fill_table(self):
