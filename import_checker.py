@@ -30,23 +30,23 @@ from tkinter import Tk, Frame, Button, Label, BOTH
 
 
 modules_can_install = {
-    # "IMPORT NAME IN PROJECT", "PIP INSTALL NAME")
+    # "IMPORT NAME IN PROJECT": "PIP INSTALL NAME"
     # different names
-    "PIL": "pillow",
     "wx": "wxPython",
+    "PIL": "pillow",
 
     # similare names
-    "pystray": "pystray",
+    "plotly": "plotly",
+    "pandas": "pandas",
+    "pygame": "pygame",
     "psutil": "psutil",
+    "pystray": "pystray",
+    "requests": "requests",
     "tabulate": "tabulate",
     "openpyxl": "openpyxl",
-    "pandas": "pandas",
-    "pyscreenshot": "pyscreenshot",
     "playsound": "playsound",
     "matplotlib": "matplotlib",
-    "plotly": "plotly",
-    "pygame": "pygame",
-    "requests": "requests",
+    "pyscreenshot": "pyscreenshot",
 }
 
 mark_module_bad = "###BAD###"
