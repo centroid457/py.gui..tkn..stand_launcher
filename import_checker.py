@@ -1,22 +1,25 @@
 """
 HOW TO USE:
 1. add in .gitignore line "__pycache__"
-2. add lines in your script:
+2. add this script to your project directory
+3. add lines in your main script in place before first import line:
 *********************
 import import_checker
 import_checker.main(file_for_path=__file__)
 *********************
 WHAT IT WILL DO
 Find all import lines in all files in the directory with recursion!
+Lines only with SPACE symbols before specific code words.
 Check modules which will import in project.
 Find not installed.
 Offer try to install.
 ---------------------
 WHY DON'T USE MODULEFINDER???
-Because it work incorrect! can't find TIME anв SYS modules!
+Because it work incorrect! can't find TIME and SYS modules!
 ---------------------
 TEST LINE
-import TEST_LINE
+import TEST_LINE1
+#import TEST_LINE2
 """
 
 import re
@@ -36,6 +39,7 @@ modules_can_install = {
     "PIL": "pillow",
 
     # similare names
+    "TEST_LINE1": "TEST_LINE1",
     "plotly": "plotly",
     "pandas": "pandas",
     "pygame": "pygame",
@@ -49,7 +53,7 @@ modules_can_install = {
     "pyscreenshot": "pyscreenshot",
 }
 
-mark_module_bad = "###BAD###"
+MARK_MODULE_BAD = "###BAD###"
 
 
 def main(file_for_path=__file__):
@@ -110,7 +114,7 @@ def rank_modules(modules_in_files_set):
             exec(f'import {module}')
             modules_in_files_ranked_dict.update({module:modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
         except:
-            modules_in_files_ranked_dict.update({module: mark_module_bad})
+            modules_in_files_ranked_dict.update({module: MARK_MODULE_BAD})
 
     #print(modules_in_files_ranked_dict)
     return modules_in_files_ranked_dict
@@ -192,15 +196,17 @@ class Gui(Frame):
 
     def fill_table(self):
         for module in self.modules_data:
-            if self.modules_data[module] != mark_module_bad:
+            self.module_can_install_check = module in modules_can_install
+            if self.modules_data[module] != MARK_MODULE_BAD:
                 Label(self.frame_modules_good, text=module, fg="black", bg="#55FF55").pack(fill="x", expand=0)
             else:
                 btn = Button(self.frame_modules_try_install, text=f"pip install [{module}]")
+                btn["bg"] = "#55FF55" if self.module_can_install_check else None
                 btn["command"] = self.start_install_module(module)
                 btn.pack()
 
     def start_install_module(self, module_name):
-        module_name_cmd = modules_can_install[module_name] if module_name in modules_can_install else module_name
+        module_name_cmd = modules_can_install[module_name] if self.module_can_install_check else module_name
         return lambda: (
             subprocess.run(f"py -m pip install {module_name_cmd}"),
             self.program_restart()
