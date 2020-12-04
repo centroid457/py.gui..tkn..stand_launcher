@@ -54,14 +54,15 @@ modules_can_install = {
 }
 
 MARK_MODULE_BAD = "###BAD###"
+modules_found = set()
 
 
 def main(file_for_path=__file__):
     global python_files_found_in_directory_list
     path_find_wo_slash = os.path.dirname(file_for_path)
     python_files_found_in_directory_list = find_all_python_files(path=path_find_wo_slash)
-    modules_found_in_files_set = find_all_importing_modules(python_files_found_in_directory_list)
-    ranked_modules_dict = rank_modules(modules_found_in_files_set)
+    find_all_importing_modules(python_files_found_in_directory_list)
+    ranked_modules_dict = rank_modules(modules_found)
 
     root = Tk()
     app = Gui(root=root, modules_data=ranked_modules_dict)
@@ -82,24 +83,29 @@ def find_all_python_files(path):
 def find_all_importing_modules(file_list):
     # 1. find all import strings in all files
     # 2. parse all module names in them
-    modules_found = set()
 
     openhook = fileinput.hook_encoded(encoding="utf8", errors=None)
     for line in fileinput.input(files=file_list, mode="r", openhook=openhook):
         #print(f"[descriptor={fileinput.fileno():2}]\tfile=[{fileinput.filename()}]\tline=[{fileinput.filelineno()}]\t[{line}]")
-        mask_for_import = r'\s*import\s+(.+)(\s+as\s+.+)?[\t\r\n\f]*'
-        mask_for_from_import = r'\s*from\s+(.+)\s+import\s+.*[\t\r\n\f]*'
-
-        match1 = re.fullmatch(mask_for_import, line)
-        match2 = re.fullmatch(mask_for_from_import, line)
-        #print(match1, match2)
-
-        found_text_group = match1[1] if match1 else match2[1] if match2 else None
-        if found_text_group is not None:
-            modules_found.update(_parse_raw_modules_data(found_text_group))
+        _parse_line(line)
 
     #print(modules_found)
-    return modules_found
+    return
+
+
+def _parse_line(line):
+    mask_for_import = r'\s*import\s+(.+)(\s+as\s+.+)?[\t\r\n\f]*'
+    mask_for_from_import = r'\s*from\s+(.+)\s+import\s+.*[\t\r\n\f]*'
+
+    match1 = re.fullmatch(mask_for_import, line)
+    match2 = re.fullmatch(mask_for_from_import, line)
+    # print(match1, match2)
+
+    found_text_group = match1[1] if match1 else match2[1] if match2 else None
+    if found_text_group is not None:
+        modules_found.update(_parse_raw_modules_data(found_text_group))
+
+    return modules_found    # return just for testing!
 
 
 def _parse_raw_modules_data(raw_modules_data):
