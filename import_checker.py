@@ -67,6 +67,7 @@ def main(file_for_path=__file__):
     find_all_python_files_generate(path=path_find_wo_slash)
     find_all_importing_modules(python_files_found_in_directory_list)
     rank_modules_dict_generate()
+    sort_ranked_modules_dict()
 
     root = Tk()
     app = Gui(root=root, modules_data=ranked_modules_dict)
@@ -141,6 +142,12 @@ def rank_modules_dict_generate(module_set=modules_found_infiles):
     #print(modules_in_files_ranked_dict)
     return
 
+def sort_ranked_modules_dict():
+    global ranked_modules_dict
+    print(ranked_modules_dict)
+    sorted_dict_keys_list = sorted(ranked_modules_dict, key=lambda key: key.lower())
+    ranked_modules_dict = dict(zip(sorted_dict_keys_list, [ranked_modules_dict[value] for value in sorted_dict_keys_list]))
+    print(ranked_modules_dict)
 
 def _update_system_modules_dict():
     # produce dict - all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
