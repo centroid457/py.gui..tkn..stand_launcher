@@ -61,7 +61,7 @@ ranked_modules_dict = {}
 
 
 def main(file_for_path=__file__):
-    _update_system_modules_dict()
+    update_system_modules_dict()
 
     path_find_wo_slash = os.path.dirname(file_for_path)
     find_all_python_files_generate(path=path_find_wo_slash)
@@ -147,7 +147,7 @@ def sort_ranked_modules_dict():
     sorted_dict_keys_list = sorted(ranked_modules_dict, key=lambda key: key.lower())
     ranked_modules_dict = dict(zip(sorted_dict_keys_list, [ranked_modules_dict[value] for value in sorted_dict_keys_list]))
 
-def _update_system_modules_dict():
+def update_system_modules_dict():
     # produce dict - all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
     for module_in_system in pkgutil.iter_modules():
         #print(module_in_system.name)
@@ -229,6 +229,7 @@ class Gui(Frame):
 
 
     def fill_table(self):
+        # fill modulenames in gui
         for module in self.modules_data:
             self.module_can_install_check = module in modules_can_install
             if self.modules_data[module] != MARK_MODULE_BAD:
