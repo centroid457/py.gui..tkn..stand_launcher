@@ -144,10 +144,8 @@ def rank_modules_dict_generate(module_set=modules_found_infiles):
 
 def sort_ranked_modules_dict():
     global ranked_modules_dict
-    print(ranked_modules_dict)
     sorted_dict_keys_list = sorted(ranked_modules_dict, key=lambda key: key.lower())
     ranked_modules_dict = dict(zip(sorted_dict_keys_list, [ranked_modules_dict[value] for value in sorted_dict_keys_list]))
-    print(ranked_modules_dict)
 
 def _update_system_modules_dict():
     # produce dict - all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
