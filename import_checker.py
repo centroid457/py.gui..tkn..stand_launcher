@@ -100,15 +100,13 @@ def _find_modulenames_set(line):
     line_wo_comments = line.split(sep="#")[0]
     modules_found_inline = set()
 
-    mask_import_as = r'\s*import\s+(.+)(\s+as\s+.+)[\t\r\n\f]*'
-    mask_import = r'\s*import\s+(.+)[\t\r\n\f]*'
+    mask_import_as = r'\s*import\s+(.+?)(\s+as\s+.+)?[\t\r\n\f]*'
     mask_from_import = r'\s*from\s+(.+)\s+import\s+.*[\t\r\n\f]*'
 
     match1 = re.fullmatch(mask_import_as, line_wo_comments)
-    match2 = re.fullmatch(mask_import, line_wo_comments)
-    match3 = re.fullmatch(mask_from_import, line_wo_comments)
+    match2 = re.fullmatch(mask_from_import, line_wo_comments)
 
-    found_modulenames_group = match1[1] if match1 else match2[1] if match2 else match3[1] if match3 else None
+    found_modulenames_group = match1[1] if match1 else match2[1] if match2 else None
     if found_modulenames_group is not None:
         modules_found_inline = _split_module_names_set(found_modulenames_group)
 
@@ -127,6 +125,7 @@ assert _find_modulenames_set(" import\t m1 as m2") == {"m1"}
 assert _find_modulenames_set(" from m1 import m2 as m3") == {"m1"}
 assert _find_modulenames_set("#from m1 import m2 as m3") == set()
 assert _find_modulenames_set("import m1 #comment import m2") == {"m1"}
+
 
 def rank_modules(modules_in_files_set):
     modules_in_files_ranked_dict = {}
