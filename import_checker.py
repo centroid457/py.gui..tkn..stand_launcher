@@ -54,37 +54,37 @@ modules_can_install = {
 }
 
 MARK_MODULE_BAD = "###BAD###"
+python_files_found_in_directory_list = []
 modules_found_infiles = set()
 modules_in_system_dict = {}
+ranked_modules_dict = {}
 
 
 def main(file_for_path=__file__):
-    global python_files_found_in_directory_list
+    _update_system_modules_dict()
+
     path_find_wo_slash = os.path.dirname(file_for_path)
-    python_files_found_in_directory_list = find_all_python_files(path=path_find_wo_slash)
+    find_all_python_files_generate(path=path_find_wo_slash)
     find_all_importing_modules(python_files_found_in_directory_list)
-    ranked_modules_dict = rank_modules(modules_found_infiles)
+    rank_modules_dict_generate()
 
     root = Tk()
     app = Gui(root=root, modules_data=ranked_modules_dict)
     app.mainloop()
 
 
-def find_all_python_files(path):
+def find_all_python_files_generate(path):
     # by default find all modules in current directory with all subdirectories
-    files_found_list = []
     for file_name in glob(path+"/**/*.py*", recursive=True):
         if file_name != os.path.basename(__file__) and os.path.splitext(file_name)[1] in (".py", ".pyw"):
-            files_found_list.append(file_name)
+            python_files_found_in_directory_list.append(file_name)
 
-    # print(files_found_list)
-    return files_found_list
+    return
 
 
 def find_all_importing_modules(file_list):
     # 1. find all import strings in all files
     # 2. parse all module names in them
-
     openhook = fileinput.hook_encoded(encoding="utf8", errors=None)
     for line in fileinput.input(files=file_list, mode="r", openhook=openhook):
         #print(f"[descriptor={fileinput.fileno():2}]\tfile=[{fileinput.filename()}]\tline=[{fileinput.filelineno()}]\t[{line}]")
@@ -95,8 +95,8 @@ def find_all_importing_modules(file_list):
 
 
 def _find_modulenames_set(line):
-    # find lines with import statement
-    # return modulenames
+    # find line with import-statements
+    # return modulenames set
     line_wo_comments = line.split(sep="#")[0]
     modules_found_inline = set()
 
@@ -113,10 +113,12 @@ def _find_modulenames_set(line):
     return modules_found_inline
 
 def _split_module_names_set(raw_modulenames_data):
+    # split text like "m1,m2" into {"m1", "m2"}
     raw_modules_data_wo_spaces = re.sub(r'\s', '', raw_modulenames_data)
     modules_names_list = raw_modules_data_wo_spaces.split(sep=",")
     return set(modules_names_list)
 
+# test correct parsing
 assert _split_module_names_set("m1,m2 ,m3,    m4,\tm5") == set([f"m{i}" for i in range(1, 6)])
 assert _find_modulenames_set("import\tm1") == {"m1"}
 assert _find_modulenames_set("#import\tm1") == set()
@@ -127,22 +129,21 @@ assert _find_modulenames_set("#from m1 import m2 as m3") == set()
 assert _find_modulenames_set("import m1 #comment import m2") == {"m1"}
 
 
-def rank_modules(modules_in_files_set):
-    modules_in_files_ranked_dict = {}
-    modules_in_system_dict = _get_system_modules()
-    for module in modules_in_files_set:
+def rank_modules_dict_generate(module_set=modules_found_infiles):
+    # detect not installed modules
+    for module in module_set:
         try:
             exec(f'import {module}')
-            modules_in_files_ranked_dict.update({module:modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
+            ranked_modules_dict.update({module:modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
         except:
-            modules_in_files_ranked_dict.update({module: MARK_MODULE_BAD})
+            ranked_modules_dict.update({module: MARK_MODULE_BAD})
 
     #print(modules_in_files_ranked_dict)
-    return modules_in_files_ranked_dict
+    return
 
 
-def _get_system_modules():
-    # all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
+def _update_system_modules_dict():
+    # produce dict - all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
     for module_in_system in pkgutil.iter_modules():
         #print(module_in_system.name)
         my_string = str(module_in_system.module_finder)
@@ -152,7 +153,8 @@ def _get_system_modules():
         modules_in_system_dict.update({module_in_system.name:match[1]})
 
     #print(modules_in_system_dict)
-    return modules_in_system_dict
+    return
+
 
 # #################################################
 # GUI
