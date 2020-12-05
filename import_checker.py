@@ -55,6 +55,7 @@ modules_can_install = {
 
 MARK_MODULE_BAD = "###BAD###"
 modules_found_infiles = set()
+modules_in_system_dict = {}
 
 
 def main(file_for_path=__file__):
@@ -98,14 +99,15 @@ def _find_modulenames_set(line):
     # return modulenames
     modules_found_inline = set()
 
-    mask_for_import = r'\s*import\s+(.+)(\s+as\s+.+)?[\t\r\n\f]*'
-    mask_for_from_import = r'\s*from\s+(.+)\s+import\s+.*[\t\r\n\f]*'
+    mask_import_as = r'\s*import\s+(.+)(\s+as\s+.+)[\t\r\n\f]*'
+    mask_import = r'\s*import\s+(.+)[\t\r\n\f]*'
+    mask_from_import = r'\s*from\s+(.+)\s+import\s+.*[\t\r\n\f]*'
 
-    match1 = re.fullmatch(mask_for_import, line)
-    match2 = re.fullmatch(mask_for_from_import, line)
-    # print(match1, match2)
+    match1 = re.fullmatch(mask_import_as, line)
+    match2 = re.fullmatch(mask_import, line)
+    match3 = re.fullmatch(mask_from_import, line)
 
-    found_modulenames_group = match1[1] if match1 else match2[1] if match2 else None
+    found_modulenames_group = match1[1] if match1 else match2[1] if match2 else match3[1] if match3 else None
     if found_modulenames_group is not None:
         modules_found_inline = _split_module_names_set(found_modulenames_group)
 
@@ -118,6 +120,8 @@ def _split_module_names_set(raw_modulenames_data):
 
 assert _split_module_names_set("m1,m2 ,m3,    m4,\tm5") == set([f"m{i}" for i in range(1, 6)])
 assert _find_modulenames_set("import\tm1") == {"m1"}
+assert _find_modulenames_set(" import\t m1,m2") == {"m1", "m2"}
+assert _find_modulenames_set(" import\t m1 as m2") == {"m1"}, _find_modulenames_set("import m1 as m2")
 
 def rank_modules(modules_in_files_set):
     modules_in_files_ranked_dict = {}
@@ -134,18 +138,17 @@ def rank_modules(modules_in_files_set):
 
 
 def _get_system_modules():
-    modules_in_system = {}
-
+    # all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
     for module_in_system in pkgutil.iter_modules():
         #print(module_in_system.name)
         my_string = str(module_in_system.module_finder)
         # print(my_string)
         mask = r".*[\\/]+([^\\/']+)['\)]+$"
         match = re.fullmatch(mask, my_string)
-        modules_in_system.update({module_in_system.name:match[1]})
+        modules_in_system_dict.update({module_in_system.name:match[1]})
 
-    #print(modules_in_system)
-    return modules_in_system
+    #print(modules_in_system_dict)
+    return modules_in_system_dict
 
 # #################################################
 # GUI
