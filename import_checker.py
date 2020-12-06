@@ -61,6 +61,7 @@ modules_found_infiles = set()
 modules_in_system_dict = {}
 ranked_modules_dict = {}
 
+
 GUI_STRUCTURE_DICT = {
     # all keys must have registered names in GuiFramework!
 
@@ -137,7 +138,7 @@ GUI_STRUCTURE_DICT = {
             "rowspan": 4, "columnspan": 4,  # expansion additional positions
             "sticky": "w",      #"ewsn"
         },
-        # OTHER WIDGETS
+        # OTHER WIDGETS. just place your gui-dict-tree here
 
     },
 }
