@@ -155,6 +155,8 @@ def sort_ranked_modules_dict():
     global ranked_modules_dict
     sorted_dict_keys_list = sorted(ranked_modules_dict, key=lambda key: key.lower())
     ranked_modules_dict = dict(zip(sorted_dict_keys_list, [ranked_modules_dict[value] for value in sorted_dict_keys_list]))
+    #print(ranked_modules_dict)
+    return
 
 def update_system_modules_dict():
     # produce dict - all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
@@ -176,31 +178,37 @@ def update_system_modules_dict():
 # #################################################
 class Gui(Frame):
     """ main GUI window """
-    def __init__(self, root=None, modules_data=ranked_modules_dict):
+    def __init__(self, root=None):
         super().__init__(root)
         self.root = root
-        self.modules_data = modules_data
-
         self.gui_root_configure()
+
         self.create_gui_structure()
         self.window_move_to_center()
         self.fill_table()
 
 
     def gui_root_configure(self):
-        gui_dict_section = GUI_TREE_DICT[ROOT_CONFIGURE]
-        for key in gui_dict_section:
+        gui_dict_pointer = GUI_TREE_DICT[ROOT_CONFIGURE]
+        for key in gui_dict_pointer:
             if key == WM_ATTRIBUTES:
-                for k, v in gui_dict_section[key].items():
+                for k, v in gui_dict_pointer[key].items():
                     eval(f"self.root.{key}{k, v}")
-            elif isinstance(gui_dict_section[key], (dict)):
+            elif isinstance(gui_dict_pointer[key], (dict)):
                 my_func_link = eval(f"self.root.{key}")
-                my_func_link(**gui_dict_section[key])
-            elif isinstance(gui_dict_section[key], (tuple)):
-                eval(f"self.root.{key}{gui_dict_section[key]}")
+                my_func_link(**gui_dict_pointer[key])
+            elif isinstance(gui_dict_pointer[key], (tuple)):
+                eval(f"self.root.{key}{gui_dict_pointer[key]}")
             else:
-                eval(f"self.root.{key}('{gui_dict_section[key]}')")
-        self.root["bg"] = "black"
+                eval(f"self.root.{key}('{gui_dict_pointer[key]}')")
+
+        gui_dict_pointer = GUI_TREE_DICT[ROOT][WGT_PARAMETERS]
+        for key in gui_dict_pointer:
+            try:
+                self.root[key] = gui_dict_pointer[key]
+            except:
+                pass
+
 
     def window_move_to_center(self):
         screen_width = self.root.winfo_screenwidth()
@@ -251,9 +259,9 @@ class Gui(Frame):
 
     def fill_table(self):
         # fill modulenames in gui
-        for module in self.modules_data:
+        for module in ranked_modules_dict:
             self.module_can_install_check = module in MODULES_CAN_INSTALL
-            if self.modules_data[module] != MARK_MODULE_BAD:
+            if ranked_modules_dict[module] != MARK_MODULE_BAD:
                 Label(self.frame_modules_good, text=module, fg="black", bg="#55FF55").pack(fill="x", expand=0)
             else:
                 btn = Button(self.frame_modules_try_install, text=f"pip install [{module}]")
