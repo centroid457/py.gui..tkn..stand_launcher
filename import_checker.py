@@ -78,7 +78,7 @@ def main(file_for_path=__file__):
     sort_ranked_modules_dict()
 
     root = Tk()
-    app = Gui(root=root, modules_data=ranked_modules_dict)
+    app = Gui(root=root)
     app.mainloop()
 
 
@@ -176,17 +176,30 @@ def update_system_modules_dict():
 # #################################################
 class Gui(Frame):
     """ main GUI window """
-    def __init__(self, root=None, modules_data=None):
+    def __init__(self, root=None, modules_data=ranked_modules_dict):
         super().__init__(root)
         self.root = root
         self.modules_data = modules_data
-        self.gui_general_configure()
+
+        self.gui_root_configure()
         self.create_gui_structure()
         self.create_gui_geometry()
         self.fill_table()
 
-    def gui_general_configure(self):
-        self.root.title("IMPORT CHECHER")
+
+    def gui_root_configure(self):
+        gui_dict_section = GUI_TREE_DICT[ROOT_CONFIGURE]
+        for key in gui_dict_section:
+            if key == WM_ATTRIBUTES:
+                for k, v in gui_dict_section[key].items():
+                    eval(f"self.root.{key}{k, v}")
+            elif isinstance(gui_dict_section[key], (dict)):
+                my_func_link = eval(f"self.root.{key}")
+                my_func_link(**gui_dict_section[key])
+            elif isinstance(gui_dict_section[key], (tuple)):
+                eval(f"self.root.{key}{gui_dict_section[key]}")
+            else:
+                eval(f"self.root.{key}('{gui_dict_section[key]}')")
         self.root["bg"] = "black"
 
     def create_gui_geometry(self):
