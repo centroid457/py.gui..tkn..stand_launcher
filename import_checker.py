@@ -31,8 +31,10 @@ import subprocess
 from glob import glob
 from tkinter import Tk, Frame, Button, Label, BOTH
 
-
-modules_can_install = {
+# #################################################
+# COMMON VARS & CONSTANTS
+# #################################################
+MODULES_CAN_INSTALL = {
     # this names will use as known modules (which need installation in system)
     # in not installed modules set you can see which of then can be definitely installed
     # "IMPORT_NAME_IN_PROJECT": "PIP_INSTALL_NAME"
@@ -61,11 +63,22 @@ modules_found_infiles = set()
 modules_in_system_dict = {}
 ranked_modules_dict = {}
 
+# #################################################
+# GUI TREE
+# #################################################
+# sections in dict
+_ROOT_CONFIGURE = "ROOT_CONFIGURE"
+_WGT_TYPE = "WGT_TYPE"
+_WGT_PARAMETERS = "WGT_PARAMETERS"
+_PACKER = "PACKER"
+_PACKER_GRID_CONFIGURE = "PACKER_GRID_CONFIGURE"
+_PACKER_PARAMETERS = "PACKER_PARAMETERS"
+_INTERNAL_WGTS = "INTERNAL_WGTS"
 
+# gui dict
 GUI_STRUCTURE_DICT = {
     # all keys must have registered names in GuiFramework!
-
-    "ROOT_CONFIGURE": {     # KEEP IT ONLY IN FIRST KEY LEVEL!
+    _ROOT_CONFIGURE: {     # KEEP IT ONLY IN FIRST KEY LEVEL!
         # use only none dictionary parameters! only specific methods!
         # for usual dict-like parameters use first WGT_ID in first level in dictionary
         "title": "title",  # root.title("title")
@@ -76,23 +89,20 @@ GUI_STRUCTURE_DICT = {
         "overrideredirect": True,   # root.overrideredirect(True)   =True/False
         "state": 'normal',   # root.state('zoomed')     normal/zoomed/iconic/withdrawn
         "iconbitmap": r'ERROR.ico', # root.iconbitmap('ERROR.ico')    =ONLY FILENAME! NO fileobject
-        "wm_attributes":{
+        "wm_attributes": {
             "-topmost": 0,  # root.wm_attributes("-topmost", True)
             "-disabled": 0,  # root.wm_attributes("-disabled", True)
             "-fullscreen": 0,  # root.wm_attributes("-fullscreen", True)
             "-transparentcolor": 0,  # root.wm_attributes("-transparentcolor", "white")
         },
     },
-
-    "WGT_ID": {  # unic widget name
-        "WGT": "Frame", #"Frame|Label|Button|..."
-
-        "WGT_PARAMETERS":{
+    "WGT_ID": {  # unique widget name
+        _WGT_TYPE: "Frame",     # "Frame|Label|Button|..."
+        _WGT_PARAMETERS: {
             # all parameters will apply individually one by one with TRY-EXCEPT sentence!
             # you may leave inapplicable
             # COMMON
-            "font": ("", 30),
-            "text": None,
+            "text": None, "font": ("", 30),
             "fg": None, "bg": None,
             "width": None, "height": None,
             "bind": None,
@@ -106,23 +116,21 @@ GUI_STRUCTURE_DICT = {
             "activeforeground": None,  # color when pressed state
             "command": "",
         },
-
-        "PACKER": "pack",    # "pack|grid|place"
-        "PACKER_GRID_CONFIGURE": {
+        _PACKER: "pack",    # "pack|grid|place"
+        _PACKER_GRID_CONFIGURE: {
             "columnconfigure": {
-                "COLUMNS": {"column": [0, ], "minsize": 250, "pad": 0,},
+                "COLUMNS": {"column": [0, ], "minsize": 250, "pad": 0, },
                 "minsize": 250,  # minimal size in letters
             },
             "rowconfigure": {
-                "ROWS": {"row": [0, ], "minsize": 250, "pad": 0,},
+                "ROWS": {"row": [0, ], "minsize": 250, "pad": 0, },
                 "minsize": 1,
             },
-
             # COMMON =-minsize, -pad, -uniform, or -weight
             "pad": 3,    # external pads
             "weight": 1,    # expansion ratio
         },
-        "PACKER_PARAMETERS": {
+        _PACKER_PARAMETERS: {
             # delete yourself inapplicable parameters!
             # COMMON
             "padx": 0, "pady": 0,       # external pads
@@ -138,12 +146,16 @@ GUI_STRUCTURE_DICT = {
             "rowspan": 4, "columnspan": 4,  # expansion additional positions
             "sticky": "w",      #"ewsn"
         },
-        # OTHER WIDGETS. just place your gui-dict-tree here
-
+        _INTERNAL_WGTS: {
+            # OTHER WIDGETS. just place your gui-dict-tree here
+        },
     },
 }
 
 
+# #################################################
+# FUNCTIONS
+# #################################################
 def main(file_for_path=__file__):
     update_system_modules_dict()
 
@@ -317,7 +329,7 @@ class Gui(Frame):
     def fill_table(self):
         # fill modulenames in gui
         for module in self.modules_data:
-            self.module_can_install_check = module in modules_can_install
+            self.module_can_install_check = module in MODULES_CAN_INSTALL
             if self.modules_data[module] != MARK_MODULE_BAD:
                 Label(self.frame_modules_good, text=module, fg="black", bg="#55FF55").pack(fill="x", expand=0)
             else:
@@ -327,7 +339,7 @@ class Gui(Frame):
                 btn.pack()
 
     def start_install_module(self, module_name):
-        module_name_cmd = modules_can_install[module_name] if self.module_can_install_check else module_name
+        module_name_cmd = MODULES_CAN_INSTALL[module_name] if self.module_can_install_check else module_name
         return lambda: (
             subprocess.run(f"py -m pip install {module_name_cmd}"),
             self.program_restart()
