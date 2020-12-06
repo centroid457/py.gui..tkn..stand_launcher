@@ -115,14 +115,32 @@ GUI_TREE_DICT = {
             "-fullscreen": 0,  # root.wm_attributes("-fullscreen", True)
             "-transparentcolor": None,  # root.wm_attributes("-transparentcolor", "white")
         },
-    },
-    ROOT: {  # unique widget name
-        WGT_TYPE: ROOT,     # ROOT / "Frame|Label|Button|..."
         WGT_PARAMETERS: {
             # all parameters will apply individually one by one with TRY-EXCEPT sentence!
             # you may leave inapplicable
             # COMMON
-            "text": None, "font": ("", 30),
+            "text": "привет", "font": ("", 30),
+            "fg": None, "bg": "black",
+            "width": None, "height": None,
+            "bind": None,
+            # "image": "image",   # imgObj
+
+            # FOR FRAMES/Label/Root///
+            "relief": "raised",  # "flat"/"sunken"/"raised"/"groove"/"ridge"
+            "borderwidth": 5,  # ширина рамки!
+
+            # FOR BUTTONS
+            "activeforeground": None,  # color when pressed state
+            "command": "",
+        },
+    },
+    "WGT_ID": {  # unique widget name
+        WGT_TYPE: "Frame",     # ROOT / "Frame|Label|Button|..."
+        WGT_PARAMETERS: {
+            # all parameters will apply individually one by one with TRY-EXCEPT sentence!
+            # you may leave inapplicable
+            # COMMON
+            "text": "привет", "font": ("", 30),
             "fg": None, "bg": "black",
             "width": None, "height": None,
             "bind": None,

@@ -194,6 +194,8 @@ class Gui(Frame):
             if key == WM_ATTRIBUTES:
                 for k, v in gui_dict_pointer[key].items():
                     eval(f"self.root.{key}{k, v}")
+            elif key == WGT_PARAMETERS:
+                self.wgt_parameters_apply(wgt=self.root, dict_pointer=gui_dict_pointer[WGT_PARAMETERS])
             elif isinstance(gui_dict_pointer[key], (dict)):
                 my_func_link = eval(f"self.root.{key}")
                 my_func_link(**gui_dict_pointer[key])
@@ -202,12 +204,14 @@ class Gui(Frame):
             else:
                 eval(f"self.root.{key}('{gui_dict_pointer[key]}')")
 
-        gui_dict_pointer = GUI_TREE_DICT[ROOT][WGT_PARAMETERS]
-        for key in gui_dict_pointer:
+    def wgt_parameters_apply(self, wgt, dict_pointer):
+        for key in dict_pointer:
             try:
-                self.root[key] = gui_dict_pointer[key]
+                wgt[key] = dict_pointer[key]
             except:
                 pass
+                print(f"The object have no attribute [self.root[{key}]]")
+        return
 
 
     def window_move_to_center(self):
