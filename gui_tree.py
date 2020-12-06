@@ -86,7 +86,7 @@ window_height = 200
 ROOT = "root"
 WM_ATTRIBUTES = "wm_attributes"
 
-# sections in dict
+# sections in dicts
 ROOT_CONFIGURE = "ROOT_CONFIGURE"
 WGT_TYPE = "WGT_TYPE"
 WGT_PARAMETERS = "WGT_PARAMETERS"
@@ -95,47 +95,50 @@ PACKER_GRID_CONFIGURE = "PACKER_GRID_CONFIGURE"
 PACKER_PARAMETERS = "PACKER_PARAMETERS"
 INTERNAL_WGTS = "INTERNAL_WGTS"
 
+ROOT_CONFIGURE_DICT = {  # KEEP IT ONLY IN FIRST KEY LEVEL!
+    # use only none dictionary parameters! only specific methods!
+    # for usual dict-like parameters use first WGT_ID in first level in dictionary
+    "title": "IMPORT CHECHER",  # root.title("title")
+    "geometry": f"{window_width}x{window_height}+100+100",
+    # "root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
+    "resizable": {"width": False, "height": True},
+    # root.resizable(width=False, height=False)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
+    "maxsize": (1000, 1000),  # root.maxsize(300, 300)
+    "minsize": (100, 100),  # root.minsize(300, 300)
+    "overrideredirect": 0,  # root.overrideredirect(True)   =True/False
+    "state": 'normal',  # root.state('zoomed')     normal/zoomed/iconic/withdrawn
+    # "iconbitmap": r'ERROR.ico', # root.iconbitmap(r'ERROR.ico')    =ONLY FILENAME! NO fileobject
+    WM_ATTRIBUTES: {
+        "-topmost": False,  # root.wm_attributes("-topmost", True)
+        "-disabled": 0,  # root.wm_attributes("-disabled", True)
+        "-fullscreen": 0,  # root.wm_attributes("-fullscreen", True)
+        "-transparentcolor": None,  # root.wm_attributes("-transparentcolor", "white")
+    },
+    WGT_PARAMETERS: {
+        # all parameters will apply individually one by one with TRY-EXCEPT sentence!
+        # you may leave inapplicable
+        # COMMON
+        "text": "привет", "font": ("", 30),
+        "fg": None, "bg": "black",
+        "width": None, "height": None,
+        "bind": None,
+        # "image": "image",   # imgObj
+
+        # FOR FRAMES/Label/Root///
+        "relief": "raised",  # "flat"/"sunken"/"raised"/"groove"/"ridge"
+        "borderwidth": 5,  # ширина рамки!
+
+        # FOR BUTTONS
+        "activeforeground": None,  # color when pressed state
+        "command": "",
+    },
+}
+
 # gui dict
 GUI_TREE_DICT = {
     # all keys must have registered names in GuiFramework!
-    ROOT_CONFIGURE: {     # KEEP IT ONLY IN FIRST KEY LEVEL!
-        # use only none dictionary parameters! only specific methods!
-        # for usual dict-like parameters use first WGT_ID in first level in dictionary
-        "title": "IMPORT CHECHER",  # root.title("title")
-        "geometry": f"{window_width}x{window_height}+100+100", #"root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
-        "resizable": {"width": False, "height": True}, # root.resizable(width=False, height=False)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
-        "maxsize": (1000, 1000),  # root.maxsize(300, 300)
-        "minsize": (100, 100),  # root.minsize(300, 300)
-        "overrideredirect": 0,   # root.overrideredirect(True)   =True/False
-        "state": 'normal',   # root.state('zoomed')     normal/zoomed/iconic/withdrawn
-        #"iconbitmap": r'ERROR.ico', # root.iconbitmap(r'ERROR.ico')    =ONLY FILENAME! NO fileobject
-        WM_ATTRIBUTES: {
-            "-topmost": False,  # root.wm_attributes("-topmost", True)
-            "-disabled": 0,  # root.wm_attributes("-disabled", True)
-            "-fullscreen": 0,  # root.wm_attributes("-fullscreen", True)
-            "-transparentcolor": None,  # root.wm_attributes("-transparentcolor", "white")
-        },
-        WGT_PARAMETERS: {
-            # all parameters will apply individually one by one with TRY-EXCEPT sentence!
-            # you may leave inapplicable
-            # COMMON
-            "text": "привет", "font": ("", 30),
-            "fg": None, "bg": "black",
-            "width": None, "height": None,
-            "bind": None,
-            # "image": "image",   # imgObj
-
-            # FOR FRAMES/Label/Root///
-            "relief": "raised",  # "flat"/"sunken"/"raised"/"groove"/"ridge"
-            "borderwidth": 5,  # ширина рамки!
-
-            # FOR BUTTONS
-            "activeforeground": None,  # color when pressed state
-            "command": "",
-        },
-    },
     "WGT_ID": {  # unique widget name
-        WGT_TYPE: "Frame",     # ROOT / "Frame|Label|Button|..."
+        WGT_TYPE: "Frame",     # "Frame|Label|Button|..."
         WGT_PARAMETERS: {
             # all parameters will apply individually one by one with TRY-EXCEPT sentence!
             # you may leave inapplicable

@@ -189,7 +189,7 @@ class Gui(Frame):
 
 
     def gui_root_configure(self):
-        gui_dict_pointer = GUI_TREE_DICT[ROOT_CONFIGURE]
+        gui_dict_pointer = ROOT_CONFIGURE_DICT
         for key in gui_dict_pointer:
             if key == WM_ATTRIBUTES:
                 for k, v in gui_dict_pointer[key].items():
