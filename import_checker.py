@@ -17,8 +17,8 @@ Offer try to install.
 WHY DON'T USE MODULEFINDER???
 Because it work incorrect! can't find TIME and SYS modules!
 ---------------------
-TEST LINE
-import TEST_LINE1
+TEST LINES
+import TEST_LINE1 #test comment
 #import TEST_LINE2
 """
 
@@ -33,12 +33,13 @@ from tkinter import Tk, Frame, Button, Label, BOTH
 
 
 modules_can_install = {
-    # "IMPORT NAME IN PROJECT": "PIP INSTALL NAME"
+    # this names will use as known modules which need installation in system
+    # "IMPORT_NAME_IN_PROJECT": "PIP_INSTALL_NAME"
     # different names
     "wx": "wxPython",
     "PIL": "pillow",
 
-    # similare names
+    # similar names
     "TEST_LINE1": "TEST_LINE1",
     "plotly": "plotly",
     "pandas": "pandas",
@@ -143,12 +144,14 @@ def rank_modules_dict_generate(module_set=modules_found_infiles):
     return
 
 def sort_ranked_modules_dict():
+    # sort dict with found modules
     global ranked_modules_dict
     sorted_dict_keys_list = sorted(ranked_modules_dict, key=lambda key: key.lower())
     ranked_modules_dict = dict(zip(sorted_dict_keys_list, [ranked_modules_dict[value] for value in sorted_dict_keys_list]))
 
 def update_system_modules_dict():
     # produce dict - all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
+    # KEY=modulename:VALUE=location(CurDir|DLLs|lib|site-packages)
     for module_in_system in pkgutil.iter_modules():
         #print(module_in_system.name)
         my_string = str(module_in_system.module_finder)
