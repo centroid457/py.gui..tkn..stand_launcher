@@ -66,6 +66,9 @@ ranked_modules_dict = {}
 # #################################################
 # GUI TREE
 # #################################################
+# markers
+_ROOT_NAME = "root"
+
 # sections in dict
 _ROOT_CONFIGURE = "ROOT_CONFIGURE"
 _WGT_TYPE = "WGT_TYPE"
@@ -135,7 +138,6 @@ GUI_STRUCTURE_DICT = {
             # COMMON
             "padx": 0, "pady": 0,       # external pads
             "ipadx": 0, "ipady": 0,     # internal pads
-
             # FOR PACK
             "side": "left",    # "left|right|top|bottom"
             "fill": "both",    # 'x', 'y', 'both', 'none'.
