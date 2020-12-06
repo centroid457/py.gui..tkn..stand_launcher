@@ -79,6 +79,9 @@ from import_checker import *    # ONLY TO RESOLVE FUNCTIONS AND VARS NAMES HERE
 # #################################################
 # GUI TREE
 # #################################################
+window_width = 800
+window_height = 200
+
 # markers
 ROOT_NAME = "root"
 WM_ATTRIBUTES = "wm_attributes"
@@ -99,10 +102,10 @@ GUI_TREE_DICT = {
         # use only none dictionary parameters! only specific methods!
         # for usual dict-like parameters use first WGT_ID in first level in dictionary
         "title": "IMPORT CHECHER",  # root.title("title")
-        "geometry": "250x150+0+100", #"root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
+        "geometry": f"{window_width}x{window_height}+100+100", #"root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
         "resizable": {"width": False, "height": True}, # root.resizable(width=False, height=False)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
-        #"maxsize": (300, 300),  # root.maxsize(300, 300)
-        #"minsize": (300, 300),  # root.minsize(300, 300)
+        "maxsize": (1000, 1000),  # root.maxsize(300, 300)
+        "minsize": (100, 100),  # root.minsize(300, 300)
         "overrideredirect": 0,   # root.overrideredirect(True)   =True/False
         "state": 'normal',   # root.state('zoomed')     normal/zoomed/iconic/withdrawn
         #"iconbitmap": r'ERROR.ico', # root.iconbitmap('ERROR.ico')    =ONLY FILENAME! NO fileobject

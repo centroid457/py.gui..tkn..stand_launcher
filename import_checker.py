@@ -183,7 +183,7 @@ class Gui(Frame):
 
         self.gui_root_configure()
         self.create_gui_structure()
-        self.create_gui_geometry()
+        self.window_move_to_center()
         self.fill_table()
 
 
@@ -202,11 +202,9 @@ class Gui(Frame):
                 eval(f"self.root.{key}('{gui_dict_section[key]}')")
         self.root["bg"] = "black"
 
-    def create_gui_geometry(self):
+    def window_move_to_center(self):
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
-        window_width = 800
-        window_height = 200
         x = (screen_width - window_width) / 2
         y = (screen_height - window_height) / 2
         self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
