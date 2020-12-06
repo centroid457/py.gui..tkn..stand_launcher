@@ -33,7 +33,8 @@ from tkinter import Tk, Frame, Button, Label, BOTH
 
 
 modules_can_install = {
-    # this names will use as known modules which need installation in system
+    # this names will use as known modules (which need installation in system)
+    # in not installed modules set you can see which of then can be definitely installed
     # "IMPORT_NAME_IN_PROJECT": "PIP_INSTALL_NAME"
     # different names
     "wx": "wxPython",
