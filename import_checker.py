@@ -189,14 +189,17 @@ class Gui(Frame):
 
 
     def gui_root_configure(self):
-        gui_dict_pointer = ROOT_CONFIGURE_DICT
+        gui_dict_pointer = GUI_ROOT_CONFIGURE_DICT[WM_ATTRIBUTES]
         for key in gui_dict_pointer:
-            if key == WM_ATTRIBUTES:
-                for k, v in gui_dict_pointer[key].items():
-                    eval(f"self.root.{key}{k, v}")
-            elif key == WGT_PARAMETERS:
-                self.wgt_parameters_apply(wgt=self.root, dict_pointer=gui_dict_pointer[WGT_PARAMETERS])
-            elif isinstance(gui_dict_pointer[key], (dict)):
+            for k, v in gui_dict_pointer.items():
+                eval(f"self.root.{WM_ATTRIBUTES}{k, v}")
+
+        gui_dict_pointer = GUI_ROOT_CONFIGURE_DICT[WGT_PARAMETERS]
+        self.wgt_parameters_apply(wgt=self.root, dict_pointer=gui_dict_pointer)
+
+        gui_dict_pointer = GUI_ROOT_CONFIGURE_DICT[ROOT_METHODS]
+        for key in gui_dict_pointer:
+            if isinstance(gui_dict_pointer[key], (dict)):
                 my_func_link = eval(f"self.root.{key}")
                 my_func_link(**gui_dict_pointer[key])
             elif isinstance(gui_dict_pointer[key], (tuple)):

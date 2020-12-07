@@ -78,16 +78,17 @@ GUI_TREE_DICT = {
 #from import_checker import *    # ONLY TO RESOLVE FUNCTIONS AND VARS NAMES HERE
 # #################################################
 # GUI TREE
+# you need only 2 dictionary
 # #################################################
 window_width = 800
 window_height = 200
 
 # markers
 ROOT = "root"
+ROOT_METHODS = "ROOT_METHODS"
 WM_ATTRIBUTES = "wm_attributes"
 
 # sections in dicts
-ROOT_CONFIGURE = "ROOT_CONFIGURE"
 WGT_TYPE = "WGT_TYPE"
 WGT_PARAMETERS = "WGT_PARAMETERS"
 PACKER = "PACKER"
@@ -95,19 +96,23 @@ PACKER_GRID_CONFIGURE = "PACKER_GRID_CONFIGURE"
 PACKER_PARAMETERS = "PACKER_PARAMETERS"
 INTERNAL_WGTS = "INTERNAL_WGTS"
 
-ROOT_CONFIGURE_DICT = {  # KEEP IT ONLY IN FIRST KEY LEVEL!
-    # use only none dictionary parameters! only specific methods!
-    # for usual dict-like parameters use first WGT_ID in first level in dictionary
-    "title": "IMPORT CHECHER",  # root.title("title")
-    "geometry": f"{window_width}x{window_height}+100+100",
-    # "root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
-    "resizable": {"width": False, "height": True},
-    # root.resizable(width=False, height=False)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
-    "maxsize": (1000, 1000),  # root.maxsize(300, 300)
-    "minsize": (100, 100),  # root.minsize(300, 300)
-    "overrideredirect": 0,  # root.overrideredirect(True)   =True/False
-    "state": 'normal',  # root.state('zoomed')     normal/zoomed/iconic/withdrawn
-    # "iconbitmap": r'ERROR.ico', # root.iconbitmap(r'ERROR.ico')    =ONLY FILENAME! NO fileobject
+# -------------------------------------------------
+# 1 - GUI_ROOT_CONFIGURE_DICT
+# -------------------------------------------------
+GUI_ROOT_CONFIGURE_DICT = {
+    ROOT_METHODS: {
+        # use only none dictionary parameters! only specific methods!
+        "title": "IMPORT CHECHER",  # root.title("title")
+        "geometry": f"{window_width}x{window_height}+100+100",
+        # "root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
+        "resizable": {"width": False, "height": True},
+        # root.resizable(width=False, height=False)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
+        "maxsize": (1000, 1000),  # root.maxsize(300, 300)
+        "minsize": (100, 100),  # root.minsize(300, 300)
+        "overrideredirect": 0,  # root.overrideredirect(True)   =True/False
+        "state": 'normal',  # root.state('zoomed')     normal/zoomed/iconic/withdrawn
+        # "iconbitmap": r'ERROR.ico', # root.iconbitmap(r'ERROR.ico')    =ONLY FILENAME! NO fileobject
+    },
     WM_ATTRIBUTES: {
         "-topmost": False,  # root.wm_attributes("-topmost", True)
         "-disabled": 0,  # root.wm_attributes("-disabled", True)
@@ -119,7 +124,7 @@ ROOT_CONFIGURE_DICT = {  # KEEP IT ONLY IN FIRST KEY LEVEL!
         # you may leave inapplicable
         # COMMON
         "text": "привет", "font": ("", 30),
-        "fg": None, "bg": "black",
+        "fg": None, "bg": "#000077",
         "width": None, "height": None,
         "bind": None,
         # "image": "image",   # imgObj
@@ -134,8 +139,10 @@ ROOT_CONFIGURE_DICT = {  # KEEP IT ONLY IN FIRST KEY LEVEL!
     },
 }
 
-# gui dict
-GUI_TREE_DICT = {
+# -------------------------------------------------
+# 2 - GUI_WGT_TREE_DICT
+# -------------------------------------------------
+GUI_WGT_TREE_DICT = {
     # all keys must have registered names in GuiFramework!
     "WGT_ID": {  # unique widget name
         WGT_TYPE: "Frame",     # "Frame|Label|Button|..."
