@@ -5,7 +5,7 @@ HOW TO USE:
 3. add lines in your main script in place before first import line:
 *********************
 import import_checker
-import_checker.main(file_for_path=__file__)
+import_checker.main(file_as_path=__file__)
 *********************
 WHAT IT WILL DO
 Find all import lines in all files in the directory with recursion!
@@ -32,6 +32,14 @@ from glob import glob
 # #################################################
 # COMMON VARS & CONSTANTS
 # #################################################
+# INPUT
+filefullname_as_link_path = __file__
+
+# OUTPUT
+python_files_found_in_directory_list = []
+ranked_modules_dict = {}        #{modulename: [CanImport=True/False, Placement=ShortPathName, InstallNameIfDetected]}
+
+# SETTINGS
 MODULES_CAN_INSTALL = {
     # this names will use as known modules (which need installation in system)
     # in not installed modules set you can see which of then can be definitely installed
@@ -55,20 +63,18 @@ MODULES_CAN_INSTALL = {
     "pyscreenshot": "pyscreenshot",
 }
 
-MARK_MODULE_BAD = "###BAD###"
-python_files_found_in_directory_list = []
+# INTERNAL
 modules_found_infiles = set()
 modules_in_system_dict = {}
-ranked_modules_dict = {}
 
 
 # #################################################
 # FUNCTIONS
 # #################################################
-def main(file_for_path=__file__):
+def main(file_as_path=filefullname_as_link_path):
     update_system_modules_dict()
 
-    path_find_wo_slash = os.path.dirname(file_for_path)
+    path_find_wo_slash = os.path.dirname(file_as_path)
     find_all_python_files_generate(path=path_find_wo_slash)
     find_all_importing_modules(python_files_found_in_directory_list)
     rank_modules_dict_generate()
@@ -133,15 +139,20 @@ assert _find_modulenames_set("import m1 #comment import m2") == {"m1"}
 
 
 def rank_modules_dict_generate(module_set=modules_found_infiles):
-    # detect not installed modules
+    # detect module location if exist in system
+    # generate dict like
+    #       {modulename: [CanImport=True/False, Placement=ShortPathName, InstallNameIfDetected]}
     for module in module_set:
+        can_import = False
+        short_pathname = modules_in_system_dict.get(module, None)
+        detected_installname = MODULES_CAN_INSTALL.get(module, None)
         try :
             exec(f'import {module}')
-            ranked_modules_dict.update(
-                {module: modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
+            can_import = True
         except :
-            ranked_modules_dict.update({module: MARK_MODULE_BAD})
+            pass
 
+        ranked_modules_dict.update({module: [can_import, short_pathname, detected_installname]})
     # print(modules_in_files_ranked_dict)
     return
 
@@ -172,4 +183,5 @@ def update_system_modules_dict():
 
 if __name__ == '__main__':
     main()
-    print(python_files_found_in_directory_list)
+    # print(python_files_found_in_directory_list)
+    # print(ranked_modules_dict)

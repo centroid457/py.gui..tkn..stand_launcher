@@ -22,9 +22,8 @@ class Gui(Frame):
 
     def gui_root_configure(self):
         gui_dict_pointer = GUI_ROOT_CONFIGURE_DICT[WM_ATTRIBUTES]
-        for key in gui_dict_pointer:
-            for k, v in gui_dict_pointer.items():
-                eval(f"self.root.{WM_ATTRIBUTES}{k, v}")
+        for k, v in gui_dict_pointer.items():
+            eval(f"self.root.{WM_ATTRIBUTES}{k, v}")
 
         gui_dict_pointer = GUI_ROOT_CONFIGURE_DICT[WGT_PARAMETERS]
         self.wgt_parameters_apply(wgt=self.root, dict_pointer=gui_dict_pointer)
