@@ -24,8 +24,8 @@ GUI_ROOT_CONFIGURE_DICT = {
     ROOT_METHODS: {
         # use only none dictionary parameters! only specific methods!
         "title": "IMPORT CHECHER",  # root.title("title")
-        "geometry": "800x200+100+100",  # "root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
-        "resizable": {"width": False, "height": True},
+        "geometry": "800x600+100+100",  # "root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
+        "resizable": {"width": True, "height": True},
         # root.resizable(width=False, height=False)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
         "maxsize": (1000, 1000),  # root.maxsize(300, 300)
         "minsize": (100, 100),  # root.minsize(300, 300)

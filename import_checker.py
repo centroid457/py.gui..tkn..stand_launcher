@@ -162,7 +162,7 @@ def sort_ranked_modules_dict():
     global ranked_modules_dict
     sorted_dict_keys_list = sorted(ranked_modules_dict, key=lambda key: key.lower())
     ranked_modules_dict = dict(zip(sorted_dict_keys_list, [ranked_modules_dict[value] for value in sorted_dict_keys_list]))
-    # print(ranked_modules_dict)
+    print(ranked_modules_dict)
     return
 
 
@@ -184,4 +184,4 @@ def update_system_modules_dict():
 if __name__ == '__main__':
     main()
     # print(python_files_found_in_directory_list)
-    # print(ranked_modules_dict)
+    print(ranked_modules_dict)

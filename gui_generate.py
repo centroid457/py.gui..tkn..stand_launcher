@@ -101,19 +101,21 @@ class Gui(Frame):
     def fill_table(self):
         # fill modulenames in gui
         for module in ranked_modules_dict:
-            self.module_can_install_check = module in MODULES_CAN_INSTALL
-            if ranked_modules_dict[module] != MARK_MODULE_BAD:
-                Label(self.frame_modules_good, text=module, fg="black", bg="#55FF55").pack(fill="x", expand=0)
+            #[CanImport=True/False, Placement=ShortPathName, InstallNameIfDetected]
+            can_import, short_pathname, detected_installname = ranked_modules_dict[module]
+            if can_import:
+                Label(self.frame_modules_good, text="%-10s \t[%s]"%(module, short_pathname),
+                      fg="black", bg="#55FF55", justify="left", width=20, anchor="w").pack(fill="x", expand=0)
             else:
                 btn = Button(self.frame_modules_try_install, text=f"pip install [{module}]")
-                btn["bg"] = "#55FF55" if self.module_can_install_check else None
-                btn["command"] = self.start_install_module(module)
+                btn["bg"] = "#55FF55" if detected_installname else None
+                btn["command"] = self.start_install_module(module, ranked_modules_dict[module])
                 btn.pack()
 
-    def start_install_module(self, module_name):
-        module_name_cmd = MODULES_CAN_INSTALL[module_name] if self.module_can_install_check else module_name
+    def start_install_module(self, modulename, module_data):
+        modulename_cmd = modulename if module_data[2] is None else module_data[2]
         return lambda: (
-            subprocess.run(f"py -m pip install {module_name_cmd}"),
+            subprocess.run(f"py -m pip install {modulename_cmd}"),
             self.program_restart()
         )
 
