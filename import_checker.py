@@ -30,7 +30,7 @@ import fileinput
 import subprocess
 from glob import glob
 from tkinter import Tk, Frame, Button, Label, BOTH
-from gui_tree import *
+from gui_tree_import_checker import *
 
 # #################################################
 # COMMON VARS & CONSTANTS
@@ -87,7 +87,6 @@ def find_all_python_files_generate(path):
     for file_name in glob(path+"/**/*.py*", recursive=True):
         if file_name != os.path.basename(__file__) and os.path.splitext(file_name)[1] in (".py", ".pyw"):
             python_files_found_in_directory_list.append(file_name)
-
     return
 
 

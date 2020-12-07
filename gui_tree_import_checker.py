@@ -80,9 +80,6 @@ GUI_TREE_DICT = {
 # GUI TREE
 # you need only 2 dictionary
 # #################################################
-window_width = 800
-window_height = 200
-
 # markers
 ROOT = "root"
 ROOT_METHODS = "ROOT_METHODS"
@@ -103,7 +100,7 @@ GUI_ROOT_CONFIGURE_DICT = {
     ROOT_METHODS: {
         # use only none dictionary parameters! only specific methods!
         "title": "IMPORT CHECHER",  # root.title("title")
-        "geometry": "801x200+100+100",  # "root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
+        "geometry": "800x200+100+100",  # "root.geometry("250x150+0+100")" #("WINXxWINY+ShiftX+ShiftY")
         "resizable": {"width": False, "height": True},
         # root.resizable(width=False, height=False)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
         "maxsize": (1000, 1000),  # root.maxsize(300, 300)
