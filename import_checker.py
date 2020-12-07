@@ -95,10 +95,10 @@ def find_all_importing_modules(file_list):
     # 2. parse all module names in them
     openhook = fileinput.hook_encoded(encoding="utf8", errors=None)
     for line in fileinput.input(files=file_list, mode="r", openhook=openhook):
-        #print(f"[descriptor={fileinput.fileno():2}]\tfile=[{fileinput.filename()}]\tline=[{fileinput.filelineno()}]\t[{line}]")
+        # print(f"[descriptor={fileinput.fileno():2}]\tfile=[{fileinput.filename()}]\tline=[{fileinput.filelineno()}]\t[{line}]")
         modules_found_infiles.update(_find_modulenames_set(line))
 
-    #print(modules_found_infiles)
+    # print(modules_found_infiles)
     return
 
 
@@ -120,11 +120,13 @@ def _find_modulenames_set(line):
 
     return modules_found_inline
 
+
 def _split_module_names_set(raw_modulenames_data):
     # split text like "m1,m2" into {"m1", "m2"}
     raw_modules_data_wo_spaces = re.sub(r'\s', '', raw_modulenames_data)
     modules_names_list = raw_modules_data_wo_spaces.split(sep=",")
     return set(modules_names_list)
+
 
 # test correct parsing
 assert _split_module_names_set("m1,m2 ,m3,    m4,\tm5") == set([f"m{i}" for i in range(1, 6)])
@@ -140,22 +142,25 @@ assert _find_modulenames_set("import m1 #comment import m2") == {"m1"}
 def rank_modules_dict_generate(module_set=modules_found_infiles):
     # detect not installed modules
     for module in module_set:
-        try:
+        try :
             exec(f'import {module}')
-            ranked_modules_dict.update({module:modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
-        except:
+            ranked_modules_dict.update(
+                {module: modules_in_system_dict[module] if module in modules_in_system_dict else "+++GOOD+++"})
+        except :
             ranked_modules_dict.update({module: MARK_MODULE_BAD})
 
-    #print(modules_in_files_ranked_dict)
+    # print(modules_in_files_ranked_dict)
     return
+
 
 def sort_ranked_modules_dict():
     # sort dict with found modules
     global ranked_modules_dict
     sorted_dict_keys_list = sorted(ranked_modules_dict, key=lambda key: key.lower())
     ranked_modules_dict = dict(zip(sorted_dict_keys_list, [ranked_modules_dict[value] for value in sorted_dict_keys_list]))
-    #print(ranked_modules_dict)
+    # print(ranked_modules_dict)
     return
+
 
 def update_system_modules_dict():
     # produce dict - all modules detecting in system! in all available paths. (Build-in, Installed, located in current directory)
