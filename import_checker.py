@@ -218,11 +218,14 @@ class Gui(Frame):
 
 
     def window_move_to_center(self):
+        self.root.update_idletasks()
+        window_width = self.root.winfo_width()
+        window_height = self.root.winfo_height()
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         x = (screen_width - window_width) / 2
         y = (screen_height - window_height) / 2
-        self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
+        self.root.geometry('+%d+%d' % (x, y))
 
     # #################################################
     # FRAMES
