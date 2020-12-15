@@ -3,8 +3,6 @@
 # #################################################
 # LIBS
 # #################################################
-import import_checker
-import_checker.main(__file__)
 
 import os
 import sys
