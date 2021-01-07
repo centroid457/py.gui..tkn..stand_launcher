@@ -7,6 +7,7 @@
 import os
 import sys
 import pickle
+import pathlib
 
 from glob import glob
 from time import sleep
@@ -21,14 +22,14 @@ from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 # #################################################
 # SETTINGS = dirnames / filenames
 # #################################################
-dirname_current = os.path.dirname(__file__)
-dirname_for_auxiliary_project_files_wo_slashes = "settings"
-dirname_for_auxiliary_project_files_w_slashes = dirname_for_auxiliary_project_files_wo_slashes + "/"
-if not os.path.isdir(dirname_for_auxiliary_project_files_w_slashes):
-    os.mkdir(dirname_for_auxiliary_project_files_w_slashes)
+dirname_current = pathlib.Path.cwd()
+dirname_settings = dirname_current / "settings"
+dirname_settings.mkdir(exist_ok=True)
 
-filename_program_image = dirname_for_auxiliary_project_files_w_slashes + "program_icon.ico"
-filename_program_save_state = dirname_for_auxiliary_project_files_w_slashes + ".program_save_state.pickle"
+
+
+filename_program_image = dirname_settings / "program_icon.ico"
+filename_program_save_state = dirname_settings / ".program_save_state.pickle"
 
 filename_check_program_instances_prefix = ".started_"
 filename_check_program_instances_suffix = "_instance.check"
@@ -100,7 +101,7 @@ class Gui(Frame):
         self.program_save_state()
 
     def check_program_instances(self):
-        if len(glob(f"{dirname_for_auxiliary_project_files_w_slashes}"
+        if len(glob(f"{dirname_settings}"
                     f"{filename_check_program_instances_prefix}"
                     f"*{filename_check_program_instances_suffix}")):
             print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
@@ -109,7 +110,7 @@ class Gui(Frame):
         self.temporary_file = NamedTemporaryFile(
             suffix=filename_check_program_instances_suffix,
             prefix=filename_check_program_instances_prefix,
-            dir=dirname_for_auxiliary_project_files_w_slashes)
+            dir=dirname_settings)
 
     def gui_general_configure(self):
         self.root.title("STAND LAUNCHER")
