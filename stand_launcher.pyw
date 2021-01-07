@@ -27,7 +27,6 @@ dirname_settings = dirname_current / "settings"
 dirname_settings.mkdir(exist_ok=True)
 
 
-
 filename_program_image = dirname_settings / "program_icon.ico"
 filename_program_save_state = dirname_settings / ".program_save_state.pickle"
 
@@ -85,8 +84,8 @@ class Gui(Frame):
     """ main GUI window """
     def __init__(self, root=None):
         super().__init__()
+        self.root = root
         if not self.check_program_instances():
-            self.root = root
             self.window_state = ('normal', "zoomed")
             self.create_icon()
 
@@ -101,9 +100,11 @@ class Gui(Frame):
         self.program_save_state()
 
     def check_program_instances(self):
-        if len(glob(f"{dirname_settings}"
-                    f"{filename_check_program_instances_prefix}"
-                    f"*{filename_check_program_instances_suffix}")):
+        mask = f"{str(dirname_settings)}" + '\\'\
+                    f"{filename_check_program_instances_prefix}"\
+                    f"*{filename_check_program_instances_suffix}"
+        print(mask)
+        if len(glob(mask)):
             print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
             self.program_exit()
             return True
@@ -442,7 +443,8 @@ class Gui(Frame):
         self.root.destroy()
 
     def program_save_state(self, data_to_save=None):
-        data_to_save = self.buttons_main_gui_control_data_active
+        pass
+        #data_to_save = self.buttons_main_gui_control_data_active
         #with open(filename_program_save_state, 'wb') as file:
             #pickle.dump(data_to_save, file)
         #print("ok")
