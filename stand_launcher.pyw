@@ -3,10 +3,8 @@
 # #################################################
 # LIBS
 # #################################################
-
 import os
 import sys
-import pickle
 import pathlib
 
 from glob import glob
@@ -26,12 +24,11 @@ dirname_current = pathlib.Path.cwd()
 dirname_settings = dirname_current / "settings"
 dirname_settings.mkdir(exist_ok=True)
 
-
 filename_program_image = dirname_settings / "program_icon.ico"
 filename_program_save_state = dirname_settings / ".program_save_state.pickle"
 
-filename_check_program_instances_prefix = ".started_"
-filename_check_program_instances_suffix = "_instance.check"
+program_instance_prefix = ".started_"
+program_instance_suffix = "_instance.check"
 
 # #################################################
 # MOUSE MOVING ABILITY
@@ -82,53 +79,86 @@ class Make_gui_draggable:
 # #################################################
 class Gui(Frame):
     """ main GUI window """
-    def __init__(self, root=None):
+    def __init__(self, parent=None):
         super().__init__()
-        self.root = root
-        if not self.check_program_instances():
-            self.window_state = ('normal', "zoomed")
-            self.create_icon()
+        self.parent = parent
+        self.root = parent.winfo_toplevel()
+        Make_gui_draggable(self.root)
 
-            Thread(target=self.tray_icon_start, args=(), daemon=True).start()
+        self.check_program_instances()
+        self.window_state = ('normal', "zoomed")
+        self.create_icon()
 
-            self.gui_general_configure()
-            self.create_gui_structure()
-            self.create_gui_geometry()
+        Thread(target=self.tray_icon_start, args=(), daemon=True).start()
+
+        self.create_gui_structure()
+
+        if self.root == self.parent:      # if it is independent window (without insertion in outside project)
+            self.gui_root_configure()
+            self.window_move_to_center()
+
 
     def __del__(self):
         print("execute destructor")
         self.program_save_state()
 
+
     def check_program_instances(self):
         mask = f"{str(dirname_settings)}" + '\\'\
-                    f"{filename_check_program_instances_prefix}"\
-                    f"*{filename_check_program_instances_suffix}"
-        print(mask)
+                    f"{program_instance_prefix}"\
+                    f"*{program_instance_suffix}"
         if len(glob(mask)):
             print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
             self.program_exit()
-            return True
+            return
+        else:
+            self.create_program_instance_filemark()
+
+
+    def create_program_instance_filemark(self):
         self.temporary_file = NamedTemporaryFile(
-            suffix=filename_check_program_instances_suffix,
-            prefix=filename_check_program_instances_prefix,
+            suffix=program_instance_suffix,
+            prefix=program_instance_prefix,
             dir=dirname_settings)
 
-    def gui_general_configure(self):
-        self.root.title("STAND LAUNCHER")
-        self.root.iconbitmap(filename_program_image)
-        self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
-        self.root["bg"] = "black"
 
-    def create_gui_geometry(self):
+    def gui_root_configure(self):
+        # ROOT_METHODS
+        self.root.title("STAND LAUNCHER")
+        self.root.geometry("800x300")   #("WINXxWINY+ShiftX+ShiftY")
+        #self.root.resizable(width=True, height=True)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
+        #self.root.maxsize(1000, 1000)
+        #self.root.minsize(300, 300)
+        #self.root.overrideredirect(False)
+        #self.root.state('normal')     # normal/zoomed/iconic/withdrawn
+        self.root.iconbitmap(filename_program_image)   #=ONLY FILENAME! NO fileobject
+        self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
+
+        # WM_ATTRIBUTES
+        self.root.wm_attributes("-topmost", False)
+        self.root.wm_attributes("-disabled", False)
+        self.root.wm_attributes("-fullscreen", False)
+        self.root.wm_attributes("-transparentcolor", None)
+
+        # WGT_PARAMETERS
+        self.root["bg"] = "black"
+        self.root["fg"] = None
+        #self.root["width"] = None
+        #self.root["height"] = None
+        #self.root["bind"] = None
+        self.root["relief"] = "raised"  # "flat"/"sunken"/"raised"/"groove"/"ridge"
+        #self.root["borderwidth"] = 5
+
+    def window_move_to_center(self):
+        self.root.update_idletasks()
+        window_width = self.root.winfo_width()
+        window_height = self.root.winfo_height()
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
-        window_width = 800
-        window_height = 200
         x = (screen_width - window_width) / 2
         y = (screen_height - window_height) / 2
-        self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, x, y))
+        self.root.geometry('+%d+%d' % (x, y))
 
-        self.load_gui_settings()
 
     # #################################################
     # TRAY
@@ -171,85 +201,41 @@ class Gui(Frame):
     # FRAMES
     # #################################################
     def create_gui_structure(self):
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure([1, 2], weight=0)
-        self.root.rowconfigure(3, weight=1)
-        pad_external = 10
+        self.parent.columnconfigure(0, weight=1)
+        self.parent.rowconfigure([0, 1, ], weight=0)
+        pad_external = 5
 
-        # ======= FRAME-1 (WINDOW CONTROL) ====================
-        self.frame_control = Frame(self.root, bg="#101010")
-        self.frame_control.grid(row=1, sticky="nsew", padx=pad_external, pady=pad_external)
-        Make_gui_draggable(self.root)
+        # ======= FRAME-0 (WINDOW CONTROL) ====================
+        self.frame_control = Frame(self.parent, bg="#101010")
+        self.frame_control.grid(row=0, sticky="nsew", padx=pad_external, pady=pad_external)
+
         self.create_gui_control_buttons(self.frame_control)
 
-        # ======= FRAME-2 (SETTINGS) ====================
-        self.frame_settings = Frame(self.root, bg="#505050", height=30)
-        self.frame_settings.pack_propagate(0)   # hear it is necessary
-        self.frame_settings.grid(row=2, sticky="ew", padx=pad_external, pady=0)
+        # ======= FRAME-1 (SETTINGS) ====================
+        self.frame_settings = Frame(self.parent, bg="#505050", height=30)
+        self.frame_settings.pack_propagate(1)   # hear it is necessary
+        self.frame_settings.grid(row=1, sticky="ew", padx=pad_external, pady=0)
         self.create_settings_aria(self.frame_settings)
 
-        # ======= FRAME-3 (MAIN WORK SET) ====================
-        self.frame_main_work = Frame(self.root, bg="grey")
-        self.frame_main_work.grid(row=3, sticky="snew", padx=pad_external, pady=pad_external)
-
-        # ------- FRAME-3 /1 frame LEFT-main menu -----------------
-        self.frame_menu_left = Frame(self.frame_main_work, bg="grey", width=200, height=100)
-        self.frame_menu_left.pack(side='left', fill=BOTH, expand=0, padx=1, pady=1)
-        self.frame_menu_left.pack_propagate(0)
-        self.create_work_menu(self.frame_menu_left)
-
-        # ------- FRAME-1 /2 frame CENTER-main work aria -----------------
-        self.frame_work_aria = Frame(self.frame_main_work, bg="#ffffff", width=200)
-        self.frame_work_aria.pack(side='left', fill=BOTH, expand=1, padx=1, pady=1)
-        self.frame_work_aria.pack_propagate(0)
-        self.create_work_aria(self.frame_work_aria)
-
-        # ------- FRAME-1 /3 frame RIGHT-error aria -----------------
-        self.frame_error_aria = Frame(self.frame_main_work, bg="grey", width=200)
-        self.frame_error_aria.pack(side='left', fill=BOTH, expand=0, padx=1, pady=1)
-        self.frame_error_aria.pack_propagate(0)
-        self.create_work_error_eria(self.frame_error_aria)
-
     def create_settings_aria(self, root):
-        self.create_null_label(root)
-
-    def create_work_menu(self, root):
-        self.create_null_label(root)
-
-    def create_work_aria(self, root):
-        self.create_null_label(root)
-
-    def create_work_error_eria(self, root):
         self.create_null_label(root)
 
     def create_null_label(self, root):
         self.label_null = Label(root, text="ПУСТО", fg="white", bg="#505050")
         self.label_null.pack(side="left", fill="x", expand=0)
 
+
     # #################################################
     # BUTTONS
     # #################################################
-    def load_gui_settings(self, set_default=False):
-        if not set_default and os.path.exists(filename_program_save_state):
-            with open(filename_program_save_state, 'rb') as file:
-                self.buttons_main_gui_control_data_active = pickle.load(file)
-        else:
-            self.buttons_main_gui_control_data_active = self.get_gui_default()
-
-    def get_gui_default(self):
+    def create_gui_control_buttons(self, parent):
         colorset_button_normal = ["white", "#77FF77"]
-        self.button_switch_window_to_default_name = "default"   # button_name wich make window as default state!
-        buttons_main_gui_control_data_default = {
-            "button_window_blank": {
-                "flag": None,
-                "text": chr(9995),
-                "bg": ["white"],
-                "command": lambda flag: None,
-            },
+        '''
+        {
             "button_window_switch_to_default": {
                 "flag": None,
-                "text": self.button_switch_window_to_default_name,
-                "bg": ["white"],
+                "text": '123',
+                "bg": colorset_button_normal,
                 "command": lambda widget: self.window_set_default(widget=widget),
             },
             "button_window_short": {
@@ -273,7 +259,7 @@ class Gui(Frame):
             "button_window_minimize": {
                 "flag": None,
                 "text": "_",
-                "bg": ["white"],
+                "bg": colorset_button_normal,
                 "command": lambda flag: self.window_control_minimize(),
             },
             "button_program_restart": {
@@ -285,7 +271,7 @@ class Gui(Frame):
             "button_window_moveto00": {
                 "flag": None,
                 "text": chr(8689),
-                "bg": ["white"],
+                "bg": colorset_button_normal,
                 "command": lambda flag: self.window_move_to_00(),
             },
             "button_window_topalways": {
@@ -307,20 +293,14 @@ class Gui(Frame):
                 "command": lambda flag: self.frame_settings_open(flag=flag),
             },
         }
-        return buttons_main_gui_control_data_default
+        '''
 
-    def create_gui_control_buttons(self, frame):
-        self.load_gui_settings()
-        for button_id in self.buttons_main_gui_control_data_active:
-            button_obj = Button(frame)
-            button_data = self.buttons_main_gui_control_data_active[button_id]
-            button_obj["text"] = button_data["text"]
-            if button_obj["text"] == "":       # disable blank buttons
-                button_obj["state"] = "disabled"
-            button_obj["width"] = 3 if len(button_data["text"]) < 3 else None
-            button_obj["bg"] = button_data["bg"][0]
-            button_obj.bind("<Button-1>", self.buttons_handler)
-            button_obj.pack(side="left")
+        self.btn_window_blank = ButtonMod(parent=parent, text=chr(9995))
+        #self.btn_window_blank["text"] = chr(9995)
+        self.btn_window_blank["bg"] = None
+        self.btn_window_blank.bind("<Button-1>", self.buttons_handler)
+        self.btn_window_blank.pack(side="left")
+
 
     def buttons_handler(self, event):
         for button_id in self.buttons_main_gui_control_data_active:
@@ -348,18 +328,10 @@ class Gui(Frame):
                 # EXIT for-cycle
                 return      # do not delete!
 
-    # BUTTON FUNCTIONS
-    def gui_apply_settings(self):
-        #self.widgets_all_iter()
-        self.window_control_fullscreen(flag=False)
-        self.window_control_top(flag=False)
-        self.window_control_independent(flag=False)
-        self.frame_settings_open(flag=False)
-
-    def widgets_all_iter(self, my_frame=None, level="."):
-        if my_frame == None:
-            my_frame = self.root
-        frame_childrens = my_frame.children
+    def widgets_all_iter(self, parent=None, level="."):
+        if parent == None:
+            parent = self.root
+        frame_childrens = parent.children
         for wgt in frame_childrens:
             wgt_current_name = wgt
             if wgt[0:6] == "!frame":
@@ -396,7 +368,6 @@ class Gui(Frame):
 
     def window_set_default(self, widget):
         self.load_gui_settings(set_default=True)
-        self.gui_apply_settings()
         return
         remaining_buttons_to_reset = self.buttons_main_gui_control_data_active.copy()
 
@@ -411,7 +382,6 @@ class Gui(Frame):
                     widget_obj["bg"] = poped_button["bg"][0]
                     break
 
-        self.gui_apply_settings()
         self.create_gui_geometry()
 
     def window_control_independent(self, flag=False):
@@ -449,9 +419,35 @@ class Gui(Frame):
             #pickle.dump(data_to_save, file)
         #print("ok")
 
+
+class ButtonMod(Button):
+    color_flag_off_on = ["white", "#77FF77"]
+    flagged_buttons_count = 0
+    flagged_buttons_list = []
+
+    def __init__(self, parent=None, flagged=False, flag=False, text=None, command=None, bg=None):
+        super().__init__(parent)
+        self.parent = parent
+        self.is_flagged = flagged
+        self.flag_default = flag
+        self.flag_active = flag
+        self.text = text
+        self.command = command
+        self.bg = ButtonMod.color_flag_off_on if bg == None else [bg, ButtonMod.color_flag_off_on[1]]
+
+        if self.is_flagged == True:
+            ButtonMod.flagged_buttons_count += 1
+            ButtonMod.flagged_buttons_list += 0
+
+    def text(self):
+        self["text"] = chr(9995)
+
+
+
+
 def main():
     root = Tk()
-    app = Gui(root=root)
+    app = Gui(parent=root)
     app.mainloop()
 
 
