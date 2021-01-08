@@ -107,9 +107,7 @@ class Gui(Frame):
                     f"{program_instance_prefix}"\
                     f"*{program_instance_suffix}"
         if len(glob(mask)):
-            print("Program already have earlier started instance. Can't start new one!", file=sys.stderr)
-            self.program_exit()
-            return
+            raise Exception("Program already have earlier started instance. Can't start new one!")
         else:
             self.create_program_instance_filemark()
 
@@ -270,7 +268,7 @@ class Gui(Frame):
         self.btn_window_independent["text"] = chr(10043)
         self.btn_window_independent.pack(side="left")
 
-        self.btn_window_settings = ButtonMod(parent=parent, flag_default=True, bg_default=None, func=self.frame_settings_open)
+        self.btn_window_settings = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.frame_settings_open)
         self.btn_window_settings["text"] = "Настройки"
         self.btn_window_settings.pack(side="left")
 
