@@ -9,7 +9,7 @@ import pathlib
 
 from glob import glob
 from time import sleep
-from tkinter import Tk, Frame, Button, Label, BOTH
+from tkinter import Tk, Frame, Button, Label
 from tempfile import NamedTemporaryFile
 from threading import Thread
 
@@ -29,6 +29,7 @@ filename_program_save_state = dirname_settings / ".program_save_state.pickle"
 
 program_instance_prefix = ".started_"
 program_instance_suffix = "_instance.check"
+
 
 # #################################################
 # MOUSE MOVING ABILITY
@@ -96,11 +97,9 @@ class Gui(Frame):
             self.gui_root_configure()
             self.window_move_to_center()
 
-
     def __del__(self):
         print("execute destructor")
         self.program_save_state()
-
 
     def check_program_instances(self):
         mask = f"{str(dirname_settings)}" + '\\'\
@@ -117,33 +116,32 @@ class Gui(Frame):
             prefix=program_instance_prefix,
             dir=dirname_settings)
 
-
     def gui_root_configure(self):
         # ROOT_METHODS
         self.root.title("STAND LAUNCHER")
-        self.root.geometry("800x300")   #("WINXxWINY+ShiftX+ShiftY")
-        #self.root.resizable(width=True, height=True)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
-        #self.root.maxsize(1000, 1000)
-        #self.root.minsize(300, 300)
-        #self.root.overrideredirect(False)
-        #self.root.state('normal')     # normal/zoomed/iconic/withdrawn
-        self.root.iconbitmap(filename_program_image)   #=ONLY FILENAME! NO fileobject
+        self.root.geometry("800x300")   # ("WINXxWINY+ShiftX+ShiftY")
+        # self.root.resizable(width=True, height=True)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
+        # self.root.maxsize(1000, 1000)
+        # self.root.minsize(300, 300)
+        # self.root.overrideredirect(False)
+        # self.root.state('normal')     # normal/zoomed/iconic/withdrawn
+        self.root.iconbitmap(filename_program_image)   # ONLY FILENAME! NO fileobject
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
 
         # WM_ATTRIBUTES
-        #self.root.wm_attributes("-topmost", False)
-        #self.root.wm_attributes("-disabled", False)
-        #self.root.wm_attributes("-fullscreen", False)
-        #self.root.wm_attributes("-transparentcolor", None)
+        # self.root.wm_attributes("-topmost", False)
+        # self.root.wm_attributes("-disabled", False)
+        # self.root.wm_attributes("-fullscreen", False)
+        # self.root.wm_attributes("-transparentcolor", None)
 
         # WGT_PARAMETERS
         self.root["bg"] = "black"
         self.root["fg"] = None
-        #self.root["width"] = None
-        #self.root["height"] = None
-        #self.root["bind"] = None
+        # self.root["width"] = None
+        # self.root["height"] = None
+        # self.root["bind"] = None
         self.root["relief"] = "raised"  # "flat"/"sunken"/"raised"/"groove"/"ridge"
-        #self.root["borderwidth"] = 5
+        # self.root["borderwidth"] = 5
 
     def window_move_to_center(self):
         self.root.update_idletasks()
@@ -154,7 +152,6 @@ class Gui(Frame):
         x = (screen_width - window_width) / 2
         y = (screen_height - window_height) / 2
         self.root.geometry('+%d+%d' % (x, y))
-
 
     # #################################################
     # TRAY
@@ -186,12 +183,11 @@ class Gui(Frame):
         tray_icon_obj.menu = menu
         tray_icon_obj.run()
 
-    def tray_action_show_gui(self, tray_icon_obj_infunc, MenuItem):
+    def tray_action_show_gui(self):
         self.root.deiconify()
 
-    def tray_action_exit(self, tray_icon_obj_infunc, MenuItem):
+    def tray_action_exit(self):
         self.program_exit()
-
 
     # #################################################
     # FRAMES
@@ -322,8 +318,8 @@ class Gui(Frame):
         saving data) must be done before calling this function."""
         self.program_save_state()
         python_exe = sys.executable
-        # If you want to work with correct restart button DO NOT USE ANY PRINT-function befor!!!!
-        # else programm will not actually restart (in PyCharm will not start after second Restart)
+        # If you want to work with correct restart button DO NOT USE ANY PRINT-function before!!!!
+        # else program will not actually restart (in PyCharm will not start after second Restart)
         os.execl(python_exe, python_exe, *sys.argv)
 
     def program_exit(self):
@@ -333,10 +329,10 @@ class Gui(Frame):
 
     def program_save_state(self, data_to_save=None):
         pass
-        #data_to_save = self.buttons_main_gui_control_data_active
-        #with open(filename_program_save_state, 'wb') as file:
-            #pickle.dump(data_to_save, file)
-        #print("ok")
+        # data_to_save = self.buttons_main_gui_control_data_active
+        # with open(filename_program_save_state, 'wb') as file:
+        #     pickle.dump(data_to_save, file)
+        # print("ok")
 
 
 class ButtonMod(Button):
@@ -344,37 +340,37 @@ class ButtonMod(Button):
     buttonmod_flagged_count = 0
     buttonmod_flagged_list = []
 
-    def __init__(self1, parent=None, flag_default=None, bg_default=None, func=None):
+    def __init__(self, parent=None, flag_default=None, bg_default=None, func=None):
         super().__init__(parent)
-        self1.parent = parent
+        self.parent = parent
 
-        self1.is_flagged = False if flag_default is None else True
+        self.is_flagged = False if flag_default is None else True
 
-        self1.bg_set = ButtonMod.color_off_on if bg_default is None else [bg_default, ButtonMod.color_off_on[1]]
-        self1["bg"] = self1.bg_set[0]
+        self.bg_set = ButtonMod.color_off_on if bg_default is None else [bg_default, ButtonMod.color_off_on[1]]
+        self["bg"] = self.bg_set[0]
 
-        self1.func = func if func is not None else lambda flag=False: None
-        self1["command"] = self1.switch
+        self.func = func if func is not None else lambda flag=False: None
+        self["command"] = self.switch
 
-        if self1.is_flagged == True:
-            self1.flag_default = flag_default
-            self1.flag_active = flag_default
+        if self.is_flagged:
+            self.flag_default = flag_default
+            self.flag_active = flag_default
             ButtonMod.buttonmod_flagged_count += 1
-            ButtonMod.buttonmod_flagged_list += [self1]
-            self1.switch_default()
+            ButtonMod.buttonmod_flagged_list += [self]
+            self.switch_default()
 
-    def switch(self1):
-        if self1.is_flagged == True:
-            self1.flag_active = not self1.flag_active
-            self1["bg"] = self1.bg_set[int(self1.flag_active)]
-            self1.func(flag=self1.flag_active)
+    def switch(self):
+        if self.is_flagged:
+            self.flag_active = not self.flag_active
+            self["bg"] = self.bg_set[int(self.flag_active)]
+            self.func(flag=self.flag_active)
         else:
-            self1.func()
+            self.func()
 
-    def switch_default(self1):
-        if self1.is_flagged == True:
-            self1.flag_active = not self1.flag_default
-        self1.switch()
+    def switch_default(self):
+        if self.is_flagged:
+            self.flag_active = not self.flag_default
+        self.switch()
 
 
 def main():
