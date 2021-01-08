@@ -404,17 +404,21 @@ class ButtonMod(Button):
         self.flag_default = flag_default
         self.flag_active = flag_default
         self.bg_set = ButtonMod.color_flag_off_on if bg_default is None else [bg_default, ButtonMod.color_flag_off_on[1]]
-        self.func = func if func is not None else lambda: None
+        self.func = func if func is not None else lambda flag: None
         self["command"] = self.switch
 
         if self.is_flagged == True:
             ButtonMod.flagged_buttons_count += 1
             ButtonMod.flagged_buttons_list += [self]
+            #self.switch_default()
+        else:
+            pass #self["command"] = self.func
 
     def switch(self, flag=None):
         self.func(flag=flag if flag is not None else self.flag_active)
-        self._switch_flag()
-        self._update_color()
+        if self.is_flagged == True:
+            self._switch_flag()
+            self._update_color()
 
     def switch_default(self):
         self.switch(flag=self.flag_default)
