@@ -286,47 +286,19 @@ class Gui(Frame):
                 "bg": colorset_button_normal,
                 "command": lambda flag: self.window_control_independent(flag=flag),
             },
-            "button_window_settings": {
-                "flag": False,
-                "text": "Настройки",
-                "bg": colorset_button_normal,
-                "command": lambda flag: self.frame_settings_open(flag=flag),
-            },
         }
+            def __init__(self, parent=None, flagged=False, flag_default=False, bg_default=None):
+
         '''
 
-        self.btn_window_blank = ButtonMod(parent=parent, text=chr(9995))
-        #self.btn_window_blank["text"] = chr(9995)
-        self.btn_window_blank["bg"] = None
-        self.btn_window_blank.bind("<Button-1>", self.buttons_handler)
+        self.btn_window_blank = ButtonMod(parent=parent, flagged=False, flag_default=False, bg_default=None, func=None)
+        self.btn_window_blank["text"] = chr(9995)
         self.btn_window_blank.pack(side="left")
 
+        self.btn_window_settings = ButtonMod(parent=parent, flagged=True, flag_default=False, bg_default=None, func=self.frame_settings_open)
+        self.btn_window_settings["text"] = "Настройки"
+        self.btn_window_settings.pack(side="left")
 
-    def buttons_handler(self, event):
-        for button_id in self.buttons_main_gui_control_data_active:
-            # finding data line corresponding to pressed button
-            button_data = self.buttons_main_gui_control_data_active[button_id]
-            if button_data["text"] == event.widget["text"]:
-                # if find - use data
-                if button_data["text"] == self.button_switch_window_to_default_name:
-                    # if fined the special button just execute its lambda!
-                    button_data["command"](widget=event.widget)
-                    return
-
-                # CHANGE FLAG
-                flag_old = button_data["flag"]
-                if flag_old is not None:
-                    flag_new = not flag_old
-                    button_data["flag"] = flag_new
-                    # CHANGE windget
-                    event.widget["bg"] = button_data["bg"][flag_new]
-                else:
-                    flag_new = None
-
-                # EXECUTE COMMAND
-                button_data["command"](flag=flag_new)
-                # EXIT for-cycle
-                return      # do not delete!
 
     def widgets_all_iter(self, parent=None, level="."):
         if parent == None:
@@ -425,23 +397,35 @@ class ButtonMod(Button):
     flagged_buttons_count = 0
     flagged_buttons_list = []
 
-    def __init__(self, parent=None, flagged=False, flag=False, text=None, command=None, bg=None):
+    def __init__(self, parent=None, flagged=False, flag_default=False, bg_default=None, func=None):
         super().__init__(parent)
         self.parent = parent
         self.is_flagged = flagged
-        self.flag_default = flag
-        self.flag_active = flag
-        self.text = text
-        self.command = command
-        self.bg = ButtonMod.color_flag_off_on if bg == None else [bg, ButtonMod.color_flag_off_on[1]]
+        self.flag_default = flag_default
+        self.flag_active = flag_default
+        self.bg_set = ButtonMod.color_flag_off_on if bg_default is None else [bg_default, ButtonMod.color_flag_off_on[1]]
+        self.func = func if func is not None else lambda: None
+        self["command"] = self.switch
 
         if self.is_flagged == True:
             ButtonMod.flagged_buttons_count += 1
-            ButtonMod.flagged_buttons_list += 0
+            ButtonMod.flagged_buttons_list += [self]
 
-    def text(self):
-        self["text"] = chr(9995)
+    def switch(self):
+        self.func()
+        self._switch_flag()
+        self._update_color()
 
+    def switch_default(self):
+        self.func(flag=self.flag_active)
+        self._switch_flag()
+        self._update_color()
+
+    def _update_color(self):
+        self["bg"] = self.bg_set[int(self.flag_active)]
+
+    def _switch_flag(self):
+        self.flag_active = not self.flag_active
 
 
 
