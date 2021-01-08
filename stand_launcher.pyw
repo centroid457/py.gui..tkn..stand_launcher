@@ -82,7 +82,7 @@ class Gui(Frame):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
-        self.root = parent.winfo_toplevel()
+        self.root = self.parent.winfo_toplevel()
         Make_gui_draggable(self.root)
 
         self.check_program_instances()
@@ -133,10 +133,10 @@ class Gui(Frame):
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
 
         # WM_ATTRIBUTES
-        self.root.wm_attributes("-topmost", False)
-        self.root.wm_attributes("-disabled", False)
-        self.root.wm_attributes("-fullscreen", False)
-        self.root.wm_attributes("-transparentcolor", None)
+        #self.root.wm_attributes("-topmost", False)
+        #self.root.wm_attributes("-disabled", False)
+        #self.root.wm_attributes("-fullscreen", False)
+        #self.root.wm_attributes("-transparentcolor", None)
 
         # WGT_PARAMETERS
         self.root["bg"] = "black"
@@ -262,7 +262,7 @@ class Gui(Frame):
         self.btn_window_moveto00["text"] = chr(8689)
         self.btn_window_moveto00.pack(side="left")
 
-        self.btn_window_topalways = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_control_top)
+        self.btn_window_topalways = ButtonMod(parent=parent, flag_default=True, bg_default=None, func=self.window_control_topalways)
         self.btn_window_topalways["text"] = "top"
         self.btn_window_topalways.pack(side="left")
 
@@ -275,7 +275,7 @@ class Gui(Frame):
         self.btn_window_settings.pack(side="left")
 
     def window_set_default(self):
-        for btn_control in ButtonMod.buttonmod_list:
+        for btn_control in ButtonMod.buttonmod_flagged_list:
             btn_control.switch_default()
         self.gui_root_configure()
         self.window_move_to_center()
@@ -302,7 +302,7 @@ class Gui(Frame):
     def window_move_to_00(self):
         self.root.geometry("+0+0")
 
-    def window_control_top(self, flag=False):
+    def window_control_topalways(self, flag=False):
         self.root.wm_attributes("-topmost", flag)
 
     def window_control_independent(self, flag=False):
@@ -343,8 +343,8 @@ class Gui(Frame):
 
 class ButtonMod(Button):
     color_off_on = ["white", "#77FF77"]
-    buttonmod_count = 0
-    buttonmod_list = []
+    buttonmod_flagged_count = 0
+    buttonmod_flagged_list = []
 
     def __init__(self1, parent=None, flag_default=None, bg_default=None, func=None):
         super().__init__(parent)
@@ -361,8 +361,8 @@ class ButtonMod(Button):
         if self1.is_flagged == True:
             self1.flag_default = flag_default
             self1.flag_active = flag_default
-            ButtonMod.buttonmod_count += 1
-            ButtonMod.buttonmod_list += [self1]
+            ButtonMod.buttonmod_flagged_count += 1
+            ButtonMod.buttonmod_flagged_list += [self1]
             self1.switch_default()
 
     def switch(self1):
