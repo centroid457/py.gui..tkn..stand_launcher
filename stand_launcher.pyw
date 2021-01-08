@@ -411,15 +411,13 @@ class ButtonMod(Button):
             ButtonMod.flagged_buttons_count += 1
             ButtonMod.flagged_buttons_list += [self]
 
-    def switch(self):
-        self.func()
+    def switch(self, flag=None):
+        self.func(flag=flag if flag is not None else self.flag_active)
         self._switch_flag()
         self._update_color()
 
     def switch_default(self):
-        self.func(flag=self.flag_active)
-        self._switch_flag()
-        self._update_color()
+        self.switch(flag=self.flag_default)
 
     def _update_color(self):
         self["bg"] = self.bg_set[int(self.flag_active)]
