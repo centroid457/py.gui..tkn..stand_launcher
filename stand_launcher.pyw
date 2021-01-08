@@ -226,6 +226,7 @@ class Gui(Frame):
     def create_gui_control_buttons(self, parent):
         self.btn_window_blank = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=None)
         self.btn_window_blank["text"] = chr(9995)
+        self.btn_window_blank["state"] = "disabled"
         self.btn_window_blank.pack(side="left")
 
         self.btn_window_switch_to_default = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_set_default)
