@@ -261,7 +261,7 @@ class Gui(Frame):
         self.btn_window_topalways["text"] = "top"
         self.btn_window_topalways.pack(side="left")
 
-        self.btn_window_independent = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_control_independent)
+        self.btn_window_independent = ButtonMod(parent=parent, flag_default=True, bg_default=None, func=self.window_control_independent)
         self.btn_window_independent["text"] = chr(10043)
         self.btn_window_independent.pack(side="left")
 
@@ -277,9 +277,10 @@ class Gui(Frame):
 
     def window_control_short(self, flag=False):
         if flag:
+            self.window_control_topalways(flag=True)
             self.window_control_fullscreen(False)
             window_width = 130       # it does not matter if less then about 120!!!
-            window_height = 45
+            window_height = 40
             self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
 
     def window_control_fullscreen(self, flag=False):
@@ -346,6 +347,8 @@ class ButtonMod(Button):
         self.parent = parent
 
         self.is_flagged = False if flag_default is None else True
+        self.flag_default = flag_default
+        self.flag_active = flag_default
 
         self.bg_set = ButtonMod.color_off_on if bg_default is None else [bg_default, ButtonMod.color_off_on[1]]
         self["bg"] = self.bg_set[0]
@@ -354,24 +357,23 @@ class ButtonMod(Button):
         self["command"] = self.switch
 
         if self.is_flagged:
-            self.flag_default = flag_default
-            self.flag_active = flag_default
             ButtonMod.buttonmod_flagged_count += 1
             ButtonMod.buttonmod_flagged_list += [self]
             self.switch_default()
 
     def switch(self):
-        if self.is_flagged:
-            self.flag_active = not self.flag_active
-            self["bg"] = self.bg_set[int(self.flag_active)]
-            self.func(flag=self.flag_active)
-        else:
-            self.func()
+        self.switch_set_flag(not self.flag_active)
 
     def switch_default(self):
+        self.switch_set_flag(self.flag_default)
+
+    def switch_set_flag(self, flag):
         if self.is_flagged:
-            self.flag_active = not self.flag_default
-        self.switch()
+            self.flag_active = flag
+            self["bg"] = self.bg_set[int(flag)]
+            self.func(flag)
+        else:
+            self.func()
 
 
 def main():
