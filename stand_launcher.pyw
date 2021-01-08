@@ -359,8 +359,6 @@ class ButtonMod(Button):
         self1.func = func if func is not None else lambda flag=False: None
         self1["command"] = self1.switch
 
-
-
         if self1.is_flagged == True:
             self1.flag_default = flag_default
             self1.flag_active = flag_default
