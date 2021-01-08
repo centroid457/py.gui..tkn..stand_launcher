@@ -291,13 +291,25 @@ class Gui(Frame):
 
         '''
 
+
+
+
+
+
+
+
+
         self.btn_window_blank = ButtonMod(parent=parent, flagged=False, flag_default=False, bg_default=None, func=None)
         self.btn_window_blank["text"] = chr(9995)
         self.btn_window_blank.pack(side="left")
 
-        self.btn_window_settings = ButtonMod(parent=parent, flagged=True, flag_default=False, bg_default=None, func=self.frame_settings_open)
+        self.btn_window_settings = ButtonMod(parent=parent, flagged=True, flag_default=True, bg_default=None, func=self.frame_settings_open)
         self.btn_window_settings["text"] = "Настройки"
         self.btn_window_settings.pack(side="left")
+        #self.btn_window_settings.func(None)
+        #self.btn_window_settings.switch()
+        self.btn_window_settings.set_default_state()
+        print(self.btn_window_settings.flag_active)
 
 
     def widgets_all_iter(self, parent=None, level="."):
@@ -361,6 +373,8 @@ class Gui(Frame):
         self.root.wm_overrideredirect(flag)
 
     def frame_settings_open(self, flag=False):
+        print("FUNC GET SELF", self)
+        print("FUNC GET FLAG", flag)
         if flag:
             self.frame_settings.grid()
         else:
@@ -397,38 +411,43 @@ class ButtonMod(Button):
     flagged_buttons_count = 0
     flagged_buttons_list = []
 
-    def __init__(self, parent=None, flagged=False, flag_default=False, bg_default=None, func=None):
+    def __init__(self1, parent=None, flagged=False, flag_default=False, bg_default=None, func=None):
         super().__init__(parent)
-        self.parent = parent
-        self.is_flagged = flagged
-        self.flag_default = flag_default
-        self.flag_active = flag_default
-        self.bg_set = ButtonMod.color_flag_off_on if bg_default is None else [bg_default, ButtonMod.color_flag_off_on[1]]
-        self.func = func if func is not None else lambda flag: None
-        self["command"] = self.switch
+        self1.parent = parent
+        self1.is_flagged = flagged
+        self1.flag_default = flag_default
+        self1.flag_active = flag_default
+        self1.bg_set = ButtonMod.color_flag_off_on if bg_default is None else [bg_default, ButtonMod.color_flag_off_on[1]]
+        self1.func = func if func is not None else lambda flag=False: None
+        self1["command"] = self1.switch
+        print(self1, self1["text"], self1.flag_active)
+        #self1.func()
 
-        if self.is_flagged == True:
+
+        if self1.is_flagged == True:
             ButtonMod.flagged_buttons_count += 1
-            ButtonMod.flagged_buttons_list += [self]
-            #self.switch_default()
+            ButtonMod.flagged_buttons_list += [self1]
+            #self1.switch_default()
+            #self1.switch()
         else:
-            pass #self["command"] = self.func
+            pass #self1["command"] = self1.func
 
-    def switch(self, flag=None):
-        self.func(flag=flag if flag is not None else self.flag_active)
-        if self.is_flagged == True:
-            self._switch_flag()
-            self._update_color()
 
-    def switch_default(self):
-        self.switch(flag=self.flag_default)
+    def switch(self1):
+        if self1.is_flagged == True:
+            self1.flag_active = not self1.flag_active
+            self1["bg"] = self1.bg_set[int(self1.flag_active)]
 
-    def _update_color(self):
-        self["bg"] = self.bg_set[int(self.flag_active)]
+        print(self1["text"], self1.flag_active)
+        self1.func(flag=self1.flag_active)
 
-    def _switch_flag(self):
-        self.flag_active = not self.flag_active
+    def switch_default(self1):
+        self1.flag_active = not self1.flag_default
+        self1.switch()
 
+    def set_default_state(self1):
+        self1.flag_active = self1.flag_default
+        self1["bg"] = self1.bg_set[int(self1.flag_active)]
 
 
 def main():
