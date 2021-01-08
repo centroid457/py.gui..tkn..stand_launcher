@@ -113,7 +113,6 @@ class Gui(Frame):
         else:
             self.create_program_instance_filemark()
 
-
     def create_program_instance_filemark(self):
         self.temporary_file = NamedTemporaryFile(
             suffix=program_instance_suffix,
@@ -235,12 +234,11 @@ class Gui(Frame):
         self.btn_window_blank["text"] = chr(9995)
         self.btn_window_blank.pack(side="left")
 
-
         self.btn_window_switch_to_default = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_set_default)
         self.btn_window_switch_to_default["text"] = "default"
         self.btn_window_switch_to_default.pack(side="left")
 
-        self.btn_window_short = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_short)
+        self.btn_window_short = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_short)
         self.btn_window_short["text"] = chr(9624)
         self.btn_window_short.pack(side="left")
 
@@ -276,8 +274,11 @@ class Gui(Frame):
         self.btn_window_settings["text"] = "Настройки"
         self.btn_window_settings.pack(side="left")
 
-    def window_move_to_00(self):
-        self.root.geometry("+0+0")
+    def window_set_default(self):
+        for btn_control in ButtonMod.buttonmod_list:
+            btn_control.switch_default()
+        self.gui_root_configure()
+        self.window_move_to_center()
 
     def window_short(self, flag=False):
         self.window_control_fullscreen(False)
@@ -298,13 +299,11 @@ class Gui(Frame):
         else:
             self.root.withdraw()
 
+    def window_move_to_00(self):
+        self.root.geometry("+0+0")
+
     def window_control_top(self, flag=False):
         self.root.wm_attributes("-topmost", flag)
-
-    def window_set_default(self):
-        for btn_control in ButtonMod.buttonmod_list:
-            btn_control.switch_default()
-        self.window_move_to_center()
 
     def window_control_independent(self, flag=False):
         """make window independent from OS explorer"""
