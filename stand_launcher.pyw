@@ -214,10 +214,12 @@ class Gui(Frame):
         self.frame_settings.pack_propagate(1)   # hear it is necessary
         self.frame_settings.grid(row=1, sticky="ew", padx=pad_external, pady=0)
 
-        # FILL FRAMES! PLACE IT ONLY AFTER ALL FRAMES INITIATION!!!
+        self.fill_all_frames()
+
+    def fill_all_frames(self):
+        # PLACE IT ONLY AFTER ALL FRAMES INITIATION!!!
         self.create_gui_control_buttons(self.frame_control)
         self.create_settings_aria(self.frame_settings)
-
 
     def create_settings_aria(self, root):
         self.create_null_label(root)
@@ -231,77 +233,48 @@ class Gui(Frame):
     # BUTTONS
     # #################################################
     def create_gui_control_buttons(self, parent):
-        '''
-        {
-            "button_window_switch_to_default": {
-                "flag": None,
-                "text": '123',
-                "bg": colorset_button_normal,
-                "command": lambda widget: self.window_set_default(widget=widget),
-            },
-            "button_window_short": {
-                "flag": False,
-                "text": chr(9624),
-                "bg": colorset_button_normal,
-                "command": lambda flag: self.window_short(flag=flag),
-            },
-            "button_window_exit": {             # first level it's only id! you can change it any time
-                "flag": None,                   # None mean it will always do the same things, flag not used
-                "text": chr(9587),              # text on the button
-                "bg": ["#FF6666"],       # second color is for flaged button state, it will rotating
-                "command": lambda flag: self.program_exit(),
-            },
-            "button_window_fullscreen": {
-                "flag": False,
-                "text": chr(9744),
-                "bg": colorset_button_normal,
-                "command": lambda flag: self.window_control_fullscreen(flag=flag),
-            },
-            "button_window_minimize": {
-                "flag": None,
-                "text": "_",
-                "bg": colorset_button_normal,
-                "command": lambda flag: self.window_control_minimize(),
-            },
-            "button_program_restart": {
-                "flag": None,
-                "text": "restart",
-                "bg": ["#FF6666"],
-                "command": lambda flag: self.program_restart(),
-            },
-            "button_window_moveto00": {
-                "flag": None,
-                "text": chr(8689),
-                "bg": colorset_button_normal,
-                "command": lambda flag: self.window_move_to_00(),
-            },
-            "button_window_topalways": {
-                "flag": False,
-                "text": "top",
-                "bg": colorset_button_normal,
-                "command": lambda flag: self.window_control_top(flag=flag),
-            },
-            "button_window_independent": {
-                "flag": False,
-                "text": chr(10043),
-                "bg": colorset_button_normal,
-                "command": lambda flag: self.window_control_independent(flag=flag),
-            },
-        }
-            def __init__(self, parent=None, flagged=False, flag_default=False, bg_default=None):
-
-        '''
-
-
-
-
-
-
-        self.btn_window_blank = ButtonMod(parent=parent, flagged=False, flag_default=False, bg_default=None, func=None)
+        self.btn_window_blank = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=None)
         self.btn_window_blank["text"] = chr(9995)
         self.btn_window_blank.pack(side="left")
 
-        self.btn_window_settings = ButtonMod(parent=parent, flagged=True, flag_default=True, bg_default=None, func=self.frame_settings_open)
+
+        self.btn_window_switch_to_default = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=lambda widget: self.window_set_default(widget=widget))
+        self.btn_window_switch_to_default["text"] = "default"
+        self.btn_window_switch_to_default.pack(side="left")
+
+        self.btn_window_short = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_short)
+        self.btn_window_short["text"] = chr(9624)
+        self.btn_window_short.pack(side="left")
+
+        self.btn_window_exit = ButtonMod(parent=parent, flag_default=None, bg_default="#FF6666", func=self.program_exit)
+        self.btn_window_exit["text"] = chr(9587)
+        self.btn_window_exit.pack(side="left")
+
+        self.btn_window_fullscreen = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_control_fullscreen)
+        self.btn_window_fullscreen["text"] = chr(9744)
+        self.btn_window_fullscreen.pack(side="left")
+
+        self.btn_window_minimize = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_control_minimize)
+        self.btn_window_minimize["text"] = "_"
+        self.btn_window_minimize.pack(side="left")
+
+        self.btn_program_restart = ButtonMod(parent=parent, flag_default=None, bg_default="#FF6666", func=self.program_restart)
+        self.btn_program_restart["text"] = "restart"
+        self.btn_program_restart.pack(side="left")
+
+        self.btn_window_moveto00 = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_move_to_00)
+        self.btn_window_moveto00["text"] = chr(8689)
+        self.btn_window_moveto00.pack(side="left")
+
+        self.btn_window_topalways = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_control_top)
+        self.btn_window_topalways["text"] = "top"
+        self.btn_window_topalways.pack(side="left")
+
+        self.btn_window_independent = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_control_independent)
+        self.btn_window_independent["text"] = chr(10043)
+        self.btn_window_independent.pack(side="left")
+
+        self.btn_window_settings = ButtonMod(parent=parent, flag_default=True, bg_default=None, func=self.frame_settings_open)
         self.btn_window_settings["text"] = "Настройки"
         self.btn_window_settings.pack(side="left")
 
@@ -335,7 +308,7 @@ class Gui(Frame):
             self.root.wm_attributes('-fullscreen', flag)
 
     def window_control_minimize(self):
-        if not self.buttons_main_gui_control_data_active["button_window_independent"]["flag"]:
+        if not self.btn_window_independent.flag_active:
             self.root.iconify()
         else:
             self.root.withdraw()
@@ -402,13 +375,19 @@ class ButtonMod(Button):
     buttonmod_count = 0
     buttonmod_list = []
 
-    def __init__(self1, parent=None, flagged=False, flag_default=False, bg_default=None, func=None):
+    def __init__(self1, parent=None, flag_default=None, bg_default=None, func=None):
         super().__init__(parent)
         self1.parent = parent
-        self1.is_flagged = flagged
+
+        self1.is_flagged = False if flag_default is None else True
+
         self1.bg_set = ButtonMod.color_off_on if bg_default is None else [bg_default, ButtonMod.color_off_on[1]]
+        self1["bg"] = self1.bg_set[0]
+
         self1.func = func if func is not None else lambda flag=False: None
         self1["command"] = self1.switch
+
+
 
         if self1.is_flagged == True:
             self1.flag_default = flag_default
