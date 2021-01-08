@@ -86,7 +86,6 @@ class Gui(Frame):
         Make_gui_draggable(self.root)
 
         self.check_program_instances()
-        self.window_state = ('normal', "zoomed")
         self.create_icon()
 
         Thread(target=self.tray_icon_start, args=(), daemon=True).start()
@@ -228,7 +227,6 @@ class Gui(Frame):
         self.label_null = Label(root, text="ПУСТО", fg="white", bg="#505050")
         self.label_null.pack(side="left", fill="x", expand=0)
 
-
     # #################################################
     # BUTTONS
     # #################################################
@@ -238,7 +236,7 @@ class Gui(Frame):
         self.btn_window_blank.pack(side="left")
 
 
-        self.btn_window_switch_to_default = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=lambda widget: self.window_set_default(widget=widget))
+        self.btn_window_switch_to_default = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_set_default)
         self.btn_window_switch_to_default["text"] = "default"
         self.btn_window_switch_to_default.pack(side="left")
 
@@ -278,20 +276,6 @@ class Gui(Frame):
         self.btn_window_settings["text"] = "Настройки"
         self.btn_window_settings.pack(side="left")
 
-    def widgets_all_iter(self, parent=None, level="."):
-        if parent == None:
-            parent = self.root
-        frame_childrens = parent.children
-        for wgt in frame_childrens:
-            wgt_current_name = wgt
-            if wgt[0:6] == "!frame":
-                print(level + wgt_current_name)
-                widgets_all_iter(my_frame=frame_childrens[wgt], level=level + wgt_current_name)
-
-            elif wgt[0:7] == "!button":
-                print(level + wgt_current_name)
-                change_widget(frame_childrens[wgt])
-
     def window_move_to_00(self):
         self.root.geometry("+0+0")
 
@@ -303,7 +287,8 @@ class Gui(Frame):
             self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
 
     def window_control_fullscreen(self, flag=False):
-        self.root.state(self.window_state[int(flag)])
+        window_state = ('normal', "zoomed")
+        self.root.state(window_state[int(flag)])
         if not flag:
             self.root.wm_attributes('-fullscreen', flag)
 
@@ -316,23 +301,10 @@ class Gui(Frame):
     def window_control_top(self, flag=False):
         self.root.wm_attributes("-topmost", flag)
 
-    def window_set_default(self, widget):
-        self.load_gui_settings(set_default=True)
-        return
-        remaining_buttons_to_reset = self.buttons_main_gui_control_data_active.copy()
-
-        parent_widget_name = widget.winfo_parent()      # .!frame
-        parent_widget_obj = widget._nametowidget(parent_widget_name)
-        button_obj_list = parent_widget_obj.pack_slaves()
-
-        for widget_obj in button_obj_list:
-            for button_id in remaining_buttons_to_reset:
-                if remaining_buttons_to_reset[button_id]["text"] == widget_obj["text"]:
-                    poped_button = remaining_buttons_to_reset.pop(button_id)
-                    widget_obj["bg"] = poped_button["bg"][0]
-                    break
-
-        self.create_gui_geometry()
+    def window_set_default(self):
+        for btn_control in ButtonMod.buttonmod_list:
+            btn_control.switch_default()
+        self.window_move_to_center()
 
     def window_control_independent(self, flag=False):
         """make window independent from OS explorer"""
