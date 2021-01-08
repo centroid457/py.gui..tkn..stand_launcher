@@ -209,13 +209,15 @@ class Gui(Frame):
         self.frame_control = Frame(self.parent, bg="#101010")
         self.frame_control.grid(row=0, sticky="nsew", padx=pad_external, pady=pad_external)
 
-        self.create_gui_control_buttons(self.frame_control)
-
         # ======= FRAME-1 (SETTINGS) ====================
         self.frame_settings = Frame(self.parent, bg="#505050", height=30)
         self.frame_settings.pack_propagate(1)   # hear it is necessary
         self.frame_settings.grid(row=1, sticky="ew", padx=pad_external, pady=0)
+
+        # FILL FRAMES! PLACE IT ONLY AFTER ALL FRAMES INITIATION!!!
+        self.create_gui_control_buttons(self.frame_control)
         self.create_settings_aria(self.frame_settings)
+
 
     def create_settings_aria(self, root):
         self.create_null_label(root)
@@ -229,7 +231,6 @@ class Gui(Frame):
     # BUTTONS
     # #################################################
     def create_gui_control_buttons(self, parent):
-        colorset_button_normal = ["white", "#77FF77"]
         '''
         {
             "button_window_switch_to_default": {
@@ -296,9 +297,6 @@ class Gui(Frame):
 
 
 
-
-
-
         self.btn_window_blank = ButtonMod(parent=parent, flagged=False, flag_default=False, bg_default=None, func=None)
         self.btn_window_blank["text"] = chr(9995)
         self.btn_window_blank.pack(side="left")
@@ -306,11 +304,6 @@ class Gui(Frame):
         self.btn_window_settings = ButtonMod(parent=parent, flagged=True, flag_default=True, bg_default=None, func=self.frame_settings_open)
         self.btn_window_settings["text"] = "Настройки"
         self.btn_window_settings.pack(side="left")
-        #self.btn_window_settings.func(None)
-        #self.btn_window_settings.switch()
-        self.btn_window_settings.set_default_state()
-        print(self.btn_window_settings.flag_active)
-
 
     def widgets_all_iter(self, parent=None, level="."):
         if parent == None:
@@ -373,8 +366,6 @@ class Gui(Frame):
         self.root.wm_overrideredirect(flag)
 
     def frame_settings_open(self, flag=False):
-        print("FUNC GET SELF", self)
-        print("FUNC GET FLAG", flag)
         if flag:
             self.frame_settings.grid()
         else:
@@ -407,47 +398,37 @@ class Gui(Frame):
 
 
 class ButtonMod(Button):
-    color_flag_off_on = ["white", "#77FF77"]
-    flagged_buttons_count = 0
-    flagged_buttons_list = []
+    color_off_on = ["white", "#77FF77"]
+    buttonmod_count = 0
+    buttonmod_list = []
 
     def __init__(self1, parent=None, flagged=False, flag_default=False, bg_default=None, func=None):
         super().__init__(parent)
         self1.parent = parent
         self1.is_flagged = flagged
-        self1.flag_default = flag_default
-        self1.flag_active = flag_default
-        self1.bg_set = ButtonMod.color_flag_off_on if bg_default is None else [bg_default, ButtonMod.color_flag_off_on[1]]
+        self1.bg_set = ButtonMod.color_off_on if bg_default is None else [bg_default, ButtonMod.color_off_on[1]]
         self1.func = func if func is not None else lambda flag=False: None
         self1["command"] = self1.switch
-        print(self1, self1["text"], self1.flag_active)
-        #self1.func()
-
 
         if self1.is_flagged == True:
-            ButtonMod.flagged_buttons_count += 1
-            ButtonMod.flagged_buttons_list += [self1]
-            #self1.switch_default()
-            #self1.switch()
-        else:
-            pass #self1["command"] = self1.func
-
+            self1.flag_default = flag_default
+            self1.flag_active = flag_default
+            ButtonMod.buttonmod_count += 1
+            ButtonMod.buttonmod_list += [self1]
+            self1.switch_default()
 
     def switch(self1):
         if self1.is_flagged == True:
             self1.flag_active = not self1.flag_active
             self1["bg"] = self1.bg_set[int(self1.flag_active)]
-
-        print(self1["text"], self1.flag_active)
-        self1.func(flag=self1.flag_active)
+            self1.func(flag=self1.flag_active)
+        else:
+            self1.func()
 
     def switch_default(self1):
-        self1.flag_active = not self1.flag_default
+        if self1.is_flagged == True:
+            self1.flag_active = not self1.flag_default
         self1.switch()
-
-    def set_default_state(self1):
-        self1.flag_active = self1.flag_default
-        self1["bg"] = self1.bg_set[int(self1.flag_active)]
 
 
 def main():
