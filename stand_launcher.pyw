@@ -232,7 +232,7 @@ class Gui(Frame):
         self.btn_window_switch_to_default["text"] = "default"
         self.btn_window_switch_to_default.pack(side="left")
 
-        self.btn_window_short = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_short)
+        self.btn_window_short = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_control_short)
         self.btn_window_short["text"] = chr(9624)
         self.btn_window_short.pack(side="left")
 
@@ -252,7 +252,7 @@ class Gui(Frame):
         self.btn_program_restart["text"] = "restart"
         self.btn_program_restart.pack(side="left")
 
-        self.btn_window_moveto00 = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_move_to_00)
+        self.btn_window_moveto00 = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_control_move_to_00)
         self.btn_window_moveto00["text"] = chr(8689)
         self.btn_window_moveto00.pack(side="left")
 
@@ -274,11 +274,11 @@ class Gui(Frame):
         self.gui_root_configure()
         self.window_move_to_center()
 
-    def window_short(self, flag=False):
-        self.window_control_fullscreen(False)
-        window_width = 130       # it does not matter if less then about 120!!!
-        window_height = 45
+    def window_control_short(self, flag=False):
         if flag:
+            self.window_control_fullscreen(False)
+            window_width = 130       # it does not matter if less then about 120!!!
+            window_height = 45
             self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
 
     def window_control_fullscreen(self, flag=False):
@@ -293,7 +293,7 @@ class Gui(Frame):
         else:
             self.root.withdraw()
 
-    def window_move_to_00(self):
+    def window_control_move_to_00(self):
         self.root.geometry("+0+0")
 
     def window_control_topalways(self, flag=False):
