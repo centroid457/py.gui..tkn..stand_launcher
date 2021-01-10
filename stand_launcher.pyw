@@ -117,31 +117,40 @@ class Gui(Frame):
             dir=dirname_settings)
 
     def gui_root_configure(self):
-        # ROOT_METHODS
+        # IF YOU WANT TO DISABLE - CHANGE TO NONE or COMMENT OUT
+        # ROOT_METHODS = many of them can named with WM! geometry=WM_geometry
         self.root.title("STAND LAUNCHER")
-        self.root.geometry("800x300")   # ("WINXxWINY+ShiftX+ShiftY")
-        # self.root.resizable(width=True, height=True)	# заблокировать возможность изменения размеров границ! В том числе на весь экран!!!
-        # self.root.maxsize(1000, 1000)
-        # self.root.minsize(300, 300)
-        # self.root.overrideredirect(False)
-        # self.root.state('normal')     # normal/zoomed/iconic/withdrawn
         self.root.iconbitmap(filename_program_image)   # ONLY FILENAME! NO fileobject
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
 
-        # WM_ATTRIBUTES
+        # self.root.geometry("800x500+100+100")           #("WINXxWINY+ShiftX+ShiftY")
+        # self.root.geometry("800x500")                 #("WINXxWINY")
+        # self.root.geometry("+100+100")                #("+ShiftX+ShiftY")
+        # self.root.resizable(width=True, height=True)    # block resizable! even if fullscreen!!!
+        # self.root.maxsize(1000, 1000)
+        self.root.minsize(800, 300)
+
+        # self.root.overrideredirect(False)   # borderless window, without standard OS header and boarders
+        # self.root.state('zoomed')   # normal/zoomed/iconic/withdrawn
+        # self.root.iconify()       # ICONIFY/deiconify = hide down window, minimize
+        # self.root.withdraw()      # WITHDRAW/deiconify = hide out window, don't show anywhere
+        # self.root.deiconify()     # restore window
+
+        # WM_ATTRIBUTES = root.wm_attributes / root.attributes
         # self.root.wm_attributes("-topmost", False)
-        # self.root.wm_attributes("-disabled", False)
+        # self.root.wm_attributes("-disabled", False)     # disable whole gui
         # self.root.wm_attributes("-fullscreen", False)
         # self.root.wm_attributes("-transparentcolor", None)
 
-        # WGT_PARAMETERS
+        # WGT_PARAMETERS = ROOT.CONFIG(bg="red") / ROOT["bg"]="red"
         self.root["bg"] = "black"
-        self.root["fg"] = None
+        # self.root["fg"] = None
         # self.root["width"] = None
         # self.root["height"] = None
         # self.root["bind"] = None
         self.root["relief"] = "raised"  # "flat"/"sunken"/"raised"/"groove"/"ridge"
         # self.root["borderwidth"] = 5
+        # self.root["cursor"] = None   # 'watch'=the best / "xterm" / "arrow"=standard
 
     def window_move_to_center(self):
         self.root.update_idletasks()
