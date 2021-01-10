@@ -124,11 +124,11 @@ class Gui(Frame):
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
 
         # self.root.geometry("800x500+100+100")           #("WINXxWINY+ShiftX+ShiftY")
-        # self.root.geometry("800x500")                 #("WINXxWINY")
+        self.root.geometry("800x300")                 #("WINXxWINY")
         # self.root.geometry("+100+100")                #("+ShiftX+ShiftY")
         # self.root.resizable(width=True, height=True)    # block resizable! even if fullscreen!!!
         # self.root.maxsize(1000, 1000)
-        self.root.minsize(800, 300)
+        # self.root.minsize(800, 300)
 
         # self.root.overrideredirect(False)   # borderless window, without standard OS header and boarders
         # self.root.state('zoomed')   # normal/zoomed/iconic/withdrawn
@@ -242,7 +242,7 @@ class Gui(Frame):
         self.btn_window_switch_to_default["text"] = "default"
         self.btn_window_switch_to_default.pack(side="left")
 
-        self.btn_window_short = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.window_control_short)
+        self.btn_window_short = ButtonMod(parent=parent, flag_default=None, bg_default=None, func=self.window_control_short)
         self.btn_window_short["text"] = chr(9624)
         self.btn_window_short.pack(side="left")
 
@@ -281,13 +281,15 @@ class Gui(Frame):
     def window_set_default(self):
         for btn_control in ButtonMod.buttonmod_flagged_list:
             btn_control.switch_default()
-        self.gui_root_configure()
+        if self.root == self.parent:
+            self.gui_root_configure()
         self.window_move_to_center()
 
-    def window_control_short(self, flag=False):
+    def window_control_short(self, flag=True):
         if flag:
-            self.window_control_topalways(flag=True)
-            self.window_control_fullscreen(False)
+            self.btn_window_topalways.switch_set_flag(flag=True)
+            self.btn_window_fullscreen.switch_set_flag(flag=False)
+            self.btn_window_independent.switch_set_flag(flag=True)
             window_width = 130       # it does not matter if less then about 120!!!
             window_height = 40
             self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
