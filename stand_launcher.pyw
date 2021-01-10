@@ -83,7 +83,7 @@ class Gui(Frame):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
-        self.root = self.parent.winfo_toplevel()
+        self.root = self.winfo_toplevel()
         Make_gui_draggable(self.root)
 
         self.check_program_instances()
