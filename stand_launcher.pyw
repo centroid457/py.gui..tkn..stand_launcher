@@ -93,9 +93,8 @@ class Gui(Frame):
 
         self.create_gui_structure()
 
-        if self.root == self.parent:      # if it is independent window (without insertion in outside project)
-            self.gui_root_configure()
-            self.window_move_to_center()
+        self.gui_root_configure()
+        self.window_move_to_center()
 
     def __del__(self):
         print("execute destructor")
@@ -117,14 +116,19 @@ class Gui(Frame):
             dir=dirname_settings)
 
     def gui_root_configure(self):
+        if self.root == self.parent:      # if it is independent window (without insertion in outside project)
+            self.root.title("STAND LAUNCHER")
+            self.root.geometry("800x300")  # ("WINXxWINY")
+            self.root["bg"] = "black"
+
         # IF YOU WANT TO DISABLE - CHANGE TO NONE or COMMENT OUT
         # ROOT_METHODS = many of them can named with WM! geometry=WM_geometry
-        self.root.title("STAND LAUNCHER")
+        # self.root.title("STAND LAUNCHER")
         self.root.iconbitmap(filename_program_image)   # ONLY FILENAME! NO fileobject
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
 
         # self.root.geometry("800x500+100+100")           #("WINXxWINY+ShiftX+ShiftY")
-        self.root.geometry("800x300")                 #("WINXxWINY")
+        # self.root.geometry("800x300")                 #("WINXxWINY")
         # self.root.geometry("+100+100")                #("+ShiftX+ShiftY")
         # self.root.resizable(width=True, height=True)    # block resizable! even if fullscreen!!!
         # self.root.maxsize(1000, 1000)
@@ -143,12 +147,12 @@ class Gui(Frame):
         # self.root.wm_attributes("-transparentcolor", None)
 
         # WGT_PARAMETERS = ROOT.CONFIG(bg="red") / ROOT["bg"]="red"
-        self.root["bg"] = "black"
+        # self.root["bg"] = "black"
         # self.root["fg"] = None
         # self.root["width"] = None
         # self.root["height"] = None
         # self.root["bind"] = None
-        self.root["relief"] = "raised"  # "flat"/"sunken"/"raised"/"groove"/"ridge"
+        # self.root["relief"] = "raised"  # "flat"/"sunken"/"raised"/"groove"/"ridge"
         # self.root["borderwidth"] = 5
         # self.root["cursor"] = None   # 'watch'=the best / "xterm" / "arrow"=standard
 
@@ -281,8 +285,7 @@ class Gui(Frame):
     def window_set_default(self):
         for btn_control in ButtonMod.buttonmod_flagged_list:
             btn_control.switch_default()
-        if self.root == self.parent:
-            self.gui_root_configure()
+        self.gui_root_configure()
         self.window_move_to_center()
 
     def window_control_short(self, flag=True):
