@@ -84,7 +84,6 @@ class Gui(Frame):
         super().__init__()
         self.parent = parent
         self.root = self.winfo_toplevel()
-        Make_gui_draggable(self.root)
 
         self.check_program_instances()
         self.create_icon()
@@ -213,6 +212,8 @@ class Gui(Frame):
         # ======= FRAME-0 (WINDOW CONTROL) ====================
         self.frame_control = Frame(self.parent, bg="#101010")
         self.frame_control.grid(row=0, sticky="nsew", padx=pad_external, pady=pad_external)
+
+        Make_gui_draggable(self.frame_control)
 
         # ======= FRAME-1 (SETTINGS) ====================
         self.frame_settings = Frame(self.parent, bg="#505050", height=30)
