@@ -119,6 +119,7 @@ class Gui(Frame):
         if self.root == self.parent:      # if it is independent window (without insertion in outside project)
             self.root.title("STAND LAUNCHER")
             self.root["bg"] = "black"
+            self.root.geometry("800x60")
 
         # IF YOU WANT TO DISABLE - CHANGE TO NONE or COMMENT OUT
         # ROOT_METHODS = many of them can named with WM! geometry=WM_geometry
@@ -127,7 +128,7 @@ class Gui(Frame):
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
 
         # self.root.geometry("800x500+100+100")           #("WINXxWINY+ShiftX+ShiftY")
-        self.root.geometry("800x60")                 #("WINXxWINY")
+        # self.root.geometry("800x60")                 #("WINXxWINY")
         # self.root.geometry("+100+100")                #("+ShiftX+ShiftY")
         # self.root.resizable(width=True, height=True)    # block resizable! even if fullscreen!!!
         # self.root.maxsize(1000, 1000)
