@@ -13,7 +13,7 @@ import frame_root_control
 
 def main():
     root = Tk()
-    root.geometry("800x400")
+    root.geometry("800x300")
 
     root.columnconfigure(0, weight=1)
     root.rowconfigure([0, ], weight=0)
@@ -26,9 +26,11 @@ def main():
 
     frame_root_control.Gui(frame_control)
 
-    # ======= FRAME-1 (SETTINGS) ====================
-    frame_1 = Frame(root, bg="#505050", height=30)
-    frame_1.grid(row=1, sticky="snew", padx=pad_external, pady=0)
+    # ======= FRAME-1 (DATA) ====================
+    frame_data = Frame(root, bg="#505050")
+    frame_data.grid(row=1, sticky="snew", padx=pad_external, pady=0)
+
+    import_checker.frame.Gui(parent=frame_data, path_link=__file__)
 
     root.mainloop()
 
