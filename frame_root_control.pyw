@@ -127,7 +127,7 @@ class Gui(Frame):
         self.root.protocol('WM_DELETE_WINDOW', self.program_exit)  # intersept gui exit()
 
         # self.root.geometry("800x500+100+100")           #("WINXxWINY+ShiftX+ShiftY")
-        self.root.geometry("800x300")                 #("WINXxWINY")
+        self.root.geometry("800x60")                 #("WINXxWINY")
         # self.root.geometry("+100+100")                #("+ShiftX+ShiftY")
         # self.root.resizable(width=True, height=True)    # block resizable! even if fullscreen!!!
         # self.root.maxsize(1000, 1000)
@@ -215,7 +215,6 @@ class Gui(Frame):
 
         # ======= FRAME-1 (SETTINGS) ====================
         self.frame_settings = Frame(self.parent, bg="#505050", height=30)
-        self.frame_settings.pack_propagate(1)   # hear it is necessary
         self.frame_settings.grid(row=1, sticky="ew", padx=pad_external, pady=0)
 
         self.fill_all_frames()
