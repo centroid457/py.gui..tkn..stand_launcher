@@ -24,7 +24,7 @@ from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 dirname_current = pathlib.Path.cwd()
 dirname_settings = dirname_current / "settings"
 dirname_settings.mkdir(exist_ok=True)
-filename_btns_settings = dirname_current / "settings" / "settings_root_control_btns.json"
+filename_btns_settings = dirname_current / "settings" / ".settings_root_control_btns.json"
 
 filename_program_image = dirname_settings / "program_icon.ico"
 filename_program_save_state = dirname_settings / ".program_save_state.pickle"
