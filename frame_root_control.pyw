@@ -1,5 +1,4 @@
 # DO NOT USE ANY PRINT() FUNCTIONS! ONLY for debug purpose!! else it will brake program_restart()!
-
 # #################################################
 # LIBS
 # #################################################
@@ -91,10 +90,6 @@ class Gui(Frame):
 
         self.gui_root_configure()
         self.window_move_to_center()
-
-    def __del__(self):
-        print("execute destructor")
-        self.program_save_state()
 
     def check_program_instances(self):
         mask = f"{str(dirname_settings)}" + '\\'\
@@ -363,11 +358,10 @@ class Gui(Frame):
 
     def program_exit(self):
         self.program_save_state()
-        print("exit")
+        print("correct exit")
         self.root.destroy()
 
     def program_save_state(self, data_to_save=None):
-        pass
         self.btns_save_state()
 
 
