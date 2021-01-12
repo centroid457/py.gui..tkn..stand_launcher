@@ -3,6 +3,7 @@
 # #################################################
 # LIBS
 # #################################################
+import json
 import os
 import sys
 import pathlib
@@ -23,6 +24,7 @@ from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 dirname_current = pathlib.Path.cwd()
 dirname_settings = dirname_current / "settings"
 dirname_settings.mkdir(exist_ok=True)
+filename_btns_settings = dirname_current / "settings" / "settings_root_control_btns.json"
 
 filename_program_image = dirname_settings / "program_icon.ico"
 filename_program_save_state = dirname_settings / ".program_save_state.pickle"
@@ -277,6 +279,24 @@ class Gui(Frame):
         self.btn_window_settings["text"] = "Settings"
         self.btn_window_settings.pack(side="left")
 
+        self.btns_apply_saved_state()
+
+    def btns_apply_saved_state(self):
+        # todo: LOAD DICT
+        return
+        for btn in ButtonMod.buttonmod_flagged_list:
+            pass
+
+    def btns_save_state(self):
+        saved_state_dict = {}
+        for btn in ButtonMod.buttonmod_flagged_list:
+            # print(btn.winfo_name(), btn.flag_default, btn["text"])
+            saved_state_dict[btn.winfo_name()] = [btn.flag_default, btn["text"]]
+        # print(saved_state_dict)
+        with open(filename_btns_settings, "w") as file_obj:
+            json.dump(saved_state_dict, file_obj, ensure_ascii=True, indent=True)
+        return
+
     def window_set_default(self):
         for btn_control in ButtonMod.buttonmod_flagged_list:
             btn_control.switch_default()
@@ -340,10 +360,7 @@ class Gui(Frame):
 
     def program_save_state(self, data_to_save=None):
         pass
-        # data_to_save = self.buttons_main_gui_control_data_active
-        # with open(filename_program_save_state, 'wb') as file:
-        #     pickle.dump(data_to_save, file)
-        # print("ok")
+        self.btns_save_state()
 
 
 class ButtonMod(Button):
