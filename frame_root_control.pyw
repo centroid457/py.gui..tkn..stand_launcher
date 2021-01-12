@@ -24,7 +24,7 @@ from pystray import Icon, Menu, MenuItem        # pip3 install pystray
 dirname_current = pathlib.Path.cwd()
 dirname_settings = dirname_current / "settings"
 dirname_settings.mkdir(exist_ok=True)
-filename_btns_settings = dirname_current / "settings" / ".settings_root_control_btns.json"
+filename_settings_root_control_btns = dirname_current / "settings" / ".settings_root_control_btns.json"
 
 filename_program_image = dirname_settings / "program_icon.ico"
 filename_program_save_state = dirname_settings / ".program_save_state.pickle"
@@ -282,16 +282,16 @@ class Gui(Frame):
         self.btns_apply_saved_state()
 
     def btns_apply_saved_state(self):
-        if not filename_btns_settings.exists():
+        if not filename_settings_root_control_btns.exists():
             return
 
-        with open(filename_btns_settings, "r") as file_obj:
+        with open(filename_settings_root_control_btns, "r") as file_obj:
             saved_state_dict = json.load(file_obj)
 
         for btn in ButtonMod.buttonmod_flagged_list:
             btn_last_name = str(btn).rsplit(".", maxsplit=1)[1]
             if btn_last_name in saved_state_dict:
-                btn.switch_set_flag(flag=saved_state_dict[btn_last_name][0])
+                btn.switch_to_flag(flag=saved_state_dict[btn_last_name][0])
         return
 
     def btns_save_state(self):
@@ -300,21 +300,21 @@ class Gui(Frame):
             # print(btn.winfo_name(), btn.flag_default, btn["text"])
             saved_state_dict[btn.winfo_name()] = [btn.flag_active, btn["text"]]
         # print(saved_state_dict)
-        with open(filename_btns_settings, "w") as file_obj:
+        with open(filename_settings_root_control_btns, "w") as file_obj:
             json.dump(saved_state_dict, file_obj, ensure_ascii=True, indent=True)
         return
 
     def window_set_default(self):
         for btn_control in ButtonMod.buttonmod_flagged_list:
-            btn_control.switch_default()
+            btn_control.switch_to_default()
         self.gui_root_configure()
         self.window_move_to_center()
 
     def window_control_short(self, flag=True):
         if flag:
-            self.btn_window_topalways.switch_set_flag(flag=True)
-            self.btn_window_fullscreen.switch_set_flag(flag=False)
-            self.btn_window_independent.switch_set_flag(flag=True)
+            self.btn_window_topalways.switch_to_flag(flag=True)
+            self.btn_window_fullscreen.switch_to_flag(flag=False)
+            self.btn_window_independent.switch_to_flag(flag=True)
             window_width = 130       # it does not matter if less then about 120!!!
             window_height = 40
             self.root.geometry('%dx%d+%d+%d' % (window_width, window_height, 0, 0))
@@ -392,15 +392,15 @@ class ButtonMod(Button):
         if self.is_flagged:
             ButtonMod.buttonmod_flagged_count += 1
             ButtonMod.buttonmod_flagged_list += [self]
-            self.switch_default()
+            self.switch_to_default()
 
     def switch(self):
-        self.switch_set_flag(not self.flag_active)
+        self.switch_to_flag(not self.flag_active)
 
-    def switch_default(self):
-        self.switch_set_flag(self.flag_default)
+    def switch_to_default(self):
+        self.switch_to_flag(self.flag_default)
 
-    def switch_set_flag(self, flag):
+    def switch_to_flag(self, flag):
         if self.is_flagged:
             self.flag_active = flag
             self["bg"] = self.bg_set[int(flag)]
