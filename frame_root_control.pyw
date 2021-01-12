@@ -291,7 +291,8 @@ class Gui(Frame):
         for btn in ButtonMod.buttonmod_flagged_list:
             btn_last_name = str(btn).rsplit(".", maxsplit=1)[1]
             if btn_last_name in saved_state_dict:
-                btn.switch_to_flag(flag=saved_state_dict[btn_last_name][0])
+                btn.flag_default = saved_state_dict[btn_last_name][0]
+                btn.switch_to_default()
         return
 
     def btns_save_state(self):
