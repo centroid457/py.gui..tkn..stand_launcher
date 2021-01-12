@@ -48,6 +48,16 @@ class Make_gui_draggable:
         root_start_xy = self.root.geometry().split("+")
         self.root_start_x, self.root_start_y = int(root_start_xy[1]), int(root_start_xy[2])
 
+        wgt_under_pointer = self.root.winfo_containing(self.pointer_start_x, self.pointer_start_y)
+        wgt_name = str(wgt_under_pointer)
+        wgt_names_dont_move_list = ["scrollbar", ]
+        for wgt in wgt_names_dont_move_list:
+            if wgt in wgt_name:
+                return
+
+        if "button" in wgt_name and event.widget._nametowidget(wgt_name)["state"] != "disabled":
+            return
+
         self.parent.bind('<Motion>', self.drag)
 
     def drag(self, event):
@@ -190,6 +200,8 @@ class Gui(Frame):
     # FRAMES
     # #################################################
     def create_gui_structure(self):
+        Make_gui_draggable(self.root)
+
         self.parent.columnconfigure(0, weight=1)
         self.parent.rowconfigure([0, 1, ], weight=0)
         pad_external = 5
@@ -197,8 +209,6 @@ class Gui(Frame):
         # ======= FRAME-0 (WINDOW CONTROL) ====================
         self.frame_control = Frame(self.parent, bg="#101010")
         self.frame_control.grid(row=0, sticky="nsew", padx=pad_external, pady=pad_external)
-
-        Make_gui_draggable(self.frame_control)
 
         # ======= FRAME-1 (SETTINGS) ====================
         self.frame_settings = Frame(self.parent, bg="#505050", height=30)
