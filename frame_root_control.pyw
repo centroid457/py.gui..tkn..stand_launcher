@@ -36,43 +36,28 @@ program_instance_suffix = "_instance.check"
 # #################################################
 class Make_gui_draggable:
     """ Makes a window draggable by mouse """
-    def __init__(self, parent, disable=None, releasecmd=None):
+    def __init__(self, parent):
         self.parent = parent
         self.root = parent.winfo_toplevel()
 
-        self.disable = disable
-        if type(disable) == 'str':
-            self.disable = disable.lower()
+        self.parent.bind('<Button-1>', self.start)
+        self.parent.bind('<ButtonRelease-1>', self.stop)
 
-        self.releaseCMD = releasecmd
+    def start(self, event):
+        self.pointer_start_x, self.pointer_start_y = self.parent.winfo_pointerxy()
+        root_start_xy = self.root.geometry().split("+")
+        self.root_start_x, self.root_start_y = int(root_start_xy[1]), int(root_start_xy[2])
 
-        self.parent.bind('<Button-1>', self.relative_position)
-        self.parent.bind('<ButtonRelease-1>', self.drag_unbind)
+        self.parent.bind('<Motion>', self.drag)
 
-    def relative_position(self, event):
-        cx, cy = self.parent.winfo_pointerxy()
-        geo = self.root.geometry().split("+")
-        self.oriX, self.oriY = int(geo[1]), int(geo[2])
-        self.relX = cx - self.oriX
-        self.relY = cy - self.oriY
+    def drag(self, event):
+        pointer_next_x, pointer_next_y = self.parent.winfo_pointerxy()
+        next_x = pointer_next_x - self.pointer_start_x + self.root_start_x
+        next_y = pointer_next_y - self.pointer_start_y + self.root_start_y
+        self.root.geometry('+%i+%i' % (next_x, next_y))
 
-        self.parent.bind('<Motion>', self.drag_wid)
-
-    def drag_wid(self, event):
-        cx, cy = self.parent.winfo_pointerxy()
-        d = self.disable
-        x = cx - self.relX
-        y = cy - self.relY
-        if d == 'x':
-            x = self.oriX
-        elif d == 'y':
-            y = self.oriY
-        self.root.geometry('+%i+%i' % (x, y))
-
-    def drag_unbind(self, event):
+    def stop(self, event):
         self.parent.unbind('<Motion>')
-        if self.releaseCMD is not None:
-            self.releaseCMD()
 
 
 # #################################################
