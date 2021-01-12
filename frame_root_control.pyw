@@ -279,9 +279,9 @@ class Gui(Frame):
         self.btn_window_settings["text"] = "Settings"
         self.btn_window_settings.pack(side="left")
 
-        self.btns_apply_saved_state()
+        self.btns_load_saved_state()
 
-    def btns_apply_saved_state(self):
+    def btns_load_saved_state(self):
         if not filename_settings_root_control_btns.exists():
             return
 
