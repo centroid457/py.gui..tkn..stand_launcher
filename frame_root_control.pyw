@@ -282,16 +282,23 @@ class Gui(Frame):
         self.btns_apply_saved_state()
 
     def btns_apply_saved_state(self):
-        # todo: LOAD DICT
-        return
+        if not filename_btns_settings.exists():
+            return
+
+        with open(filename_btns_settings, "r") as file_obj:
+            saved_state_dict = json.load(file_obj)
+
         for btn in ButtonMod.buttonmod_flagged_list:
-            pass
+            btn_last_name = str(btn).rsplit(".", maxsplit=1)[1]
+            if btn_last_name in saved_state_dict:
+                btn.switch_set_flag(flag=saved_state_dict[btn_last_name][0])
+        return
 
     def btns_save_state(self):
         saved_state_dict = {}
         for btn in ButtonMod.buttonmod_flagged_list:
             # print(btn.winfo_name(), btn.flag_default, btn["text"])
-            saved_state_dict[btn.winfo_name()] = [btn.flag_default, btn["text"]]
+            saved_state_dict[btn.winfo_name()] = [btn.flag_active, btn["text"]]
         # print(saved_state_dict)
         with open(filename_btns_settings, "w") as file_obj:
             json.dump(saved_state_dict, file_obj, ensure_ascii=True, indent=True)
