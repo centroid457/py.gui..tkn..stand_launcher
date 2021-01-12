@@ -274,7 +274,7 @@ class Gui(Frame):
         self.btn_window_independent.pack(side="left")
 
         self.btn_window_settings = ButtonMod(parent=parent, flag_default=False, bg_default=None, func=self.frame_settings_open)
-        self.btn_window_settings["text"] = "Настройки"
+        self.btn_window_settings["text"] = "Settings"
         self.btn_window_settings.pack(side="left")
 
     def window_set_default(self):
