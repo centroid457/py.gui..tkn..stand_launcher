@@ -286,7 +286,7 @@ class Gui(Frame):
         for btn in ButtonMod.buttonmod_flagged_list:
             btn_last_name = str(btn).rsplit(".", maxsplit=1)[1]
             if btn_last_name in saved_state_dict:
-                btn.flag_default = saved_state_dict[btn_last_name][0]
+                btn.flag_default = saved_state_dict[btn_last_name]["flag"]
                 btn.switch_to_default()
         return
 
@@ -294,7 +294,7 @@ class Gui(Frame):
         saved_state_dict = {}
         for btn in ButtonMod.buttonmod_flagged_list:
             # print(btn.winfo_name(), btn.flag_default, btn["text"])
-            saved_state_dict[btn.winfo_name()] = [btn.flag_active, btn["text"]]
+            saved_state_dict[btn.winfo_name()] = {"flag": btn.flag_active, "text": btn["text"]}
         # print(saved_state_dict)
         with open(filename_settings_root_control_btns, "w") as file_obj:
             json.dump(saved_state_dict, file_obj, ensure_ascii=True, indent=True)
