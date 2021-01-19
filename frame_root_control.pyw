@@ -56,6 +56,7 @@ class Make_gui_draggable:
             if wgt in wgt_name:
                 return
 
+        # Don't use disabled buttons
         if "button" in wgt_name and event.widget._nametowidget(wgt_name)["state"] != "disabled":
             return
 
