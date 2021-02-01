@@ -7,6 +7,7 @@ import_checker.frame.start_gui(__file__)
 # ##########################################################
 
 # import test123
+import net_scan
 from tkinter import Tk, Frame, Button, Label
 from tkinter import ttk
 import frame_root_control
@@ -32,12 +33,15 @@ def main():
     frame_nb.grid(row=1, sticky="snew", padx=pad_external, pady=0)
 
     tab_1 = Frame(frame_nb, bg="#00FF00", height=100)
-    frame_nb.add(tab_1, text="tab1")
+    frame_nb.add(tab_1, text="Import Checker")
+
+    tab_1_data = import_checker.frame.Gui(parent=tab_1, path_link=__file__)
+    tab_1_data.grid(sticky="snew")
 
     tab_2 = Frame(frame_nb, bg="#0000FF", height=100)
-    frame_nb.add(tab_2, text="Import Checker")
+    frame_nb.add(tab_2, text="NET_SCAN")
 
-    tab_2_data = import_checker.frame.Gui(parent=tab_2, path_link=__file__)
+    tab_2_data = net_scan.frame.Gui(parent=tab_2)
     tab_2_data.grid(sticky="snew")
 
     root.mainloop()
