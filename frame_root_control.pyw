@@ -51,7 +51,7 @@ class Make_gui_draggable:
 
         wgt_under_pointer = self.root.winfo_containing(self.pointer_start_x, self.pointer_start_y)
         wgt_name = str(wgt_under_pointer)
-        wgt_names_dont_move_list = ["scrollbar", ]
+        wgt_names_dont_move_list = ["scrollbar", "entry", ]
         for wgt in wgt_names_dont_move_list:
             if wgt in wgt_name:
                 return
